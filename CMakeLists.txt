@@ -27,7 +27,7 @@ target_sources(UNIT20-AB PRIVATE
     "src/Cita.cpp" 
     "src/Reporte.cpp" 
     "src/Archivo.cpp"
-)
+ "src/Administrador.cpp")
 
 # Configuración específica de MSVC
 if (MSVC)

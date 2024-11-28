@@ -39,4 +39,5 @@ public:
     std::string getEspecialidad() const;
 };
 
+
 #endif
