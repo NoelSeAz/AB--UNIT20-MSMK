@@ -62,3 +62,33 @@ void Administrador::bajaPaciente(std::vector<Paciente>& pacientes, int id) {
     pacientes.erase(it, pacientes.end());
     std::cout << "Paciente con ID " << id << " dado de baja exitosamente.\n";
 }
+
+// Buscar paciente por ID
+Paciente* Administrador::buscarPacientePorID(const std::vector<Paciente>& pacientes, int id) {
+    auto it = std::find_if(pacientes.begin(), pacientes.end(), [id](const Paciente& paciente) {
+        return paciente.getID() == id;
+        });
+
+    if (it != pacientes.end()) {
+        return const_cast<Paciente*>(&(*it)); // Devuelve un puntero al paciente encontrado
+    }
+    else {
+        std::cerr << "Error: No se encontró un paciente con el ID " << id << ".\n";
+        return nullptr;
+    }
+}
+
+// Buscar médico por ID
+Medico* Administrador::buscarMedicoPorID(const std::vector<Medico>& medicos, int id) {
+    auto it = std::find_if(medicos.begin(), medicos.end(), [id](const Medico& medico) {
+        return medico.getID() == id;
+        });
+
+    if (it != medicos.end()) {
+        return const_cast<Medico*>(&(*it)); // Devuelve un puntero al médico encontrado
+    }
+    else {
+        std::cerr << "Error: No se encontró un médico con el ID " << id << ".\n";
+        return nullptr;
+    }
+}

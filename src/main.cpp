@@ -11,8 +11,10 @@ int main() {
     SetConsoleCP(CP_UTF8);
 
     // Crear datos de prueba
-    std::vector<Paciente> pacientes = { Paciente(1, "Juan", "Perez", "Calle 123", 30) };
-    std::vector<Medico> medicos = { Medico(1, "Ana", "Gomez", "Cardiología", true) };
+    std::vector<Paciente> pacientes = { Paciente(1, "Juan", "Perez", "Calle 123", 30),
+                                    Paciente(2, "Ana", "Lopez", "Avenida Real", 25) };
+    std::vector<Medico> medicos = { Medico(1, "Luis", "Fernandez", "Cardiología", true),
+                                    Medico(2, "Maria", "Gomez", "Pediatría", false) };
     std::vector<Cita> citas = { Cita(1, 1, 1, "2024-11-27", 1) };
 
     // Guardar datos
@@ -56,4 +58,16 @@ int main() {
 
     // Baja de pacientes
     Administrador::bajaPaciente(pacientes, 1);
+
+    // Buscar un paciente por ID
+    Paciente* paciente = Administrador::buscarPacientePorID(pacientes, 3);
+    if (paciente) {
+        paciente->imprimirDatos();
+    }
+
+    // Buscar un médico por ID
+    Medico* medico = Administrador::buscarMedicoPorID(medicos, 2);
+    if (medico) {
+        medico->imprimirDatos();
+    }
 }
