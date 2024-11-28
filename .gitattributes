@@ -1,2 +1,9 @@
-# Auto detect text files and perform LF normalization
+# Normaliza los finales de línea para todos los archivos de texto
 * text=auto
+
+# Asegura que los scripts usan LF
+*.sh text eol=lf
+*.py text eol=lf
+
+# Asegura que los archivos Markdown usan LF
+*.md text eol=lf
