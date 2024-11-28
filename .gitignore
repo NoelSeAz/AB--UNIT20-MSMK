@@ -30,4 +30,45 @@
 *.exe
 *.out
 *.app
-/.vs/AB -UNIT20 MSMK/v17/Browse.VC.opendb
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+build.ninja
+.ninja_deps
+.ninja_log
+
+# Output directories
+/out/
+build/
+
+# Visual Studio temporary files
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+*.vcxproj
+*.sln
+*.sqlite
+*.db
+
+# Logs and debugging files
+*.ilk
+*.pdb
+*.log
+
+# Ninja specific
+.ninja_deps
+.ninja_log
+
+# Specific generated files
+*.opendb
+*.vc.db
+*.VC.opendb
+*.tlog
+
+# Backup and system files
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
