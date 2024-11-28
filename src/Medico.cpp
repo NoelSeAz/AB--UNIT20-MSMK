@@ -46,6 +46,14 @@ int Medico::getID() const {
     return ID;
 }
 
-std::string Medico::getNombreCompleto() const {
-    return nombre + " " + apellido;
+std::string Medico::getNombre() const {
+    return nombre;
+}
+
+std::string Medico::getApellido() const {
+    return apellido;
+}
+
+std::string Medico::getEspecialidad() const {
+    return especialidad;
 }

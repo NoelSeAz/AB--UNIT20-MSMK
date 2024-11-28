@@ -37,8 +37,20 @@ int Paciente::getID() const {
     return ID;
 }
 
-std::string Paciente::getNombreCompleto() const {
-    return nombre + " " + apellido;
+std::string Paciente::getNombre() const {
+    return nombre;
+}
+
+std::string Paciente::getApellido() const {
+    return apellido;
+}
+
+std::string Paciente::getDireccion() const {
+    return direccion;
+}
+
+int Paciente::getEdad() const {
+    return edad;
 }
 
 const std::vector<std::string>& Paciente::getHistorialClinico() const {

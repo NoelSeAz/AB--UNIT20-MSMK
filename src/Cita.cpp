@@ -1,7 +1,6 @@
 #include "Cita.hpp"
 #include <iostream>
 
-
 // Constructor
 Cita::Cita(int citaID, int pacienteID, int medicoID, const std::string& fecha, int prioridad)
     : citaID(citaID), pacienteID(pacienteID), medicoID(medicoID), fecha(fecha), prioridad(prioridad) {}
@@ -41,18 +40,9 @@ void Cita::imprimirCita() const {
         << "Prioridad: " << (prioridad == 1 ? "Urgente" : "Normal") << "\n";
 }
 
-int Cita::getCitaID() const {
-    return citaID;
-}
-
-int Cita::getPacienteID() const {
-    return pacienteID;
-}
-
-int Cita::getMedicoID() const {
-    return medicoID;
-}
-
-std::string Cita::getFecha() const {
-    return fecha;
-}
+// Getters
+int Cita::getCitaID() const { return citaID; }
+int Cita::getPacienteID() const { return pacienteID; }
+int Cita::getMedicoID() const { return medicoID; }
+int Cita::getPrioridad() const { return prioridad; }
+std::string Cita::getFecha() const { return fecha; }

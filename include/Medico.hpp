@@ -34,7 +34,9 @@ public:
 
     // Getters
     int getID() const;
-    std::string getNombreCompleto() const;
+    std::string getNombre() const;
+    std::string getApellido() const;
+    std::string getEspecialidad() const;
 };
 
 #endif

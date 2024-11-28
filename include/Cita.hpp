@@ -35,6 +35,7 @@ public:
     int getCitaID() const;
     int getPacienteID() const;
     int getMedicoID() const;
+    int getPrioridad() const;
     std::string getFecha() const;
 };
 

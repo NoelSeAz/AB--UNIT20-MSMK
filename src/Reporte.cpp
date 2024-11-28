@@ -9,10 +9,14 @@ void Reporte::generarListadoPacientes(const std::vector<Paciente>& pacientes, co
 
     for (const auto& cita : citas) {
         if (cita.getFecha() >= fechaInicio && cita.getFecha() <= fechaFin) {
-            for (const auto& paciente : pacientes) {
-                if (paciente.getID() == cita.getPacienteID()) {
-                    std::cout << "- " << paciente.getNombreCompleto() << " (ID: " << paciente.getID() << ")\n";
-                }
+            auto it = std::find_if(pacientes.begin(), pacientes.end(),
+                [&cita](const Paciente& paciente) {
+                    return paciente.getID() == cita.getPacienteID();
+                });
+
+            if (it != pacientes.end()) {
+                std::cout << "- " << it->getNombre() << " " << it->getApellido()
+                    << " (ID: " << it->getID() << ")\n";
             }
         }
     }
@@ -23,10 +27,12 @@ void Reporte::generarCitasPendientes(const std::vector<Cita>& citas, const std::
     std::cout << "Citas pendientes por médico:\n";
 
     for (const auto& medico : medicos) {
-        std::cout << "\nMédico: " << medico.getNombreCompleto() << " (ID: " << medico.getID() << ")\n";
+        std::cout << "\nMédico: " << medico.getNombre() << " " << medico.getApellido()
+            << " (ID: " << medico.getID() << ")\n";
         for (const auto& cita : citas) {
             if (cita.getMedicoID() == medico.getID() && cita.getFecha() >= "2024-11-26") {
-                std::cout << "- Cita ID: " << cita.getCitaID() << ", Fecha: " << cita.getFecha() << "\n";
+                std::cout << "- Cita ID: " << cita.getCitaID()
+                    << ", Fecha: " << cita.getFecha() << "\n";
             }
         }
     }
@@ -38,11 +44,19 @@ void Reporte::generarReporteEnfermedadesCronicas(const std::vector<Paciente>& pa
 
     for (const auto& paciente : pacientes) {
         const auto& historial = paciente.getHistorialClinico();
+        bool encontrado = false;
+
         for (const auto& registro : historial) {
-            if (registro.find("crónica") != std::string::npos) {
-                std::cout << "- " << paciente.getNombreCompleto() << " (ID: " << paciente.getID() << ")\n";
-                break; // Ya no necesitamos revisar más registros para este paciente
+            auto pos = registro.find("crónica");
+            if (pos != std::string::npos || registro.find("Crónica") != std::string::npos) {
+                encontrado = true;
+                break;
             }
+        }
+
+        if (encontrado) {
+            std::cout << "- " << paciente.getNombre() << " " << paciente.getApellido()
+                << " (ID: " << paciente.getID() << ")\n";
         }
     }
 }
