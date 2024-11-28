@@ -1,27 +1,28 @@
 #include <iostream>
 #include <windows.h>
-#include <Paciente.hpp>
+#include <Medico.hpp>
 
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     
-    Paciente paciente1(1, "Juan", "Pérez", "Calle Falsa 123", 35);
+    // Crear un médico
+    Medico medico1(1, "Ana", "Gómez", "Cardiología", true);
 
-    // Registrar historial clínico
-    paciente1.registrarHistorial("Consulta inicial - 2024-11-26");
-    paciente1.registrarHistorial("Examen de laboratorio - 2024-11-27");
+    // Imprimir datos del médico
+    medico1.imprimirDatos();
 
-    // Mostrar datos del paciente
-    paciente1.imprimirDatos();
+    // Cambiar disponibilidad
+    medico1.cambiarDisponibilidad(false);
+    std::cout << "\nNueva disponibilidad: " << (medico1.obtenerDisponibilidad() ? "Disponible" : "No disponible") << "\n";
 
-    // Mostrar historial clínico
-    paciente1.mostrarHistorial();
+    // Asignar una nueva especialidad
+    medico1.asignarEspecialidad("Neurología");
+    medico1.imprimirDatos();
 
-    // Modificar datos personales
-    paciente1.modificarDatos("Avenida Real 456", 36);
-
-    // Mostrar datos actualizados
-    paciente1.imprimirDatos();
+    // Agregar y mostrar citas
+    medico1.agregarCita(101);
+    medico1.agregarCita(102);
+    medico1.mostrarCitas();
 
     return 0;
 }
