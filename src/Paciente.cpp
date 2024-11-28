@@ -32,3 +32,15 @@ void Paciente::imprimirDatos() const {
         << "Dirección: " << direccion << "\n"
         << "Edad: " << edad << "\n";
 }
+
+int Paciente::getID() const {
+    return ID;
+}
+
+std::string Paciente::getNombreCompleto() const {
+    return nombre + " " + apellido;
+}
+
+const std::vector<std::string>& Paciente::getHistorialClinico() const {
+    return historialClinico;
+}

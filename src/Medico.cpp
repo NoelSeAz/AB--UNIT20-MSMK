@@ -1,9 +1,9 @@
-#include "Medico.hpp"
+ï»¿#include "Medico.hpp"
 #include <iostream>
 
 // Constructor
-Medico::Medico(int id, const std::string& nombre, const std::string& apellido,
-    const std::string& especialidad, bool disponibilidad)
+Medico::Medico(int id, const std::string& nombre, const std::string& apellido, 
+               const std::string& especialidad, bool disponibilidad)
     : ID(id), nombre(nombre), apellido(apellido), especialidad(especialidad), disponibilidad(disponibilidad) {}
 
 // Asignar una nueva especialidad
@@ -11,33 +11,41 @@ void Medico::asignarEspecialidad(const std::string& nuevaEspecialidad) {
     especialidad = nuevaEspecialidad;
 }
 
-// Cambiar la disponibilidad del médico
+// Cambiar la disponibilidad del mÃ©dico
 void Medico::cambiarDisponibilidad(bool nuevaDisponibilidad) {
     disponibilidad = nuevaDisponibilidad;
 }
 
-// Obtener la disponibilidad actual del médico
+// Obtener la disponibilidad actual del mÃ©dico
 bool Medico::obtenerDisponibilidad() const {
     return disponibilidad;
 }
 
-// Agregar una cita al médico
+// Agregar una cita al mÃ©dico
 void Medico::agregarCita(int citaID) {
     listaCitas.push_back(citaID);
 }
 
-// Mostrar todas las citas asignadas al médico
+// Mostrar todas las citas asignadas al mÃ©dico
 void Medico::mostrarCitas() const {
-    std::cout << "Citas del médico " << nombre << " " << apellido << ":\n";
+    std::cout << "Citas del mÃ©dico " << nombre << " " << apellido << ":\n";
     for (const auto& cita : listaCitas) {
         std::cout << "- ID de la cita: " << cita << "\n";
     }
 }
 
-// Imprimir los datos del médico
+// Imprimir los datos del mÃ©dico
 void Medico::imprimirDatos() const {
-    std::cout << "Médico ID: " << ID << "\n"
-        << "Nombre: " << nombre << " " << apellido << "\n"
-        << "Especialidad: " << especialidad << "\n"
-        << "Disponibilidad: " << (disponibilidad ? "Disponible" : "No disponible") << "\n";
+    std::cout << "MÃ©dico ID: " << ID << "\n"
+              << "Nombre: " << nombre << " " << apellido << "\n"
+              << "Especialidad: " << especialidad << "\n"
+              << "Disponibilidad: " << (disponibilidad ? "Disponible" : "No disponible") << "\n";
+}
+
+int Medico::getID() const {
+    return ID;
+}
+
+std::string Medico::getNombreCompleto() const {
+    return nombre + " " + apellido;
 }

@@ -27,6 +27,11 @@ public:
 
     // Métodos de depuración
     void imprimirDatos() const;
+
+    // Getters
+    int getID() const;
+    std::string getNombreCompleto() const;
+    const std::vector<std::string>& getHistorialClinico() const;
 };
 
 #endif
