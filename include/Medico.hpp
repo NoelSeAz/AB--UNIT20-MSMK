@@ -29,9 +29,6 @@ public:
     void agregarCita(int citaID);
     void mostrarCitas() const;
 
-    // Métodos de depuración
-    void imprimirDatos() const;
-
     // Getters
     int getID() const;
     std::string getNombre() const;

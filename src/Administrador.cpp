@@ -1,4 +1,5 @@
 #include "Administrador.hpp"
+#include "Formateador.hpp"
 #include <iostream>
 
 // Alta de médicos
@@ -13,8 +14,10 @@ void Administrador::altaMedico(std::vector<Medico>& medicos, int id, const std::
         return;
     }
 
-    medicos.emplace_back(id, nombre, apellido, especialidad, disponibilidad);
-    std::cout << "Médico dado de alta exitosamente.\n";
+    auto& nuevoMedico = medicos.emplace_back(id, nombre, apellido, especialidad, disponibilidad);
+    Formateador::imprimirEncabezadoMedicos();
+    Formateador::imprimirRegistro(nuevoMedico);
+    std::cout << "\nMédico dado de alta exitosamente.\n";
 }
 
 // Baja de médicos
@@ -40,12 +43,14 @@ void Administrador::altaPaciente(std::vector<Paciente>& pacientes, int id, const
         });
 
     if (it != pacientes.end()) {
-        std::cerr << "Error: Ya existe un paciente con el ID " << id << ".\n";
+        std::cerr << "\nError: Ya existe un paciente con el ID " << id << ".\n";
         return;
     }
 
-    pacientes.emplace_back(id, nombre, apellido, direccion, edad);
-    std::cout << "Paciente dado de alta exitosamente.\n";
+    auto& nuevoPaciente = pacientes.emplace_back(id, nombre, apellido, direccion, edad);
+    Formateador::imprimirEncabezadoPacientes();
+    Formateador::imprimirRegistro(nuevoPaciente);
+    std::cout << "\nPaciente dado de alta exitosamente.\n";
 }
 
 // Baja de pacientes

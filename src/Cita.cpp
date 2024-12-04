@@ -1,5 +1,6 @@
 #include "Cita.hpp"
 #include <iostream>
+#include <iomanip>
 
 // Constructor
 Cita::Cita(int citaID, int pacienteID, int medicoID, const std::string& fecha, int prioridad)
@@ -33,11 +34,13 @@ void Cita::ordenarCitasPorPrioridad(std::vector<Cita>& citas) {
 
 // Imprimir detalles de una cita
 void Cita::imprimirCita() const {
-    std::cout << "Cita ID: " << citaID << "\n"
-        << "Paciente ID: " << pacienteID << "\n"
-        << "Médico ID: " << medicoID << "\n"
-        << "Fecha: " << fecha << "\n"
-        << "Prioridad: " << (prioridad == 1 ? "Urgente" : "Normal") << "\n";
+    std::cout << std::left;
+    std::cout << std::setw(5) << citaID
+        << std::setw(10) << pacienteID
+        << std::setw(10) << medicoID
+        << std::setw(20) << fecha
+        << std::setw(10) << (prioridad == 1 ? "Urgente" : "Normal")
+        << "\n";
 }
 
 // Getters

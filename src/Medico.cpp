@@ -1,5 +1,6 @@
 ﻿#include "Medico.hpp"
 #include <iostream>
+#include <iomanip>
 
 // Constructor
 Medico::Medico(int id, const std::string& nombre, const std::string& apellido, 
@@ -32,14 +33,6 @@ void Medico::mostrarCitas() const {
     for (const auto& cita : listaCitas) {
         std::cout << "- ID de la cita: " << cita << "\n";
     }
-}
-
-// Imprimir los datos del médico
-void Medico::imprimirDatos() const {
-    std::cout << "Médico ID: " << ID << "\n"
-              << "Nombre: " << nombre << " " << apellido << "\n"
-              << "Especialidad: " << especialidad << "\n"
-              << "Disponibilidad: " << (disponibilidad ? "Disponible" : "No disponible") << "\n";
 }
 
 int Medico::getID() const {

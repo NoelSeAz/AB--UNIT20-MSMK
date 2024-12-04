@@ -25,9 +25,6 @@ public:
     // Métodos para acceder y modificar datos personales
     void modificarDatos(const std::string& nuevaDireccion, int nuevaEdad);
 
-    // Métodos de depuración
-    void imprimirDatos() const;
-
     // Getters
     int getID() const;
     std::string getNombre() const;

@@ -1,10 +1,12 @@
 ﻿#include "Paciente.hpp"
 #include "Medico.hpp"
 #include "Administrador.hpp"
+#include "Formateador.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
 #include <windows.h>
+#include <iomanip>
 
 // Funciones para los submenús
 void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos);
@@ -35,6 +37,7 @@ int main() {
         std::cout << "0. Salir\n";
         std::cout << "Seleccione una opción: ";
         std::cin >> opcion;
+        Formateador::limpiarPantalla();
 
         switch (opcion) {
         case 1:
@@ -68,20 +71,17 @@ void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medi
         std::cout << "4. Dar de alta un médico\n";
         std::cout << "5. Dar de baja un paciente\n";
         std::cout << "6. Dar de baja un médico\n";
-        std::cout << "0. Volver al menú principal\n";
+        std::cout << "0. Volver al menú principal\n\n";
         std::cout << "Seleccione una opción: ";
         std::cin >> opcion;
+        Formateador::limpiarPantalla();
 
         switch (opcion) {
         case 1:
-            for (const auto& paciente : pacientes) {
-                paciente.imprimirDatos();
-            }
+            Formateador::imprimirTablaPacientes(pacientes);
             break;
         case 2:
-            for (const auto& medico : medicos) {
-                medico.imprimirDatos();
-            }
+            Formateador::imprimirTablaMedicos(medicos);
             break;
         case 3: {
             int id, edad;
@@ -132,22 +132,22 @@ void mostrarMenuMedico(const std::vector<Paciente>& pacientes, const std::vector
         std::cout << "\n--- Menú Médico ---\n";
         std::cout << "1. Ver lista de pacientes\n";
         std::cout << "2. Buscar paciente por ID\n";
-        std::cout << "0. Volver al menú principal\n";
+        std::cout << "0. Volver al menú principal\n\n";
         std::cout << "Seleccione una opción: ";
         std::cin >> opcion;
+        Formateador::limpiarPantalla();
 
         switch (opcion) {
         case 1:
-            for (const auto& paciente : pacientes) {
-                paciente.imprimirDatos();
-            }
+            Formateador::imprimirTablaPacientes(pacientes);
             break;
         case 2: {
             int id;
             std::cout << "Ingrese ID del paciente: "; std::cin >> id;
             auto paciente = Administrador::buscarPacientePorID(pacientes, id);
             if (paciente) {
-                paciente->imprimirDatos();
+                Formateador::imprimirEncabezadoPacientes();
+                Formateador::imprimirRegistro(*paciente);
             }
             break;
         }
@@ -180,10 +180,12 @@ void mostrarMenuPaciente(const std::vector<Paciente>& pacientes) {
         std::cout << "0. Volver al menú principal\n";
         std::cout << "Seleccione una opción: ";
         std::cin >> opcion;
+        Formateador::limpiarPantalla();
 
         switch (opcion) {
         case 1:
-            paciente->imprimirDatos();
+            Formateador::imprimirEncabezadoPacientes();
+            Formateador::imprimirRegistro(*paciente);
             break;
         case 2:
             paciente->mostrarHistorial();
@@ -195,5 +197,5 @@ void mostrarMenuPaciente(const std::vector<Paciente>& pacientes) {
             std::cout << "Opción no válida. Intente nuevamente.\n";
             break;
         }
-    } while (opcion != 0);
+    } while (opcion != 0); 
 }

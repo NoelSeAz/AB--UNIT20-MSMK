@@ -1,5 +1,7 @@
 #include "Paciente.hpp"
+#include <Formateador.hpp>
 #include <iostream>
+#include <iomanip>
 
 // Constructor
 Paciente::Paciente(int id, const std::string& nombre, const std::string& apellido,
@@ -25,14 +27,7 @@ void Paciente::modificarDatos(const std::string& nuevaDireccion, int nuevaEdad) 
     edad = nuevaEdad;
 }
 
-// Imprimir los datos del paciente
-void Paciente::imprimirDatos() const {
-    std::cout << "Paciente ID: " << ID << "\n"
-        << "Nombre: " << nombre << " " << apellido << "\n"
-        << "Dirección: " << direccion << "\n"
-        << "Edad: " << edad << "\n";
-}
-
+// Getters
 int Paciente::getID() const {
     return ID;
 }
