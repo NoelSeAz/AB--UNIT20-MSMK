@@ -1,0 +1,59 @@
+﻿# CMakeList.txt: Proyecto de CMake para UNIT20-AB
+
+# Versión mínima requerida
+cmake_minimum_required(VERSION 3.6)
+
+# Nombre del proyecto
+project(UNIT20-AB)
+
+# Estándar de C++
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_COMPILER "g++")
+
+# Configuración de compilación (Debug/Release)
+set(CMAKE_BUILD_TYPE Debug)
+
+# Establecer las banderas de compilación
+add_compile_options(
+  "$<$<CONFIG:Debug>:-march=native;-pedantic;-Wall;-Wextra;-Wconversion;-Wshadow;-Wcast-qual;-Wwrite-strings;-O0;-ggdb3;-DDEBUG>"
+  "$<$<CONFIG:Release>:-march=native;-pedantic;-Wall;-03>"
+)
+
+# Configurar directorio de salida para ejecutables
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+
+# Añadir el ejecutable
+#add_executable(UNIT20-AB)
+add_executable(cmake main.cpp)
+
+# Directorios de encabezados
+target_include_directories(UNIT20-AB PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+# Archivos fuente
+target_sources(UNIT20-AB PRIVATE 
+    "src/main.cpp" 
+    "src/Paciente.cpp" 
+    "src/Medico.cpp" 
+    "src/Cita.cpp" 
+    "src/Reporte.cpp" 
+    "src/Archivo.cpp"
+ "src/Administrador.cpp")
+
+# Configuración específica de MSVC
+if (MSVC)
+    # Configurar directorios para depuración
+    set_target_properties(UNIT20-AB PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/build
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/build
+        PDB_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/build
+        PDB_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/build
+    )
+
+    # Configurar depuración incremental
+    if (POLICY CMP0141)
+        cmake_policy(SET CMP0141 NEW)
+        set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<CONFIG:Debug>:ProgramDatabase>")
+    endif()
+endif()

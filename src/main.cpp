@@ -1,73 +1,199 @@
 ﻿#include "Paciente.hpp"
-#include "Cita.hpp"
 #include "Medico.hpp"
 #include "Administrador.hpp"
-#include <windows.h>
-#include "Archivo.hpp"
 #include <iostream>
+#include <vector>
+#include <string>
+#include <windows.h>
+
+// Funciones para los submenús
+void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos);
+void mostrarMenuMedico(const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos);
+void mostrarMenuPaciente(const std::vector<Paciente>& pacientes);
 
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
 
-    // Crear datos de prueba
-    std::vector<Paciente> pacientes = { Paciente(1, "Juan", "Perez", "Calle 123", 30),
-                                    Paciente(2, "Ana", "Lopez", "Avenida Real", 25) };
-    std::vector<Medico> medicos = { Medico(1, "Luis", "Fernandez", "Cardiología", true),
-                                    Medico(2, "Maria", "Gomez", "Pediatría", false) };
-    std::vector<Cita> citas = { Cita(1, 1, 1, "2024-11-27", 1) };
+    // Datos iniciales
+    std::vector<Paciente> pacientes = {
+        Paciente(1, "Juan", "Perez", "Calle 123", 30),
+        Paciente(2, "Ana", "Lopez", "Avenida Real", 25)
+    };
 
-    // Guardar datos
-    Archivo::guardarPacientes(pacientes, "pacientes.csv");
-    Archivo::guardarMedicos(medicos, "medicos.txt");
-    Archivo::guardarCitas(citas, "citas.txt");
+    std::vector<Medico> medicos = {
+        Medico(1, "Luis", "Fernandez", "Cardiología", true),
+        Medico(2, "Maria", "Gomez", "Pediatría", false)
+    };
 
-    // Cargar y mostrar datos de pacientes
-    auto pacientesCargados = Archivo::cargarPacientes("pacientes.txt");
-    std::cout << "\nPacientes Cargados:\n";
-    for (const auto& paciente : pacientesCargados) {
-        paciente.imprimirDatos();
+    int opcion;
+    do {
+        std::cout << "\n--- Sistema de Gestión Hospitalaria ---\n";
+        std::cout << "1. Entrar como Administrador\n";
+        std::cout << "2. Entrar como Médico\n";
+        std::cout << "3. Entrar como Paciente\n";
+        std::cout << "0. Salir\n";
+        std::cout << "Seleccione una opción: ";
+        std::cin >> opcion;
+
+        switch (opcion) {
+        case 1:
+            mostrarMenuAdministrador(pacientes, medicos);
+            break;
+        case 2:
+            mostrarMenuMedico(pacientes, medicos);
+            break;
+        case 3:
+            mostrarMenuPaciente(pacientes);
+            break;
+        case 0:
+            std::cout << "Saliendo del sistema...\n";
+            break;
+        default:
+            std::cout << "Opción no válida. Intente nuevamente.\n";
+            break;
+        }
+    } while (opcion != 0);
+
+    return 0;
+}
+
+void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos) {
+    int opcion;
+    do {
+        std::cout << "\n--- Menú Administrador ---\n";
+        std::cout << "1. Ver lista de pacientes\n";
+        std::cout << "2. Ver lista de médicos\n";
+        std::cout << "3. Dar de alta un paciente\n";
+        std::cout << "4. Dar de alta un médico\n";
+        std::cout << "5. Dar de baja un paciente\n";
+        std::cout << "6. Dar de baja un médico\n";
+        std::cout << "0. Volver al menú principal\n";
+        std::cout << "Seleccione una opción: ";
+        std::cin >> opcion;
+
+        switch (opcion) {
+        case 1:
+            for (const auto& paciente : pacientes) {
+                paciente.imprimirDatos();
+            }
+            break;
+        case 2:
+            for (const auto& medico : medicos) {
+                medico.imprimirDatos();
+            }
+            break;
+        case 3: {
+            int id, edad;
+            std::string nombre, apellido, direccion;
+            std::cout << "Ingrese ID: "; std::cin >> id;
+            std::cout << "Ingrese Nombre: "; std::cin >> nombre;
+            std::cout << "Ingrese Apellido: "; std::cin >> apellido;
+            std::cout << "Ingrese Dirección: "; std::cin.ignore(); std::getline(std::cin, direccion);
+            std::cout << "Ingrese Edad: "; std::cin >> edad;
+            Administrador::altaPaciente(pacientes, id, nombre, apellido, direccion, edad);
+            break;
+        }
+        case 4: {
+            int id;
+            std::string nombre, apellido, especialidad;
+            bool disponibilidad;
+            std::cout << "Ingrese ID: "; std::cin >> id;
+            std::cout << "Ingrese Nombre: "; std::cin >> nombre;
+            std::cout << "Ingrese Apellido: "; std::cin >> apellido;
+            std::cout << "Ingrese Especialidad: "; std::cin.ignore(); std::getline(std::cin, especialidad);
+            std::cout << "Disponibilidad (1 = Disponible, 0 = Ocupado): "; std::cin >> disponibilidad;
+            Administrador::altaMedico(medicos, id, nombre, apellido, especialidad, disponibilidad);
+            break;
+        }
+        case 5:
+            int idPaciente;
+            std::cout << "Ingrese ID del paciente a eliminar: "; std::cin >> idPaciente;
+            Administrador::bajaPaciente(pacientes, idPaciente);
+            break;
+        case 6:
+            int idMedico;
+            std::cout << "Ingrese ID del médico a eliminar: "; std::cin >> idMedico;
+            Administrador::bajaMedico(medicos, idMedico);
+            break;
+        case 0:
+            std::cout << "Volviendo al menú principal...\n";
+            break;
+        default:
+            std::cout << "Opción no válida. Intente nuevamente.\n";
+            break;
+        }
+    } while (opcion != 0);
+}
+
+void mostrarMenuMedico(const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos) {
+    int opcion;
+    do {
+        std::cout << "\n--- Menú Médico ---\n";
+        std::cout << "1. Ver lista de pacientes\n";
+        std::cout << "2. Buscar paciente por ID\n";
+        std::cout << "0. Volver al menú principal\n";
+        std::cout << "Seleccione una opción: ";
+        std::cin >> opcion;
+
+        switch (opcion) {
+        case 1:
+            for (const auto& paciente : pacientes) {
+                paciente.imprimirDatos();
+            }
+            break;
+        case 2: {
+            int id;
+            std::cout << "Ingrese ID del paciente: "; std::cin >> id;
+            auto paciente = Administrador::buscarPacientePorID(pacientes, id);
+            if (paciente) {
+                paciente->imprimirDatos();
+            }
+            break;
+        }
+        case 0:
+            std::cout << "Volviendo al menú principal...\n";
+            break;
+        default:
+            std::cout << "Opción no válida. Intente nuevamente.\n";
+            break;
+        }
+    } while (opcion != 0);
+}
+
+void mostrarMenuPaciente(const std::vector<Paciente>& pacientes) {
+    int id;
+    std::cout << "Ingrese su ID para acceder al sistema: ";
+    std::cin >> id;
+
+    auto paciente = Administrador::buscarPacientePorID(pacientes, id);
+    if (!paciente) {
+        std::cout << "Paciente no encontrado.\n";
+        return;
     }
 
-    // Cargar y mostrar datos de médicos
-    auto medicosCargados = Archivo::cargarMedicos("medicos.txt");
-    std::cout << "\nMédicos Cargados:\n";
-    for (const auto& medico : medicosCargados) {
-        medico.imprimirDatos();
-    }
+    int opcion;
+    do {
+        std::cout << "\n--- Menú Paciente ---\n";
+        std::cout << "1. Ver información personal\n";
+        std::cout << "2. Consultar historial clínico\n";
+        std::cout << "0. Volver al menú principal\n";
+        std::cout << "Seleccione una opción: ";
+        std::cin >> opcion;
 
-    // Cargar y mostrar datos de citas
-    auto citasCargadas = Archivo::cargarCitas("citas.txt");
-    std::cout << "\nCitas Cargadas:\n";
-    for (const auto& cita : citasCargadas) {
-        std::cout << "Cita ID: " << cita.getCitaID()
-            << ", Paciente ID: " << cita.getPacienteID()
-            << ", Médico ID: " << cita.getMedicoID()
-            << ", Fecha: " << cita.getFecha()
-            << ", Prioridad: " << (cita.getPrioridad() == 1 ? "Urgente" : "Normal") << "\n";
-    }
-
-    // Alta de médicos
-    Administrador::altaMedico(medicos, 1, "Luis", "Fernandez", "Cardiología", true);
-
-    // Alta de pacientes
-    Administrador::altaPaciente(pacientes, 3, "Anna", "Lopez", "Calle Falsa 123", 30);
-
-    // Baja de médicos
-    Administrador::bajaMedico(medicos, 1);
-
-    // Baja de pacientes
-    Administrador::bajaPaciente(pacientes, 1);
-
-    // Buscar un paciente por ID
-    Paciente* paciente = Administrador::buscarPacientePorID(pacientes, 3);
-    if (paciente) {
-        paciente->imprimirDatos();
-    }
-
-    // Buscar un médico por ID
-    Medico* medico = Administrador::buscarMedicoPorID(medicos, 2);
-    if (medico) {
-        medico->imprimirDatos();
-    }
+        switch (opcion) {
+        case 1:
+            paciente->imprimirDatos();
+            break;
+        case 2:
+            paciente->mostrarHistorial();
+            break;
+        case 0:
+            std::cout << "Volviendo al menú principal...\n";
+            break;
+        default:
+            std::cout << "Opción no válida. Intente nuevamente.\n";
+            break;
+        }
+    } while (opcion != 0);
 }
