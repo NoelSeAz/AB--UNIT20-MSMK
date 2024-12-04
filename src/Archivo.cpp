@@ -68,13 +68,11 @@ std::vector<Paciente> Archivo::cargarPacientes(const std::string& archivo) {
         std::istringstream ss(linea);
         std::string token;
 
-        int id, edad;
-        std::string nombre, apellido, direccion;
+        int edad;
+        std::string id, nombre, apellido, direccion;
 
         // Leer cada campo utilizando el delimitador '|'
-        std::getline(ss, token, ',');
-        id = std::stoi(token);
-
+        std::getline(ss, id, ',');
         std::getline(ss, nombre, ',');
         std::getline(ss, apellido, ',');
         std::getline(ss, direccion, ',');
@@ -89,6 +87,7 @@ std::vector<Paciente> Archivo::cargarPacientes(const std::string& archivo) {
     return pacientes;
 }
 
+// Cargar datos de médicos
 std::vector<Medico> Archivo::cargarMedicos(const std::string& archivo) {
     std::ifstream in(archivo);
     std::vector<Medico> medicos;
@@ -103,14 +102,11 @@ std::vector<Medico> Archivo::cargarMedicos(const std::string& archivo) {
         std::istringstream ss(linea);
         std::string token;
 
-        int id;
-        std::string nombre, apellido, especialidad;
+        std::string id, nombre, apellido, especialidad;
         bool disponibilidad;
 
         // Leer cada campo utilizando el delimitador '|'
-        std::getline(ss, token, ',');
-        id = std::stoi(token);
-
+        std::getline(ss, id, ',');
         
         std::getline(ss, nombre, ',');
         std::getline(ss, apellido, ',');
@@ -127,6 +123,7 @@ std::vector<Medico> Archivo::cargarMedicos(const std::string& archivo) {
     return medicos;
 }
 
+//Cargar datos de citas
 std::vector<Cita> Archivo::cargarCitas(const std::string& archivo) {
     std::ifstream in(archivo);
     std::vector<Cita> citas;
@@ -141,18 +138,16 @@ std::vector<Cita> Archivo::cargarCitas(const std::string& archivo) {
         std::istringstream ss(linea);
         std::string token;
 
-        int citaID, pacienteID, medicoID, prioridad;
-        std::string fecha;
+        int citaID, prioridad;
+        std::string pacienteID, medicoID, fecha;
 
         // Leer cada campo utilizando el delimitador ','
         std::getline(ss, token, ',');
         citaID = std::stoi(token);
 
-        std::getline(ss, token, ',');
-        pacienteID = std::stoi(token);
+        std::getline(ss, pacienteID, ',');
 
-        std::getline(ss, token, ',');
-        medicoID = std::stoi(token);
+        std::getline(ss, medicoID, ',');
 
         std::getline(ss, fecha, ',');
 

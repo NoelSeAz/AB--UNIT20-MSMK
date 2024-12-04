@@ -8,8 +8,8 @@
 class Cita {
 private:
     int citaID;                    // Identificador único de la cita
-    int pacienteID;                // ID del paciente asociado
-    int medicoID;                  // ID del médico asociado
+    std::string pacienteID;        // ID del paciente asociado
+    std::string medicoID;          // ID del médico asociado
     std::string fecha;             // Fecha de la cita (formato: "YYYY-MM-DD")
     int prioridad;                 // Prioridad de la cita (0: normal, 1: urgente)
 
@@ -19,7 +19,7 @@ private:
 
 public:
     // Constructor
-    Cita(int citaID, int pacienteID, int medicoID, const std::string& fecha, int prioridad);
+    Cita(int citaID, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad);
 
     // Métodos para gestionar la cita
     void modificarCita(const std::string& nuevaFecha, int nuevaPrioridad);
@@ -33,8 +33,8 @@ public:
 
     // Getters
     int getCitaID() const;
-    int getPacienteID() const;
-    int getMedicoID() const;
+    std::string getPacienteID() const;
+    std::string getMedicoID() const;
     int getPrioridad() const;
     std::string getFecha() const;
 };

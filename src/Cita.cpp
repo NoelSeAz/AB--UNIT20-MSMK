@@ -3,7 +3,7 @@
 #include <iomanip>
 
 // Constructor
-Cita::Cita(int citaID, int pacienteID, int medicoID, const std::string& fecha, int prioridad)
+Cita::Cita(int citaID, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad)
     : citaID(citaID), pacienteID(pacienteID), medicoID(medicoID), fecha(fecha), prioridad(prioridad) {}
 
 // Modificar los detalles de una cita
@@ -45,7 +45,7 @@ void Cita::imprimirCita() const {
 
 // Getters
 int Cita::getCitaID() const { return citaID; }
-int Cita::getPacienteID() const { return pacienteID; }
-int Cita::getMedicoID() const { return medicoID; }
+std::string Cita::getPacienteID() const { return pacienteID; }
+std::string Cita::getMedicoID() const { return medicoID; }
 int Cita::getPrioridad() const { return prioridad; }
 std::string Cita::getFecha() const { return fecha; }

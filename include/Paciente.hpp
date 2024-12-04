@@ -6,7 +6,7 @@
 
 class Paciente {
 private:
-    int ID;                                 // Identificador único del paciente
+    std::string ID;                         // Identificador único del paciente
     std::string nombre;                     // Nombre del paciente
     std::string apellido;                   // Apellido del paciente
     std::string direccion;                  // Dirección del paciente
@@ -15,7 +15,7 @@ private:
 
 public:
     // Constructor
-    Paciente(int id, const std::string& nombre, const std::string& apellido,
+    Paciente(const std::string& id, const std::string& nombre, const std::string& apellido,
         const std::string& direccion, int edad);
 
     // Métodos para gestionar el historial clínico
@@ -26,7 +26,7 @@ public:
     void modificarDatos(const std::string& nuevaDireccion, int nuevaEdad);
 
     // Getters
-    int getID() const;
+    std::string getID() const;
     std::string getNombre() const;
     std::string getApellido() const;
     std::string getDireccion() const;

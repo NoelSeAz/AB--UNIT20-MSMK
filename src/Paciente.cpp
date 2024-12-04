@@ -4,7 +4,7 @@
 #include <iomanip>
 
 // Constructor
-Paciente::Paciente(int id, const std::string& nombre, const std::string& apellido,
+Paciente::Paciente(const std::string& id, const std::string& nombre, const std::string& apellido,
     const std::string& direccion, int edad)
     : ID(id), nombre(nombre), apellido(apellido), direccion(direccion), edad(edad) {}
 
@@ -28,7 +28,7 @@ void Paciente::modificarDatos(const std::string& nuevaDireccion, int nuevaEdad) 
 }
 
 // Getters
-int Paciente::getID() const {
+std::string Paciente::getID() const {
     return ID;
 }
 

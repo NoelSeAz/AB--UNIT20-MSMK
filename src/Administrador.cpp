@@ -1,9 +1,10 @@
 #include "Administrador.hpp"
 #include "Formateador.hpp"
+#include "IDGenerator.hpp"
 #include <iostream>
 
 // Alta de médicos
-void Administrador::altaMedico(std::vector<Medico>& medicos, int id, const std::string& nombre, const std::string& apellido,
+void Administrador::altaMedico(std::vector<Medico>& medicos, const std::string& id, const std::string& nombre, const std::string& apellido,
     const std::string& especialidad, bool disponibilidad) {
     auto it = std::find_if(medicos.begin(), medicos.end(), [id](const Medico& medico) {
         return medico.getID() == id;
@@ -21,7 +22,7 @@ void Administrador::altaMedico(std::vector<Medico>& medicos, int id, const std::
 }
 
 // Baja de médicos
-void Administrador::bajaMedico(std::vector<Medico>& medicos, int id) {
+void Administrador::bajaMedico(std::vector<Medico>& medicos, const std::string& id) {
     auto it = std::remove_if(medicos.begin(), medicos.end(), [id](const Medico& medico) {
         return medico.getID() == id;
         });
@@ -36,25 +37,22 @@ void Administrador::bajaMedico(std::vector<Medico>& medicos, int id) {
 }
 
 // Alta de pacientes
-void Administrador::altaPaciente(std::vector<Paciente>& pacientes, int id, const std::string& nombre, const std::string& apellido,
-    const std::string& direccion, int edad) {
-    auto it = std::find_if(pacientes.begin(), pacientes.end(), [id](const Paciente& paciente) {
-        return paciente.getID() == id;
-        });
-
-    if (it != pacientes.end()) {
-        std::cerr << "\nError: Ya existe un paciente con el ID " << id << ".\n";
-        return;
+void Administrador::altaPaciente(std::vector<Paciente>& pacientes, const std::string& nombre,
+    const std::string& apellido, const std::string& direccion, int edad) {
+    std::vector<std::string> idsExistentes;
+    for (const auto& paciente : pacientes) {
+        idsExistentes.push_back(paciente.getID());
     }
 
-    auto& nuevoPaciente = pacientes.emplace_back(id, nombre, apellido, direccion, edad);
+    std::string ID = IDGenerator::generarID("P", nombre, apellido, idsExistentes);
+    auto& nuevoPaciente = pacientes.emplace_back(ID, nombre, apellido, direccion, edad);
     Formateador::imprimirEncabezadoPacientes();
     Formateador::imprimirRegistro(nuevoPaciente);
     std::cout << "\nPaciente dado de alta exitosamente.\n";
 }
 
 // Baja de pacientes
-void Administrador::bajaPaciente(std::vector<Paciente>& pacientes, int id) {
+void Administrador::bajaPaciente(std::vector<Paciente>& pacientes, const std::string& id) {
     auto it = std::remove_if(pacientes.begin(), pacientes.end(), [id](const Paciente& paciente) {
         return paciente.getID() == id;
         });
@@ -69,7 +67,7 @@ void Administrador::bajaPaciente(std::vector<Paciente>& pacientes, int id) {
 }
 
 // Buscar paciente por ID
-Paciente* Administrador::buscarPacientePorID(const std::vector<Paciente>& pacientes, int id) {
+Paciente* Administrador::buscarPacientePorID(const std::vector<Paciente>& pacientes, const std::string& id) {
     auto it = std::find_if(pacientes.begin(), pacientes.end(), [id](const Paciente& paciente) {
         return paciente.getID() == id;
         });
@@ -84,7 +82,7 @@ Paciente* Administrador::buscarPacientePorID(const std::vector<Paciente>& pacien
 }
 
 // Buscar médico por ID
-Medico* Administrador::buscarMedicoPorID(const std::vector<Medico>& medicos, int id) {
+Medico* Administrador::buscarMedicoPorID(const std::vector<Medico>& medicos, const std::string& id) {
     auto it = std::find_if(medicos.begin(), medicos.end(), [id](const Medico& medico) {
         return medico.getID() == id;
         });

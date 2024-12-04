@@ -6,7 +6,7 @@
 
 class Medico {
 private:
-    int ID;                           // Identificador único del médico
+    std::string ID;                           // Identificador único del médico
     std::string nombre;               // Nombre del médico
     std::string apellido;             // Apellido del médico
     std::string especialidad;         // Especialidad del médico
@@ -15,7 +15,7 @@ private:
 
 public:
     // Constructor
-    Medico(int id, const std::string& nombre, const std::string& apellido,
+    Medico(const std::string& id, const std::string& nombre, const std::string& apellido,
         const std::string& especialidad, bool disponibilidad);
 
     // Métodos para gestionar la especialidad
@@ -30,7 +30,7 @@ public:
     void mostrarCitas() const;
 
     // Getters
-    int getID() const;
+    std::string getID() const;
     std::string getNombre() const;
     std::string getApellido() const;
     std::string getEspecialidad() const;

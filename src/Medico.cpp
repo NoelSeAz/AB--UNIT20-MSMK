@@ -3,7 +3,7 @@
 #include <iomanip>
 
 // Constructor
-Medico::Medico(int id, const std::string& nombre, const std::string& apellido, 
+Medico::Medico(const std::string& id, const std::string& nombre, const std::string& apellido, 
                const std::string& especialidad, bool disponibilidad)
     : ID(id), nombre(nombre), apellido(apellido), especialidad(especialidad), disponibilidad(disponibilidad) {}
 
@@ -35,7 +35,7 @@ void Medico::mostrarCitas() const {
     }
 }
 
-int Medico::getID() const {
+std::string Medico::getID() const {
     return ID;
 }
 

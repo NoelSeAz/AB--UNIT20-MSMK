@@ -5,24 +5,24 @@
 // Métodos para imprimir encabezados
 void Formateador::imprimirEncabezadoPacientes() {
     std::cout << std::left;
-    std::cout << std::setw(5) << "ID"
+    std::cout << std::setw(10) << "ID"
         << std::setw(20) << "Nombre"
         << std::setw(20) << "Apellido"
         << std::setw(30) << "Dirección"
         << std::setw(5) << "Edad"
         << "\n";
-    std::cout << std::string(80, '-') << "\n";
+    std::cout << std::string(100, '-') << "\n";
 }
 
 void Formateador::imprimirEncabezadoMedicos() {
     std::cout << std::left;
-    std::cout << std::setw(5) << "ID"
+    std::cout << std::setw(10) << "ID"
         << std::setw(20) << "Nombre"
         << std::setw(20) << "Apellido"
         << std::setw(20) << "Especialidad"
         << std::setw(12) << "Disponibilidad"
         << "\n";
-    std::cout << std::string(80, '-') << "\n";
+    std::cout << std::string(100, '-') << "\n";
 }
 
 void Formateador::imprimirEncabezadoCitas() {
@@ -33,13 +33,13 @@ void Formateador::imprimirEncabezadoCitas() {
         << std::setw(20) << "Fecha"
         << std::setw(10) << "Prioridad"
         << "\n";
-    std::cout << std::string(80, '-') << "\n";
+    std::cout << std::string(100, '-') << "\n";
 }
 
 // Métodos para imprimir registros individuales
 void Formateador::imprimirRegistro(const Paciente& paciente) {
     std::cout << std::left;
-    std::cout << std::setw(5) << paciente.getID()
+    std::cout << std::setw(10) << paciente.getID()
         << std::setw(20) << paciente.getNombre()
         << std::setw(20) << paciente.getApellido()
         << std::setw(30) << paciente.getDireccion()
@@ -49,7 +49,7 @@ void Formateador::imprimirRegistro(const Paciente& paciente) {
 
 void Formateador::imprimirRegistro(const Medico& medico) {
     std::cout << std::left;
-    std::cout << std::setw(5) << medico.getID()
+    std::cout << std::setw(10) << medico.getID()
         << std::setw(20) << medico.getNombre()
         << std::setw(20) << medico.getApellido()
         << std::setw(20) << medico.getEspecialidad()

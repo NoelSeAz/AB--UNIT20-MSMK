@@ -6,7 +6,6 @@
 #include <vector>
 #include <string>
 #include <windows.h>
-#include <iomanip>
 
 // Funciones para los submenús
 void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos);
@@ -19,13 +18,13 @@ int main() {
 
     // Datos iniciales
     std::vector<Paciente> pacientes = {
-        Paciente(1, "Juan", "Perez", "Calle 123", 30),
-        Paciente(2, "Ana", "Lopez", "Avenida Real", 25)
+        Paciente("PJP0", "Juan", "Perez", "Calle 123", 30),
+        Paciente("PAL0", "Ana", "Lopez", "Avenida Real", 25)
     };
 
     std::vector<Medico> medicos = {
-        Medico(1, "Luis", "Fernandez", "Cardiología", true),
-        Medico(2, "Maria", "Gomez", "Pediatría", false)
+        Medico("MLF0", "Luis", "Fernandez", "Cardiología", true),
+        Medico("MMG0", "Maria", "Gomez", "Pediatría", false)
     };
 
     int opcion;
@@ -84,19 +83,17 @@ void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medi
             Formateador::imprimirTablaMedicos(medicos);
             break;
         case 3: {
-            int id, edad;
+            int edad;
             std::string nombre, apellido, direccion;
-            std::cout << "Ingrese ID: "; std::cin >> id;
             std::cout << "Ingrese Nombre: "; std::cin >> nombre;
             std::cout << "Ingrese Apellido: "; std::cin >> apellido;
             std::cout << "Ingrese Dirección: "; std::cin.ignore(); std::getline(std::cin, direccion);
             std::cout << "Ingrese Edad: "; std::cin >> edad;
-            Administrador::altaPaciente(pacientes, id, nombre, apellido, direccion, edad);
+            Administrador::altaPaciente(pacientes, nombre, apellido, direccion, edad);
             break;
         }
         case 4: {
-            int id;
-            std::string nombre, apellido, especialidad;
+            std::string id, nombre, apellido, especialidad;
             bool disponibilidad;
             std::cout << "Ingrese ID: "; std::cin >> id;
             std::cout << "Ingrese Nombre: "; std::cin >> nombre;
@@ -106,16 +103,18 @@ void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medi
             Administrador::altaMedico(medicos, id, nombre, apellido, especialidad, disponibilidad);
             break;
         }
-        case 5:
-            int idPaciente;
+        case 5: {
+            std::string idPaciente;
             std::cout << "Ingrese ID del paciente a eliminar: "; std::cin >> idPaciente;
             Administrador::bajaPaciente(pacientes, idPaciente);
             break;
-        case 6:
-            int idMedico;
+        }
+        case 6: {
+            std::string idMedico;
             std::cout << "Ingrese ID del médico a eliminar: "; std::cin >> idMedico;
             Administrador::bajaMedico(medicos, idMedico);
             break;
+        }
         case 0:
             std::cout << "Volviendo al menú principal...\n";
             break;
@@ -142,7 +141,7 @@ void mostrarMenuMedico(const std::vector<Paciente>& pacientes, const std::vector
             Formateador::imprimirTablaPacientes(pacientes);
             break;
         case 2: {
-            int id;
+            std::string id;
             std::cout << "Ingrese ID del paciente: "; std::cin >> id;
             auto paciente = Administrador::buscarPacientePorID(pacientes, id);
             if (paciente) {
@@ -162,7 +161,7 @@ void mostrarMenuMedico(const std::vector<Paciente>& pacientes, const std::vector
 }
 
 void mostrarMenuPaciente(const std::vector<Paciente>& pacientes) {
-    int id;
+    std::string id;
     std::cout << "Ingrese su ID para acceder al sistema: ";
     std::cin >> id;
 
