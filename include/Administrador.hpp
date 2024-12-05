@@ -3,12 +3,14 @@
 
 #include "Paciente.hpp"
 #include "Medico.hpp"
+#include "ICreadorDeCitas.hpp"
 #include <vector>
+#include <string>
 
-class Administrador {
+// Clase estática para la gestión de pacientes y médicos
+class GestorAdministrativo {
 public:
-    // Métodos de alta y baja
-    static void altaMedico(std::vector<Medico>& medicos, const std::string& id, const std::string& nombre, const std::string& apellido,
+    static void altaMedico(std::vector<Medico>& medicos, const std::string& nombre, const std::string& apellido,
         const std::string& especialidad, bool disponibilidad);
 
     static void bajaMedico(std::vector<Medico>& medicos, const std::string& id);
@@ -18,9 +20,14 @@ public:
 
     static void bajaPaciente(std::vector<Paciente>& pacientes, const std::string& id);
 
-    // Métodos de búsqueda
     static Paciente* buscarPacientePorID(const std::vector<Paciente>& pacientes, const std::string& id);
     static Medico* buscarMedicoPorID(const std::vector<Medico>& medicos, const std::string& id);
+};
+
+// Clase concreta para la gestión de citas
+class AdministradorCitas : public ICreadorDeCitas {
+public:
+    void crearCita(std::vector<Cita>& citas, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad) override;
 };
 
 #endif

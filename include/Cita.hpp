@@ -10,7 +10,7 @@ private:
     int citaID;                    // Identificador único de la cita
     std::string pacienteID;        // ID del paciente asociado
     std::string medicoID;          // ID del médico asociado
-    std::string fecha;             // Fecha de la cita (formato: "YYYY-MM-DD")
+    std::string fecha;             // Fecha de la cita (formato: "DD/MM/YYYY")
     int prioridad;                 // Prioridad de la cita (0: normal, 1: urgente)
 
     // Funciones privadas para comparar citas

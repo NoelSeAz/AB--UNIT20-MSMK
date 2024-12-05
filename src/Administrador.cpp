@@ -1,28 +1,27 @@
 #include "Administrador.hpp"
 #include "Formateador.hpp"
 #include "IDGenerator.hpp"
+#include "InputValidator.hpp"
 #include <iostream>
+#include <stdexcept>
 
 // Alta de médicos
-void Administrador::altaMedico(std::vector<Medico>& medicos, const std::string& id, const std::string& nombre, const std::string& apellido,
+void GestorAdministrativo::altaMedico(std::vector<Medico>& medicos, const std::string& nombre, const std::string& apellido,
     const std::string& especialidad, bool disponibilidad) {
-    auto it = std::find_if(medicos.begin(), medicos.end(), [id](const Medico& medico) {
-        return medico.getID() == id;
-        });
-
-    if (it != medicos.end()) {
-        std::cerr << "Error: Ya existe un médico con el ID " << id << ".\n";
-        return;
+    std::vector<std::string> idsExistentes;
+    for (const auto& medico : medicos) {
+        idsExistentes.push_back(medico.getID());
     }
 
-    auto& nuevoMedico = medicos.emplace_back(id, nombre, apellido, especialidad, disponibilidad);
+    std::string ID = IDGenerator::generarID("M", nombre, apellido, idsExistentes);
+    auto& nuevoMedico = medicos.emplace_back(ID, nombre, apellido, especialidad, disponibilidad);
     Formateador::imprimirEncabezadoMedicos();
     Formateador::imprimirRegistro(nuevoMedico);
     std::cout << "\nMédico dado de alta exitosamente.\n";
 }
 
 // Baja de médicos
-void Administrador::bajaMedico(std::vector<Medico>& medicos, const std::string& id) {
+void GestorAdministrativo::bajaMedico(std::vector<Medico>& medicos, const std::string& id) {
     auto it = std::remove_if(medicos.begin(), medicos.end(), [id](const Medico& medico) {
         return medico.getID() == id;
         });
@@ -37,7 +36,7 @@ void Administrador::bajaMedico(std::vector<Medico>& medicos, const std::string& 
 }
 
 // Alta de pacientes
-void Administrador::altaPaciente(std::vector<Paciente>& pacientes, const std::string& nombre,
+void GestorAdministrativo::altaPaciente(std::vector<Paciente>& pacientes, const std::string& nombre,
     const std::string& apellido, const std::string& direccion, int edad) {
     std::vector<std::string> idsExistentes;
     for (const auto& paciente : pacientes) {
@@ -52,7 +51,7 @@ void Administrador::altaPaciente(std::vector<Paciente>& pacientes, const std::st
 }
 
 // Baja de pacientes
-void Administrador::bajaPaciente(std::vector<Paciente>& pacientes, const std::string& id) {
+void GestorAdministrativo::bajaPaciente(std::vector<Paciente>& pacientes, const std::string& id) {
     auto it = std::remove_if(pacientes.begin(), pacientes.end(), [id](const Paciente& paciente) {
         return paciente.getID() == id;
         });
@@ -67,7 +66,7 @@ void Administrador::bajaPaciente(std::vector<Paciente>& pacientes, const std::st
 }
 
 // Buscar paciente por ID
-Paciente* Administrador::buscarPacientePorID(const std::vector<Paciente>& pacientes, const std::string& id) {
+Paciente* GestorAdministrativo::buscarPacientePorID(const std::vector<Paciente>& pacientes, const std::string& id) {
     auto it = std::find_if(pacientes.begin(), pacientes.end(), [id](const Paciente& paciente) {
         return paciente.getID() == id;
         });
@@ -82,7 +81,7 @@ Paciente* Administrador::buscarPacientePorID(const std::vector<Paciente>& pacien
 }
 
 // Buscar médico por ID
-Medico* Administrador::buscarMedicoPorID(const std::vector<Medico>& medicos, const std::string& id) {
+Medico* GestorAdministrativo::buscarMedicoPorID(const std::vector<Medico>& medicos, const std::string& id) {
     auto it = std::find_if(medicos.begin(), medicos.end(), [id](const Medico& medico) {
         return medico.getID() == id;
         });
@@ -94,4 +93,23 @@ Medico* Administrador::buscarMedicoPorID(const std::vector<Medico>& medicos, con
         std::cerr << "Error: No se encontró un médico con el ID " << id << ".\n";
         return nullptr;
     }
+}
+
+
+void AdministradorCitas::crearCita(std::vector<Cita>& citas, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad) {
+    // Validar que la fecha sea futura
+    if (!InputValidator::esFechaFutura(fecha)) {
+        throw std::invalid_argument("La fecha debe ser igual o posterior a la fecha actual.");
+    }
+
+    // Crear una nueva cita
+    int citaID = citas.size() + 1;
+    Cita nuevaCita(citaID, pacienteID, medicoID, fecha, prioridad);
+
+    // Añadir la cita al vector
+    citas.push_back(nuevaCita);
+
+    // Mostrar confirmación
+    std::cout << "Cita creada exitosamente:\n";
+    nuevaCita.imprimirCita();
 }

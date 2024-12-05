@@ -1,13 +1,23 @@
 #include "Cita.hpp"
+#include "InputValidator.hpp"
 #include <iostream>
 #include <iomanip>
 
 // Constructor
 Cita::Cita(int citaID, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad)
-    : citaID(citaID), pacienteID(pacienteID), medicoID(medicoID), fecha(fecha), prioridad(prioridad) {}
+    : citaID(citaID), pacienteID(pacienteID), medicoID(medicoID), fecha(fecha), prioridad(prioridad) {
+    if (!InputValidator::esFechaFutura(fecha)) {
+        throw std::invalid_argument("La fecha de la cita debe ser igual o posterior a la fecha actual.");
+    }
+    this->fecha = fecha; // Asignar la fecha validada
+}
 
 // Modificar los detalles de una cita
 void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad) {
+    if (!InputValidator::esFechaFutura(nuevaFecha)) {
+        std::cerr << "Error: La fecha de la cita debe ser igual o posterior a la fecha actual.\n";
+        return;
+    }
     fecha = nuevaFecha;
     prioridad = nuevaPrioridad;
 }

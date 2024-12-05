@@ -3,10 +3,11 @@
 
 #include <string>
 #include <vector>
+#include "Cita.hpp"
 
 class Medico {
 private:
-    std::string ID;                           // Identificador único del médico
+    std::string id;                   // Identificador único del médico
     std::string nombre;               // Nombre del médico
     std::string apellido;             // Apellido del médico
     std::string especialidad;         // Especialidad del médico
@@ -26,7 +27,7 @@ public:
     bool obtenerDisponibilidad() const;
 
     // Métodos relacionados con citas
-    void agregarCita(int citaID);
+    void agregarCita(int citaID, const std::string& pacienteID, const std::string& fecha, int prioridad, std::vector<Cita>& citas);
     void mostrarCitas() const;
 
     // Getters
