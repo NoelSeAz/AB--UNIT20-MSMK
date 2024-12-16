@@ -19,3 +19,4 @@ PPB0,Pablo,Benítez,Calle Aurora,37
 PSC0,Sara,Calderón,Calle Prado,23
 PJG0,José,Gutiérrez,Calle Rosa,39
 PLP0,Luis,Prieto,Paseo del Alba,28
+PBG0,Bruno,Garcia,Palafolls,30

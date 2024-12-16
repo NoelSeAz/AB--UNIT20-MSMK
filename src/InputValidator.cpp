@@ -78,41 +78,26 @@ bool InputValidator::esFechaFutura(const std::string& fecha) {
         return false; // Formato inválido
     }
 
-    // Convertir la fecha actual a std::tm
+    // Obtener la fecha actual
     std::string fechaActualStr = obtenerFechaActual();
     std::tm fechaActualTm = {};
+    std::tm fechaIngresadaTm = {};
+
     std::istringstream ssActual(fechaActualStr);
     ssActual >> std::get_time(&fechaActualTm, "%d/%m/%Y");
     if (ssActual.fail()) {
-        throw std::runtime_error("Error al obtener la fecha actual."); // Esto no debería ocurrir
+        throw std::runtime_error("Error al obtener la fecha actual.");
     }
 
-    // Convertir la fecha ingresada a std::tm
-    std::tm fechaIngresadaTm = {};
     std::istringstream ssIngresada(fecha);
     ssIngresada >> std::get_time(&fechaIngresadaTm, "%d/%m/%Y");
     if (ssIngresada.fail()) {
         return false; // Conversión fallida
     }
 
-    // Comparar años
-    if (fechaIngresadaTm.tm_year > fechaActualTm.tm_year) {
-        return true; // Año futuro
-    }
-    else if (fechaIngresadaTm.tm_year == fechaActualTm.tm_year) {
-        // Comparar meses dentro del mismo año
-        if (fechaIngresadaTm.tm_mon > fechaActualTm.tm_mon) {
-            return true; // Mes futuro
-        }
-        else if (fechaIngresadaTm.tm_mon == fechaActualTm.tm_mon) {
-            // Comparar días dentro del mismo mes
-            return fechaIngresadaTm.tm_mday > fechaActualTm.tm_mday;
-        }
-    }
-
-    return false; // Fecha no futura
+    // Validar si la fecha ingresada es igual o posterior al día actual
+    return std::mktime(&fechaIngresadaTm) >= std::mktime(&fechaActualTm);
 }
-
 
 // Validar que la fecha ingresada es pasada o actual (<= hoy)
 bool InputValidator::esFechaPasadaOActual(const std::string& fecha) {

@@ -31,8 +31,7 @@ void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad) {
     this->fecha = nuevaFecha;
     this->prioridad = nuevaPrioridad;
 
-    std::cout << "Cita modificada exitosamente. Nueva fecha: " << nuevaFecha
-        << ", Nueva prioridad: " << nuevaPrioridad << "\n";
+    std::cout << "Nueva fecha: " << nuevaFecha << ", Nueva prioridad: " << nuevaPrioridad << "\n";
 }
 
 // Función de comparación por fecha
