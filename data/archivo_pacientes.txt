@@ -1,0 +1,21 @@
+PDC0,Denise,Campbell,Malgrat de Mar,31
+PAB0,Ana,Bermúdez,Calle Lomas,30
+PJS0,Juan,Santos,Avenida Sol,25
+PMR0,María,Rodríguez,Paseo del Parque,40
+PFL0,Fernando,López,Calle Robles,35
+PCL0,Carlos,López,Calle Luna,28
+PSM0,Sofía,Morales,Plaza Mayor,22
+PVA0,Valeria,Acevedo,Calle del Río,31
+PLM0,Lucía,Méndez,Calle Cedro,26
+PGG0,Gabriel,Gómez,Calle Jazmín,33
+PAT0,Andrea,Torres,Calle Pino,27
+PDP0,Diego,Pérez,Calle Arboleda,29
+PMC0,Marcela,Castro,Calle Sauce,34
+PJH0,Javier,Hernández,Paseo del Sol,24
+PCG0,Cristina,García,Calle Estrella,30
+PML0,Martín,Luna,Calle Alba,36
+PGS0,Gloria,Sánchez,Paseo Laurel,32
+PPB0,Pablo,Benítez,Calle Aurora,37
+PSC0,Sara,Calderón,Calle Prado,23
+PJG0,José,Gutiérrez,Calle Rosa,39
+PLP0,Luis,Prieto,Paseo del Alba,28

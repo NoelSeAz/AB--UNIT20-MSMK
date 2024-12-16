@@ -27,11 +27,11 @@ void Formateador::imprimirEncabezadoMedicos() {
 
 void Formateador::imprimirEncabezadoCitas() {
     std::cout << std::left;
-    std::cout << std::setw(10) << "Cita ID"
-        << std::setw(10) << "Paciente ID"
-        << std::setw(10) << "Médico ID"
+    std::cout << std::setw(15) << "Cita ID"
+        << std::setw(15) << "Paciente ID"
+        << std::setw(15) << "Médico ID"
         << std::setw(20) << "Fecha"
-        << std::setw(10) << "Prioridad"
+        << std::setw(15) << "Prioridad"
         << "\n";
     std::cout << std::string(100, '-') << "\n";
 }
@@ -59,11 +59,11 @@ void Formateador::imprimirRegistro(const Medico& medico) {
 
 void Formateador::imprimirRegistro(const Cita& cita) {
     std::cout << std::left;
-    std::cout << std::setw(10) << cita.getCitaID()
-        << std::setw(10) << cita.getPacienteID()
-        << std::setw(10) << cita.getMedicoID()
+    std::cout << std::setw(15) << cita.getCitaID()
+        << std::setw(15) << cita.getPacienteID()
+        << std::setw(15) << cita.getMedicoID()
         << std::setw(20) << cita.getFecha()
-        << std::setw(10) << (cita.getPrioridad() == 1 ? "Urgente" : "Normal")
+        << std::setw(15) << (cita.getPrioridad() == 1 ? "Urgente" : "Normal")
         << "\n";
 }
 

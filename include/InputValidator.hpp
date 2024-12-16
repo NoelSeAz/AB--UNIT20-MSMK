@@ -16,23 +16,28 @@ public:
     // Validar valores booleanos
     // static bool solicitarBooleano(const std::string& mensaje);
 
-    //
-    static std::string obtenerFecha();
+    // Obtener la fecha actual en formato "dd/mm/aaaa"
+    static std::string obtenerFechaActual();
 
     // Valida el formato de fecha en "dd/mm/aaaa"
     static bool validarFormatoFecha(const std::string& fecha);
 
-    //
-    static std::string InputValidator::solicitarFecha(const std::string& mensaje, const std::optional<std::string>& fechaInicio, const std::optional<std::string>& fechaFin);
+    //Solicitar una fecha con validación de formato y rango opcional
+    static std::string solicitarFecha(const std::string& mensaje,
+        const std::optional<std::string>& fechaInicio = std::nullopt,
+        const std::optional<std::string>& fechaFin = std::nullopt);
 
-    //
+    // Validar que un rango de fechas es lógico
     static bool InputValidator::validarRangoFechas(const std::string& fechaInicio, const std::string& fechaFin);
 
-    //
+    //Validar que la fecha ingresada es futura (>= hoy)
     static bool InputValidator::esFechaFutura(const std::string& fecha);
 
-    //
-    static bool InputValidator::esFechaPasadaOActual(const std::string& fecha);
+    // Validar que la fecha ingresada es pasada o actual (<= hoy)
+    static bool esFechaPasadaOActual(const std::string& fecha);
+
+    // Validar que fechaComparada es igual o posterior a fechaReferencia
+    static bool esFechaPosterior(const std::string& fechaComparada, const std::string& fechaReferencia);
 };
 
 #endif

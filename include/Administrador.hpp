@@ -22,12 +22,23 @@ public:
 
     static Paciente* buscarPacientePorID(const std::vector<Paciente>& pacientes, const std::string& id);
     static Medico* buscarMedicoPorID(const std::vector<Medico>& medicos, const std::string& id);
+
+    static void cargarPacientes(std::vector<Paciente>& pacientes, const std::string& archivo);
+    static void cargarMedicos(std::vector<Medico>& medicos, const std::string& archivo);
+    static void cargarCitas(std::vector<Cita>& citas, const std::string& archivo);
 };
 
 // Clase concreta para la gestión de citas
 class AdministradorCitas : public ICreadorDeCitas {
 public:
-    void crearCita(std::vector<Cita>& citas, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad) override;
+    // Crear una nueva cita
+    void crearCita(std::vector<Cita>&citas, const std::string & pacienteID, const std::string & medicoID, const std::string & fecha, int prioridad) override;
+
+    // Cancelar una cita existente
+    void cancelarCita(std::vector<Cita>& citas, int citaID);
+
+    // Modificar una cita existente
+    void modificarCita(std::vector<Cita>& citas, int citaID, const std::string& nuevaFecha, int nuevaPrioridad);
 };
 
 #endif

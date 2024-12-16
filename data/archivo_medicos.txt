@@ -1,0 +1,20 @@
+MNS0,Noel,Sebastia,General,1
+MLF0,Luis,Fernández,Cardiología,1
+MMG0,Maria,Gómez,Pediatría,0
+MCR0,Carlos,Ruiz,Dermatología,1
+MMA0,Marta,Alonso,Neurología,1
+MSH0,Sergio,Herrera,Urología,0
+MVA0,Valeria,Acevedo,Endocrinología,1
+MLL0,Lucía,López,Ginecología,0
+MJG0,José,García,Traumatología,1
+MCA0,Carmen,Aguilar,Oftalmología,1
+MDC0,Diego,Camacho,Cirugía,0
+MMV0,Marcela,Villanueva,Oncología,1
+MJH0,Javier,Hernández,Neumología,0
+MCM0,Cristina,Morales,Psiquiatría,1
+MMB0,Martín,Benítez,Otorrinolaringología,0
+MGF0,Gloria,Fernández,Nefrología,1
+MPL0,Pablo,López,Reumatología,0
+MSC0,Sara,Cruz,Medicina Interna,1
+MJG1,José,Guzmán,Anestesiología,0
+MLP0,Luis,Pérez,Infectología,1

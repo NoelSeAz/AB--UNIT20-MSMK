@@ -14,12 +14,25 @@ Cita::Cita(int citaID, const std::string& pacienteID, const std::string& medicoI
 
 // Modificar los detalles de una cita
 void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad) {
-    if (!InputValidator::esFechaFutura(nuevaFecha)) {
-        std::cerr << "Error: La fecha de la cita debe ser igual o posterior a la fecha actual.\n";
-        return;
+    if (!InputValidator::validarFormatoFecha(nuevaFecha)) {
+        throw std::invalid_argument("El formato de la nueva fecha es inválido.");
     }
-    fecha = nuevaFecha;
-    prioridad = nuevaPrioridad;
+
+    // Obtener la fecha actual para comparación
+    std::string fechaActual = InputValidator::obtenerFechaActual(); 
+
+    // Validar que la nueva fecha no sea anterior a hoy
+    if (!InputValidator::esFechaPosterior(nuevaFecha, fechaActual)) {
+        throw std::invalid_argument("La nueva fecha debe ser igual o posterior a la fecha actual.");
+    }
+
+    // Si la nueva fecha es anterior a la fecha original, se permite
+    // mientras sea igual o posterior a hoy
+    this->fecha = nuevaFecha;
+    this->prioridad = nuevaPrioridad;
+
+    std::cout << "Cita modificada exitosamente. Nueva fecha: " << nuevaFecha
+        << ", Nueva prioridad: " << nuevaPrioridad << "\n";
 }
 
 // Función de comparación por fecha
