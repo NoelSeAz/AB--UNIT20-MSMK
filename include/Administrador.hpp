@@ -20,7 +20,7 @@ public:
 
     static void bajaPaciente(std::vector<Paciente>& pacientes, const std::string& id);
 
-    static Paciente* buscarPacientePorID(const std::vector<Paciente>& pacientes, const std::string& id);
+    static Paciente* buscarPacientePorID(std::vector<Paciente>& pacientes, const std::string& id);
     static Medico* buscarMedicoPorID(const std::vector<Medico>& medicos, const std::string& id);
 
     static void cargarPacientes(std::vector<Paciente>& pacientes, const std::string& archivo);

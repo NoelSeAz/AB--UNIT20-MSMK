@@ -50,6 +50,37 @@ void Archivo::guardarCitas(const std::vector<Cita>& citas, const std::string& no
     archivo.close();
 }
 
+void Archivo::guardarHistorialMedico(const HistorialMedico& historial) {
+    std::ofstream archivo("data/historial_" + historial.getPacienteID() + ".csv");
+    if (!archivo) {
+        std::cerr << "Error al abrir el archivo para guardar historial médico.\n";
+        return;
+    }
+
+    archivo << "Diagnosticos\n";
+    for (const auto& [fecha, detalle] : historial.getDiagnosticos()) {
+        archivo << fecha << "," << detalle << "\n";
+    }
+
+    archivo << "Pruebas\n";
+    for (const auto& [fecha, prueba] : historial.getPruebas()) {
+        archivo << fecha << "," << prueba << "\n";
+    }
+
+    archivo << "Enfermedades\n";
+    for (const auto& enfermedad : historial.getEnfermedadesCronicas()) {
+        archivo << enfermedad.getFechaDiagnostico() << ","
+            << enfermedad.getNombre() << ","
+            << enfermedad.getSeveridad() << ","
+            << enfermedad.getTratamiento() << "\n";
+    }
+
+    archivo << "Notas\n" << historial.getNotas();
+    archivo.close();
+}
+
+
+
 // Cargar datos de pacientes
 std::vector<Paciente> Archivo::cargarPacientes(const std::string& archivo) {
     std::ifstream in(archivo);
@@ -159,4 +190,55 @@ std::vector<Cita> Archivo::cargarCitas(const std::string& archivo) {
     }
 
     return citas;
+}
+
+void Archivo::cargarHistorialMedico(HistorialMedico& historial) {
+    std::ifstream archivo("data/historial_" + historial.getPacienteID() + ".csv");
+    if (!archivo) return;
+
+    std::string linea, seccion;
+
+    while (std::getline(archivo, linea)) {
+        if (linea == "Diagnosticos") {
+            seccion = "Diagnosticos";
+            continue;
+        }
+        if (linea == "Pruebas") {
+            seccion = "Pruebas";
+            continue;
+        }
+        if (linea == "Enfermedades") {
+            seccion = "Enfermedades";
+            continue;
+        }
+        if (linea == "Notas") {
+            std::string notas;
+            std::getline(archivo, notas, '\0');
+            historial.agregarNota(notas);
+            break;
+        }
+
+        std::istringstream ss(linea);
+        std::string fecha, detalle;
+
+        if (seccion == "Diagnosticos" || seccion == "Pruebas") {
+            std::getline(ss, fecha, ',');
+            std::getline(ss, detalle);
+
+            if (seccion == "Diagnosticos") historial.agregarDiagnostico(fecha, detalle);
+            else historial.agregarPrueba(fecha, detalle);
+        }
+        else if (seccion == "Enfermedades") {
+            std::string nombre, tratamiento;
+            int severidad;
+
+            std::getline(ss, fecha, ',');
+            std::getline(ss, nombre, ',');
+            ss >> severidad;
+            ss.ignore(); // Saltar la coma
+            std::getline(ss, tratamiento);
+
+            historial.agregarEnfermedadCronica(EnfermedadCronica(nombre, severidad, tratamiento, fecha));
+        }
+    }
 }

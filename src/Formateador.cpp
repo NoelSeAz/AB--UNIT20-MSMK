@@ -1,4 +1,6 @@
 #include "Formateador.hpp"
+#include "HistorialMedico.hpp"
+#include "EnfermedadCronica.hpp"
 #include <iostream>
 #include <iomanip>
 
@@ -89,6 +91,55 @@ void Formateador::imprimirTablaCitas(const std::vector<Cita>& citas) {
     for (const auto& cita : citas) {
         imprimirRegistro(cita);
     }
+}
+
+void Formateador::imprimirHistorialMedico(const HistorialMedico& historial) {
+    std::cout << std::left;
+    std::cout << "\n--- Historial Médico del Paciente ID: " << historial.getPacienteID() << " ---\n";
+
+    // Tabla de Diagnósticos
+    std::cout << "\n" << std::setw(20) << "Fecha" << std::setw(30) << "Diagnóstico" << "\n";
+    std::cout << std::string(50, '-') << "\n";
+    for (const auto& [fecha, diagnostico] : historial.getDiagnosticos()) {
+        std::cout << std::setw(20) << fecha << std::setw(30) << diagnostico << "\n";
+    }
+
+    // Tabla de Pruebas Realizadas
+    std::cout << "\n" << std::setw(20) << "Fecha" << std::setw(30) << "Prueba Realizada" << "\n";
+    std::cout << std::string(50, '-') << "\n";
+    for (const auto& [fecha, prueba] : historial.getPruebas()) {
+        std::cout << std::setw(20) << fecha << std::setw(30) << prueba << "\n";
+    }
+
+    // Tabla de Enfermedades Crónicas
+    std::cout << "\n" << std::setw(20) << "Fecha Diagnóstico" << std::setw(25) << "Enfermedad"
+        << std::setw(15) << "Severidad" << std::setw(30) << "Tratamiento" << "\n";
+    std::cout << std::string(90, '-') << "\n";
+    for (const auto& enfermedad : historial.getEnfermedadesCronicas()) {
+        std::cout << std::setw(20) << enfermedad.getFechaDiagnostico()
+            << std::setw(25) << enfermedad.getNombre()
+            << std::setw(15) << enfermedad.getSeveridad()
+            << std::setw(30) << enfermedad.getTratamiento() << "\n";
+    }
+
+    // Notas generales
+    std::cout << "\nNotas Generales:\n";
+    std::cout << historial.getNotas() << "\n";
+    std::cout << std::string(90, '-') << "\n";
+}
+
+// Imprimir Enfermedad Crónica
+void Formateador::imprimirEnfermedadCronica(const EnfermedadCronica& enfermedad) {
+    std::cout << std::left;
+    std::cout << "\n--- Detalles de Enfermedad Crónica ---\n";
+    std::cout << std::setw(20) << "Nombre"
+        << std::setw(20) << "Fecha Diagnóstico"
+        << std::setw(30) << "Tratamiento Actual" << "\n";
+    std::cout << std::string(70, '-') << "\n";
+
+    std::cout << std::setw(20) << enfermedad.getNombre()
+        << std::setw(20) << enfermedad.getFechaDiagnostico()
+        << std::setw(30) << enfermedad.getTratamiento() << "\n";
 }
 
 void Formateador::limpiarPantalla() {

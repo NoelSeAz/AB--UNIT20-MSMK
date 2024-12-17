@@ -78,14 +78,13 @@ void GestorAdministrativo::bajaPaciente(std::vector<Paciente>& pacientes, const 
     }
 }
 
-// Buscar paciente por ID
-Paciente* GestorAdministrativo::buscarPacientePorID(const std::vector<Paciente>& pacientes, const std::string& id) {
-    auto it = std::find_if(pacientes.begin(), pacientes.end(), [id](const Paciente& paciente) {
+Paciente* GestorAdministrativo::buscarPacientePorID(std::vector<Paciente>& pacientes, const std::string& id) {
+    auto it = std::find_if(pacientes.begin(), pacientes.end(), [&id](const Paciente& paciente) {
         return paciente.getID() == id;
         });
 
     if (it != pacientes.end()) {
-        return const_cast<Paciente*>(&(*it)); // Devuelve un puntero al paciente encontrado
+        return &(*it); // Devuelve un puntero al paciente original
     }
     else {
         std::cerr << "Error: No se encontró un paciente con el ID " << id << ".\n";
@@ -150,6 +149,7 @@ void AdministradorCitas::crearCita(std::vector<Cita>& citas, const std::string& 
     Formateador::imprimirEncabezadoCitas();
     Formateador::imprimirRegistro(nuevaCita);
 }
+
 void AdministradorCitas::modificarCita(std::vector<Cita>& citas, const std::string& citaID, const std::string& nuevaFecha, int nuevaPrioridad) {
     auto it = std::find_if(citas.begin(), citas.end(), [citaID](Cita& cita) {
         return cita.getCitaID() == citaID;

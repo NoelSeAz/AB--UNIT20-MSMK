@@ -1,28 +1,24 @@
 #ifndef PACIENTE_HPP
 #define PACIENTE_HPP
 
+#include "HistorialMedico.hpp"
 #include <string>
-#include <vector>
 
 class Paciente {
 private:
-    std::string ID;                         // Identificador único del paciente
-    std::string nombre;                     // Nombre del paciente
-    std::string apellido;                   // Apellido del paciente
-    std::string direccion;                  // Dirección del paciente
-    int edad;                               // Edad del paciente
-    std::vector<std::string> historialClinico; // Historial clínico del paciente
+    std::string id;                // Identificador único del paciente
+    std::string nombre;            // Nombre del paciente
+    std::string apellido;          // Apellido del paciente
+    std::string direccion;         // Dirección del paciente
+    int edad;                      // Edad del paciente
+    HistorialMedico historialMedico; // Historial clínico del paciente
 
 public:
     // Constructor
     Paciente(const std::string& id, const std::string& nombre, const std::string& apellido,
         const std::string& direccion, int edad);
 
-    // Métodos para gestionar el historial clínico
-    void registrarHistorial(const std::string& registro);
-    void mostrarHistorial() const;
-
-    // Métodos para acceder y modificar datos personales
+    // Método para modificar datos personales
     void modificarDatos(const std::string& nuevaDireccion, int nuevaEdad);
 
     // Getters
@@ -31,7 +27,8 @@ public:
     std::string getApellido() const;
     std::string getDireccion() const;
     int getEdad() const;
-    const std::vector<std::string>& getHistorialClinico() const;
+    HistorialMedico& getHistorialMedico();
+    const HistorialMedico& getHistorialMedico() const;
 };
 
 #endif

@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt: Proyecto de CMake para UNIT20-AB
 
 # Versión mínima requerida
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.8)
 
 # Nombre del proyecto
 project(UNIT20-AB)
@@ -30,4 +30,4 @@ target_sources(UNIT20-AB PRIVATE
     "src/Administrador.cpp" 
     "src/Formateador.cpp" 
     "src/IDGenerator.cpp" 
-    "src/InputValidator.cpp")
+    "src/InputValidator.cpp" "src/HistorialMedico.cpp" "src/EnfermedadCronica.cpp")

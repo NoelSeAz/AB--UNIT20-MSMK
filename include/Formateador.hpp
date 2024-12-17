@@ -4,6 +4,8 @@
 #include "Paciente.hpp"
 #include "Medico.hpp"
 #include "Cita.hpp"
+#include "HistorialMedico.hpp"
+#include "EnfermedadCronica.hpp"
 #include <vector>
 
 class Formateador {
@@ -22,6 +24,10 @@ public:
     static void imprimirTablaPacientes(const std::vector<Paciente>& pacientes);
     static void imprimirTablaMedicos(const std::vector<Medico>& medicos);
     static void imprimirTablaCitas(const std::vector<Cita>& citas);
+
+    // Imprimir Historial Médico
+    static void imprimirHistorialMedico(const HistorialMedico& historial);
+    static void imprimirEnfermedadCronica(const EnfermedadCronica& enfermedad);
 
     // Limpieza de pantalla
     static void limpiarPantalla();
