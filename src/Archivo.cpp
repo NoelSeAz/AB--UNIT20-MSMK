@@ -43,7 +43,7 @@ void Archivo::guardarCitas(const std::vector<Cita>& citas, const std::string& no
     }
 
     for (const auto& cita : citas) {
-        archivo << cita.getCitaID() << ',' << cita.getPacienteID() << ',' << cita.getMedicoID() << ','
+        archivo << cita.getCitaIDHash() << ',' << cita.getCitaID() << ',' << cita.getPacienteID() << ',' << cita.getMedicoID() << ','
             << cita.getFecha() << ',' << cita.getPrioridad() << '\n';
     }
 
@@ -135,24 +135,27 @@ std::vector<Cita> Archivo::cargarCitas(const std::string& archivo) {
         std::istringstream ss(linea);
         std::string token;
 
-        int citaID, prioridad;
-        std::string pacienteID, medicoID, fecha;
+        std::string citaIDHash, citaID, pacienteID, medicoID, fecha;
+        int prioridad;
 
-        // Leer cada campo utilizando el delimitador ','
-        std::getline(ss, token, ',');
-        citaID = std::stoi(token);
+        // Leer cada campo usando ',' como delimitador
+        std::getline(ss, citaIDHash, ',');   // 1. Hash ID
+        std::getline(ss, citaID, ',');       // 2. Cita ID
+        std::getline(ss, pacienteID, ',');   // 3. Paciente ID
+        std::getline(ss, medicoID, ',');     // 4. Medico ID
+        std::getline(ss, fecha, ',');        // 5. Fecha
+        std::getline(ss, token, ',');        // 6. Prioridad
 
-        std::getline(ss, pacienteID, ',');
+        try {
+            prioridad = std::stoi(token); 
+        }
+        catch (...) {
+            std::cerr << "Error: La prioridad no es válida.\n";
+            continue;
+        }
 
-        std::getline(ss, medicoID, ',');
-
-        std::getline(ss, fecha, ',');
-
-        std::getline(ss, token, ',');
-        prioridad = std::stoi(token);
-
-        // Crear objeto Cita y añadir al vector
-        citas.emplace_back(citaID, pacienteID, medicoID, fecha, prioridad);
+        // Crear y agregar la cita al vector
+        citas.emplace_back(citaIDHash, citaID, pacienteID, medicoID, fecha, prioridad, false);
     }
 
     return citas;

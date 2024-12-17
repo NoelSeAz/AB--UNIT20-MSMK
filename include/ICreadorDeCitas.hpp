@@ -14,10 +14,10 @@ public:
     virtual void crearCita(std::vector<Cita>& citas, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad) = 0;
 
     // Cancelar una cita existente
-    virtual void cancelarCita(std::vector<Cita>& citas, int citaID) = 0;
+    virtual void cancelarCita(std::vector<Cita>& citas, const std::string& citaID) = 0;
 
     // Modificar una cita existente
-    virtual void modificarCita(std::vector<Cita>& citas, int citaID, const std::string& nuevaFecha, int nuevaPrioridad) = 0;
+    virtual void modificarCita(std::vector<Cita>& citas, const std::string& citaID, const std::string& nuevaFecha, int nuevaPrioridad) = 0;
 };
 
 #endif

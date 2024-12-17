@@ -26,31 +26,35 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
 
+    // Establecer la raíz del proyecto como directorio actual
     std::filesystem::path raizProyecto = std::filesystem::current_path().parent_path().parent_path();
     std::filesystem::current_path(raizProyecto);
 
-    // Datos iniciales
+    // Archivos por defecto
     Archivo archivo;
-    std::string archivoPacientes = "./data/archivo_pacientes.txt";
-    std::string archivoMedicos = "./data/archivo_medicos.txt";
-    std::string archivoCitas = "./data/archivo_citas.txt";
+    const std::string archivoPacientes = "./data/archivo_pacientes.txt";
+    const std::string archivoMedicos = "./data/archivo_medicos.txt";
+    const std::string archivoCitas = "./data/archivo_citas.txt";
 
-    char opcionArchivo;
-    std::cout << "¿Desea cargar los archivos predeterminados? (S/N): ";
-    std::cin >> opcionArchivo;
+    std::vector<Paciente> pacientes;
+    std::vector<Medico> medicos;
+    std::vector<Cita> citas;
 
-    if (opcionArchivo == 'N' || opcionArchivo == 'n') {
-        std::cout << "Ingrese el archivo de pacientes: ";
-        std::cin >> archivoPacientes;
-        std::cout << "Ingrese el archivo de médicos: ";
-        std::cin >> archivoMedicos;
-        std::cout << "Ingrese el archivo de citas: ";
-        std::cin >> archivoCitas;
+    try {
+        // Cargar los archivos predeterminados
+        pacientes = archivo.cargarPacientes(archivoPacientes);
+        medicos = archivo.cargarMedicos(archivoMedicos);
+        citas = archivo.cargarCitas(archivoCitas);
+        std::cout << "Archivos predeterminados cargados correctamente.\n";
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error al cargar archivos: " << e.what() << "\n";
+        std::cerr << "Por favor, asegúrese de que los archivos existan en la carpeta 'data/'.\n";
+        return 1; // Salir del programa con código de error
     }
 
-    std::vector<Paciente> pacientes = archivo.cargarPacientes(archivoPacientes);
-    std::vector<Medico> medicos = archivo.cargarMedicos(archivoMedicos);
-    std::vector<Cita> citas = archivo.cargarCitas(archivoCitas);
+    // Continuar con el flujo normal del programa
+    std::cout << "Sistema de Gestión Hospitalaria iniciado.\n";
 
     int opcion;
     do {
@@ -330,8 +334,9 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
 
             break;
         }
+
         case 2: {
-            int citaID;
+            std::string citaID;
             std::cout << "Ingrese el ID de la cita a cancelar: ";
             std::cin >> citaID;
 
@@ -341,8 +346,8 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
             break;
         }
         case 3: {
-            int citaID, nuevaPrioridad;
-            std::string nuevaFecha;
+            std::string citaID, nuevaFecha;
+            int nuevaPrioridad;
 
             std::cout << "Ingrese el ID de la cita a modificar: ";
             std::cin >> citaID;
@@ -362,7 +367,7 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
             Formateador::imprimirEncabezadoCitas();
             for (const auto& cita : citas) {
                 if (cita.getPacienteID() == pacienteID) {
-                    cita.imprimirCita();
+                    Formateador::imprimirRegistro(cita);
                 }
             }
             break;

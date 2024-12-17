@@ -3,7 +3,9 @@
 #include "IDGenerator.hpp"
 #include "InputValidator.hpp"
 #include "Archivo.hpp"
+#include <sstream>
 #include <iostream>
+#include <iomanip>
 #include <stdexcept>
 
 // Alta de médicos
@@ -127,29 +129,37 @@ void AdministradorCitas::crearCita(std::vector<Cita>& citas, const std::string& 
         throw std::invalid_argument("La fecha debe ser igual o posterior a la fecha actual.");
     }
 
-    // Crear una nueva cita
-    size_t citaID = citas.size() + 1;
-    //int citaID = static_cast<int>(citas.size() + 1);
-    Cita nuevaCita(citaID, pacienteID, medicoID, fecha, prioridad);
+    // Generar un ID único para la cita
+    unsigned long citaIDHash = IDGenerator::generarIDCitaHash(pacienteID, medicoID, fecha);
+    std::string citaID = IDGenerator::generarIDCita(pacienteID, medicoID, fecha);
+
+    // Convertir citaID a string (si es necesario para la clase Cita)
+    std::ostringstream oss;
+    oss << citaIDHash;
+    std::string citaIDStr = oss.str();
+
+    // Crear la cita
+    Cita nuevaCita(citaIDStr, citaID, pacienteID, medicoID, fecha, prioridad);
     citas.push_back(nuevaCita);
 
+    // Guardar la cita en archivo
     Archivo archivo;
     archivo.guardarCitas(citas, "./data/archivo_citas.txt");
 
-    std::cout << "Cita creada y guardada exitosamente:\n";
-    nuevaCita.imprimirCita();
+    std::cout << "Cita creada exitosamente con ID Hash: " << citaIDStr << std::endl;
+    Formateador::imprimirEncabezadoCitas();
+    Formateador::imprimirRegistro(nuevaCita);
 }
-
-void AdministradorCitas::modificarCita(std::vector<Cita>& citas, int citaID, const std::string& nuevaFecha, int nuevaPrioridad) {
+void AdministradorCitas::modificarCita(std::vector<Cita>& citas, const std::string& citaID, const std::string& nuevaFecha, int nuevaPrioridad) {
     auto it = std::find_if(citas.begin(), citas.end(), [citaID](Cita& cita) {
         return cita.getCitaID() == citaID;
         });
 
     if (it != citas.end()) {
         try {
-            it->modificarCita(nuevaFecha, nuevaPrioridad); // Usar método de la clase Cita
+            it->modificarCita(nuevaFecha, nuevaPrioridad);
             Archivo archivo;
-            archivo.guardarCitas(citas, "./data/archivo_citas.txt"); // Guardar cambios
+            archivo.guardarCitas(citas, "./data/archivo_citas.txt");
             std::cout << "Cita con ID " << citaID << " modificada exitosamente.\n";
         }
         catch (const std::exception& e) {
@@ -161,21 +171,20 @@ void AdministradorCitas::modificarCita(std::vector<Cita>& citas, int citaID, con
     }
 }
 
-void AdministradorCitas::cancelarCita(std::vector<Cita>& citas, int citaID) {
+void AdministradorCitas::cancelarCita(std::vector<Cita>& citas, const std::string& citaID) {
     auto it = std::find_if(citas.begin(), citas.end(), [citaID](const Cita& cita) {
-        return cita.getCitaID() == citaID;
+        return cita.getCitaID() == citaID; // Cambiar int por std::string
         });
 
     if (it != citas.end()) {
         citas.erase(it);
 
-        // Guardar cambios en el archivo
         Archivo archivo;
         archivo.guardarCitas(citas, "./data/archivo_citas.txt");
 
         std::cout << "Cita con ID " << citaID << " cancelada exitosamente.\n";
     }
     else {
-        std::cerr << "Error: No se encontró una cita con ID " << citaID << ".\n";
+        std::cerr << "Error: No se encontró una cita con el ID " << citaID << ".\n";
     }
 }

@@ -4,9 +4,9 @@
 #include <iomanip>
 
 // Constructor
-Cita::Cita(int citaID, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad)
-    : citaID(citaID), pacienteID(pacienteID), medicoID(medicoID), fecha(fecha), prioridad(prioridad) {
-    if (!InputValidator::esFechaFutura(fecha)) {
+Cita::Cita(const std::string& citaIDHash, const std::string& citaID, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad, bool validar)
+    : citaIDHash(citaIDHash), citaID(citaID), pacienteID(pacienteID), medicoID(medicoID), fecha(fecha), prioridad(prioridad) {
+    if (validar && !InputValidator::esFechaFutura(fecha)) {
         throw std::invalid_argument("La fecha de la cita debe ser igual o posterior a la fecha actual.");
     }
     this->fecha = fecha; // Asignar la fecha validada
@@ -54,19 +54,9 @@ void Cita::ordenarCitasPorPrioridad(std::vector<Cita>& citas) {
     std::sort(citas.begin(), citas.end(), compararPorPrioridad);
 }
 
-// Imprimir detalles de una cita
-void Cita::imprimirCita() const {
-    std::cout << std::left;
-    std::cout << std::setw(5) << citaID
-        << std::setw(10) << pacienteID
-        << std::setw(10) << medicoID
-        << std::setw(20) << fecha
-        << std::setw(10) << (prioridad == 1 ? "Urgente" : "Normal")
-        << "\n";
-}
-
 // Getters
-int Cita::getCitaID() const { return citaID; }
+std::string Cita::getCitaIDHash() const { return citaIDHash;  }
+std::string Cita::getCitaID() const { return citaID; }
 std::string Cita::getPacienteID() const { return pacienteID; }
 std::string Cita::getMedicoID() const { return medicoID; }
 int Cita::getPrioridad() const { return prioridad; }

@@ -31,14 +31,9 @@ public:
 // Clase concreta para la gestión de citas
 class AdministradorCitas : public ICreadorDeCitas {
 public:
-    // Crear una nueva cita
-    void crearCita(std::vector<Cita>&citas, const std::string & pacienteID, const std::string & medicoID, const std::string & fecha, int prioridad) override;
-
-    // Cancelar una cita existente
-    void cancelarCita(std::vector<Cita>& citas, int citaID);
-
-    // Modificar una cita existente
-    void modificarCita(std::vector<Cita>& citas, int citaID, const std::string& nuevaFecha, int nuevaPrioridad);
+    void crearCita(std::vector<Cita>& citas, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad) override;
+    void cancelarCita(std::vector<Cita>& citas, const std::string& citaID);
+    void modificarCita(std::vector<Cita>& citas, const std::string& citaID, const std::string& nuevaFecha, int nuevaPrioridad);
 };
 
 #endif

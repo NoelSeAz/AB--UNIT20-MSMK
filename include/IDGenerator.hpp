@@ -20,6 +20,26 @@ public:
     static std::string generarID(const std::string& tipo, const std::string& nombre, const std::string& apellido,
         const std::vector<std::string>& idsExistentes);
 
+    /**
+     * @brief Genera un ID único para una cita en formato C-PacienteID-MedicoID-FechaHash.
+     *
+     * @param pacienteID ID del paciente asociado.
+     * @param medicoID ID del médico asociado.
+     * @param fecha Fecha de la cita (en formato dd/mm/yyyy).
+     * @return std::string ID único de la cita.
+     */
+    static std::string generarIDCita(const std::string& pacienteID, const std::string& medicoID, const std::string& fecha);
+
+    /**
+     * @brief Genera un ID único para una cita en formato C-PacienteID-MedicoID-FechaHash.
+     *
+     * @param pacienteID ID del paciente asociado.
+     * @param medicoID ID del médico asociado.
+     * @param fecha Fecha de la cita (en formato dd/mm/yyyy).
+     * @return std::string ID único de la cita.
+     */
+    static unsigned long generarIDCitaHash(const std::string& pacienteID, const std::string& medicoID, const std::string& fecha);
+
 private:
     /**
      * @brief Extrae las iniciales del nombre y apellido.
