@@ -1,17 +1,45 @@
 #include "GestorMedicos.hpp"
+#include "Formateador.hpp"
+#include "IDGenerator.hpp"
+#include "Archivo.hpp"
 #include "iostream"
 
-void GestorMedicos::altaMedico(std::vector<Medico>& medicos, const std::string& nombre, const std::string& apellido, const std::string& especialidad, bool disponibilidad) {
-    std::vector<std::string> idsExistentes;
-    for (const auto& medico : medicos) {
-        idsExistentes.push_back(medico.getID());
+void GestorMedicos::altaMedico(std::vector<Medico>& medicos, GestorEspecialidades& gestorEspecialidades) {
+    std::string nombre, apellido;
+    bool disponibilidad;
+
+    // Recolección de datos básicos
+    std::cout << "Ingrese Nombre: ";
+    std::cin >> nombre;
+    std::cout << "Ingrese Apellido: ";
+    std::cin >> apellido;
+    std::cout << "Disponibilidad (1 = Disponible, 0 = Ocupado): ";
+    std::cin >> disponibilidad;
+
+    // Selección de especialidad
+    auto listaEspecialidades = gestorEspecialidades.obtenerListaEspecialidades();
+    if (listaEspecialidades.empty()) {
+        std::cerr << "Error: No hay especialidades registradas. No se puede dar de alta al médico.\n";
+        return;
     }
 
-    std::string ID = IDGenerator::generarID("M", nombre, apellido, idsExistentes);
-    medicos.emplace_back(ID, nombre, apellido, especialidad, disponibilidad);
-    std::cout << "Médico dado de alta exitosamente:\n";
+    Formateador::imprimirTablaEspecialidades(listaEspecialidades);
+    std::cout << "Seleccione el ID de la especialidad para el médico: ";
+    int idEspecialidad;
+    std::cin >> idEspecialidad;
+
+    auto especialidad = gestorEspecialidades.buscarEspecialidadPorID(idEspecialidad);
+    if (!especialidad) {
+        std::cerr << "Error: Especialidad no encontrada. Intente nuevamente.\n";
+        return;
+    }
+
+    // Crear y registrar el médico
+    std::string ID = IDGenerator::generarID("M", nombre, apellido, {});
+    medicos.emplace_back(ID, nombre, apellido, especialidad->getNombre(), disponibilidad);
+
+    std::cout << "Médico registrado exitosamente:\n";
     Formateador::imprimirRegistro(medicos.back());
-    Archivo::guardarMedicos(medicos, "./data/archivo_medicos.txt");
 }
 
 void GestorMedicos::bajaMedico(std::vector<Medico>& medicos, const std::string& id) {

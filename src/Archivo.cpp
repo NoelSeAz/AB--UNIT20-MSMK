@@ -65,6 +65,20 @@ void Archivo::guardarCitas(const std::vector<Cita>& citas, const std::string& no
     }
 }
 
+void Archivo::guardarEspecialidades(const std::vector<Especialidad>& especialidades, const std::string& archivo) {
+    std::ofstream outFile(archivo);
+    if (!outFile.is_open()) {
+        std::cerr << "Error al guardar el archivo de especialidades: " << archivo << "\n";
+        return;
+    }
+
+    for (const auto& esp : especialidades) {
+        outFile << esp.getID() << "," << esp.getNombre() << "," << esp.getDescripcion() << "\n";
+    }
+
+    outFile.close();
+}
+
 //Guardar datos de historial médico
 void Archivo::guardarHistorialMedico(const HistorialMedico& historial) {
     std::string rutaArchivo = "data/historial_" + historial.getPacienteID() + ".csv";
@@ -204,6 +218,35 @@ std::vector<Cita> Archivo::cargarCitas(const std::string& archivo) {
     }
 
     return citas;
+}
+
+//Cargar datos de especialidades
+std::vector<Especialidad> Archivo::cargarEspecialidades(const std::string& archivo) {
+    std::vector<Especialidad> especialidades;
+    std::ifstream inFile(archivo);
+    if (!inFile.is_open()) {
+        std::cerr << "Error al abrir el archivo de especialidades: " << archivo << "\n";
+        return especialidades;
+    }
+
+    std::string linea;
+    while (std::getline(inFile, linea)) {
+        std::istringstream ss(linea);
+        int id;
+        std::string nombre, descripcion;
+
+        ss >> id;
+        ss.ignore(); // Ignorar el separador
+        std::getline(ss, nombre, ',');
+        std::getline(ss, descripcion);
+
+        if (!nombre.empty() && !descripcion.empty()) {
+            especialidades.emplace_back(id, nombre, descripcion);
+        }
+    }
+
+    inFile.close();
+    return especialidades;
 }
 
 //Cargar datos de historial médico

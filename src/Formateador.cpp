@@ -1,6 +1,4 @@
 #include "Formateador.hpp"
-#include "HistorialMedico.hpp"
-#include "EnfermedadCronica.hpp"
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -40,6 +38,14 @@ void Formateador::imprimirEncabezadoCitas() {
     std::cout << std::string(100, '-') << "\n";
 }
 
+void Formateador::imprimirEncabezadoEspecialidades() {
+    std::cout << std::left << std::setw(5) << "ID"
+        << std::setw(20) << "Nombre"
+        << std::setw(50) << "Descripción"
+        << "\n";
+    std::cout << std::string(75, '-') << "\n";
+}
+
 // Métodos para imprimir registros individuales
 void Formateador::imprimirRegistro(const Paciente& paciente) {
     std::cout << std::left;
@@ -72,6 +78,13 @@ void Formateador::imprimirRegistro(const Cita& cita) {
         << "\n";
 }
 
+void Formateador::imprimirRegistro(const Especialidad& especialidad) {
+    std::cout << std::left << std::setw(5) << especialidad.getID()
+        << std::setw(20) << especialidad.getNombre()
+        << std::setw(50) << especialidad.getDescripcion()
+        << "\n";
+}
+
 // Métodos para imprimir tablas completas
 void Formateador::imprimirTablaPacientes(const std::vector<Paciente>& pacientes) {
     imprimirEncabezadoPacientes();
@@ -91,6 +104,13 @@ void Formateador::imprimirTablaCitas(const std::vector<Cita>& citas) {
     imprimirEncabezadoCitas();
     for (const auto& cita : citas) {
         imprimirRegistro(cita);
+    }
+}
+
+void Formateador::imprimirTablaEspecialidades(const std::vector<Especialidad>& especialidades) {
+    imprimirEncabezadoEspecialidades();
+    for (const auto& especialidad : especialidades) {
+        imprimirRegistro(especialidad);
     }
 }
 

@@ -30,4 +30,4 @@ target_sources(UNIT20-AB PRIVATE
      
     "src/Formateador.cpp" 
     "src/IDGenerator.cpp" 
-    "src/InputValidator.cpp" "src/HistorialMedico.cpp" "src/EnfermedadCronica.cpp" "src/GestorPacientes.cpp" "src/GestorMedicos.cpp" "src/GestorCitas.cpp")
+    "src/InputValidator.cpp" "src/HistorialMedico.cpp" "src/EnfermedadCronica.cpp" "src/GestorPacientes.cpp" "src/GestorMedicos.cpp" "src/GestorCitas.cpp" "src/GestorEspecialidades.cpp")

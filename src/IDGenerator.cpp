@@ -32,7 +32,6 @@ unsigned long IDGenerator::generarHashCita(const std::string& pacienteID, const 
         hash = ((hash << 5) + hash) + c; // hash * 33 + c
     }
 
-    // Retornar el hash
     return hash;
 }
 

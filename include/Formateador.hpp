@@ -6,6 +6,7 @@
 #include "Cita.hpp"
 #include "HistorialMedico.hpp"
 #include "EnfermedadCronica.hpp"
+#include "GestorEspecialidades.hpp"
 #include <vector>
 
 class Formateador {
@@ -14,16 +15,19 @@ public:
     static void imprimirEncabezadoPacientes();
     static void imprimirEncabezadoMedicos();
     static void imprimirEncabezadoCitas();
+    static void imprimirEncabezadoEspecialidades();
 
     // Métodos para imprimir registros individuales
     static void imprimirRegistro(const Paciente& paciente);
     static void imprimirRegistro(const Medico& medico);
     static void imprimirRegistro(const Cita& cita);
+    static void imprimirRegistro(const Especialidad& especialidad);
 
     // Métodos para imprimir tablas completas
     static void imprimirTablaPacientes(const std::vector<Paciente>& pacientes);
     static void imprimirTablaMedicos(const std::vector<Medico>& medicos);
     static void imprimirTablaCitas(const std::vector<Cita>& citas);
+    static void imprimirTablaEspecialidades(const std::vector<Especialidad>& especialidades);
 
     // Imprimir Historial Médico
     static void imprimirHistorialMedico(const HistorialMedico& historial);

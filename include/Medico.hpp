@@ -27,7 +27,7 @@ public:
     bool obtenerDisponibilidad() const;
 
     // Métodos relacionados con citas
-    void agregarCita(int citaID, const std::string& pacienteID, const std::string& fecha, int prioridad, std::vector<Cita>& citas);
+    //void agregarCita(int citaID, const std::string& pacienteID, const std::string& fecha, int prioridad, std::vector<Cita>& citas);
     void mostrarCitas() const;
 
     // Getters

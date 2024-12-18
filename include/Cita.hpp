@@ -7,7 +7,7 @@
 
     class Cita {
     private:
-        unsigned long citaIDHash;         // Identificador único de la cita Hash
+        unsigned long citaIDHash;      // Identificador único de la cita Hash
         std::string citaID;            // Identificador único de la cita
         std::string pacienteID;        // ID del paciente asociado
         std::string medicoID;          // ID del médico asociado

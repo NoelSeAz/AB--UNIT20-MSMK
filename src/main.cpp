@@ -9,6 +9,7 @@
 #include "GestorCitas.hpp"
 #include "GestorMedicos.hpp"
 #include "GestorPacientes.hpp"
+#include "GestorEspecialidades.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -18,13 +19,14 @@
 #include <fstream>
 
 // Funciones para los submenús
-void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas);
+void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas, GestorEspecialidades& gestorEspecialidades);
 void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos);
 void mostrarMenuPaciente(std::vector<Paciente>& pacientes);
 void mostrarMenuGestionArchivos(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas);
 void mostrarMenuListados(const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos, const std::vector<Cita>& citas);
-void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos);
+void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, GestorEspecialidades& gestorEspecialidades);
 void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos);
+void mostrarMenuGestionEspecialidades(GestorEspecialidades& gestorEspecialidades);
 
 // Función auxiliar para operar sobre el historial de un paciente
 template <typename Funcion>
@@ -55,26 +57,29 @@ int main() {
     std::filesystem::path raizProyecto = std::filesystem::current_path().parent_path().parent_path();
     std::filesystem::current_path(raizProyecto);
 
+    // Instanciar las estructuras principales
     std::vector<Paciente> pacientes;
     std::vector<Medico> medicos;
     std::vector<Cita> citas;
+    std::vector<Especialidad> especialidades;
 
     try {
         // Cargar los archivos predeterminados
         pacientes = Archivo::cargarPacientes("./data/archivo_pacientes.txt");
         medicos = Archivo::cargarMedicos("./data/archivo_medicos.txt");
         citas = Archivo::cargarCitas("./data/archivo_citas.txt");
+        especialidades = Archivo::cargarEspecialidades("./data/especialidades.csv");
         std::cout << "Archivos predeterminados cargados correctamente.\n";
     }
     catch (const std::exception& e) {
         std::cerr << "Error al cargar archivos: " << e.what() << "\n";
         std::cerr << "Por favor, asegúrese de que los archivos existan en la carpeta 'data/'.\n";
-        return 1; // Salir del programa con código de error
+        return 1;
     }
 
-    // Continuar con el flujo normal del programa
-    std::cout << "Sistema de Gestión Hospitalaria iniciado.\n";
+    GestorEspecialidades gestorEspecialidades(especialidades);
 
+    // Menú principal
     int opcion;
     do {
         std::cout << "\n--- Sistema de Gestión Hospitalaria ---\n";
@@ -88,7 +93,7 @@ int main() {
 
         switch (opcion) {
         case 1:
-            mostrarMenuAdministrador(pacientes, medicos, citas);
+            mostrarMenuAdministrador(pacientes, medicos, citas, gestorEspecialidades);
             break;
         case 2:
             mostrarMenuMedico(pacientes, medicos);
@@ -108,7 +113,8 @@ int main() {
     return 0;
 }
 
-void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas) {
+void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos,
+    std::vector<Cita>& citas, GestorEspecialidades& gestorEspecialidades) {
     int opcion;
     do {
         std::cout << "\n--- Menú Administrador ---\n";
@@ -116,7 +122,8 @@ void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medi
         std::cout << "2. Ver Listados\n";
         std::cout << "3. Alta y Baja de Registros\n";
         std::cout << "4. Gestión de Citas\n";
-        std::cout << "0. Volver al Menú Principal\n\n";
+        std::cout << "5. Gestionar Especialidades\n";
+        std::cout << "0. Volver al Menú Principal\n";
         std::cout << "Seleccione una opción: ";
         std::cin >> opcion;
         Formateador::limpiarPantalla();
@@ -129,13 +136,16 @@ void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medi
             mostrarMenuListados(pacientes, medicos, citas);
             break;
         case 3:
-            mostrarMenuAltaBaja(pacientes, medicos);
+            mostrarMenuAltaBaja(pacientes, medicos, gestorEspecialidades);
             break;
         case 4:
             mostrarMenuGestionCitas(citas, pacientes, medicos);
             break;
+        case 5:
+            mostrarMenuGestionEspecialidades(gestorEspecialidades);
+            break;
         case 0:
-            std::cout << "Volviendo al menú principal...\n";
+            std::cout << "Volviendo al Menú Principal...\n";
             break;
         default:
             std::cout << "Opción no válida. Intente nuevamente.\n";
@@ -211,7 +221,7 @@ void mostrarMenuListados(const std::vector<Paciente>& pacientes, const std::vect
     } while (opcion != 0);
 }
 
-void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos) {
+void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, GestorEspecialidades& gestorEspecialidades) {
     int opcion;
     do {
         std::cout << "\n--- Alta y Baja de Registros ---\n";
@@ -235,16 +245,12 @@ void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& 
             GestorPacientes::altaPaciente(pacientes, nombre, apellido, direccion, edad);
             break;
         }
+
         case 2: {
-            std::string nombre, apellido, especialidad;
-            bool disponibilidad;
-            std::cout << "Ingrese Nombre: "; std::cin >> nombre;
-            std::cout << "Ingrese Apellido: "; std::cin >> apellido;
-            std::cout << "Ingrese Especialidad: "; std::cin.ignore(); std::getline(std::cin, especialidad);
-            std::cout << "Disponibilidad (1 = Disponible, 0 = Ocupado): "; std::cin >> disponibilidad;
-            GestorMedicos::altaMedico(medicos, nombre, apellido, especialidad, disponibilidad);
+            GestorMedicos::altaMedico(medicos, gestorEspecialidades);
             break;
         }
+
         case 3: {
             std::string idPaciente;
             std::cout << "Ingrese ID del paciente a eliminar: "; std::cin >> idPaciente;
@@ -375,6 +381,69 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
         }
         case 0:
             std::cout << "Volviendo al menú principal...\n";
+            break;
+        default:
+            std::cout << "Opción no válida. Intente nuevamente.\n";
+            break;
+        }
+    } while (opcion != 0);
+}
+
+void mostrarMenuGestionEspecialidades(GestorEspecialidades& gestorEspecialidades) {
+    int opcion;
+    do {
+        std::cout << "\n--- Gestión de Especialidades ---\n";
+        std::cout << "1. Listar Especialidades\n";
+        std::cout << "2. Buscar Especialidad por ID\n";
+        std::cout << "3. Añadir Nueva Especialidad\n";
+        std::cout << "0. Volver al Menú Administrador\n";
+        std::cout << "Seleccione una opción: ";
+        std::cin >> opcion;
+        Formateador::limpiarPantalla();
+
+        switch (opcion) {
+        case 1: { // Listar todas las especialidades
+            auto listaEspecialidades = gestorEspecialidades.obtenerListaEspecialidades();
+            if (listaEspecialidades.empty()) {
+                std::cout << "No hay especialidades registradas.\n";
+            }
+            else {
+                Formateador::imprimirTablaEspecialidades(listaEspecialidades);
+            }
+            break;
+        }
+
+        case 2: { // Buscar especialidad por ID
+            int id;
+            std::cout << "Ingrese el ID de la especialidad: ";
+            std::cin >> id;
+            auto especialidad = gestorEspecialidades.buscarEspecialidadPorID(id);
+            if (especialidad) {
+                Formateador::imprimirRegistro(*especialidad);
+            }
+            else {
+                std::cout << "Especialidad no encontrada.\n";
+            }
+            break;
+        }
+
+        case 3: { // Añadir una nueva especialidad
+            std::string nombre, descripcion;
+
+            std::cin.ignore();
+
+            std::cout << "Ingrese el nombre de la especialidad: ";
+            std::getline(std::cin, nombre);
+
+            std::cout << "Ingrese una descripción para la especialidad: ";
+            std::getline(std::cin, descripcion);
+
+            gestorEspecialidades.añadirEspecialidad(nombre, descripcion);
+            break;
+        }
+
+        case 0:
+            std::cout << "Volviendo al Menú Administrador...\n";
             break;
         default:
             std::cout << "Opción no válida. Intente nuevamente.\n";

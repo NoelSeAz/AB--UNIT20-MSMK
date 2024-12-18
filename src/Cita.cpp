@@ -31,8 +31,7 @@ void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad) {
         throw std::invalid_argument("La nueva fecha debe ser igual o posterior a la fecha actual.");
     }
 
-    // Si la nueva fecha es anterior a la fecha original, se permite
-    // mientras sea igual o posterior a hoy
+    // Si la nueva fecha es anterior a la fecha original, se permite mientras sea igual o posterior a hoy
     this->fecha = nuevaFecha;
     this->prioridad = nuevaPrioridad;
 

@@ -18,4 +18,3 @@ MPL0,Pablo,López,Reumatología,0
 MSC0,Sara,Cruz,Medicina Interna,1
 MJG1,José,Guzmán,Anestesiología,0
 MLP0,Luis,Pérez,Infectología,1
-MMM0,Maxim,Makeev,General,1

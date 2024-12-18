@@ -1,0 +1,55 @@
+#include "GestorEspecialidades.hpp"
+#include "Archivo.hpp"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
+// --- Clase Especialidad ---
+
+Especialidad::Especialidad(int id, const std::string& nombre, const std::string& descripcion)
+    : id(id), nombre(nombre), descripcion(descripcion) {
+}
+
+int Especialidad::getID() const {
+    return id;
+}
+
+std::string Especialidad::getNombre() const {
+    return nombre;
+}
+
+std::string Especialidad::getDescripcion() const {
+    return descripcion;
+}
+
+void Especialidad::imprimir() const {
+    std::cout << "ID: " << id << " | Nombre: " << nombre << " | Descripción: " << descripcion << "\n";
+}
+
+// --- Clase GestorEspecialidades ---
+
+GestorEspecialidades::GestorEspecialidades(const std::vector<Especialidad>& especialidadesIniciales)
+    : especialidades(especialidadesIniciales) {
+}
+
+std::vector<Especialidad> GestorEspecialidades::obtenerListaEspecialidades() const {
+    return especialidades;
+}
+
+std::optional<Especialidad> GestorEspecialidades::buscarEspecialidadPorID(int id) const {
+    for (const auto& esp : especialidades) {
+        if (esp.getID() == id) {
+            return esp;
+        }
+    }
+    return std::nullopt;
+}
+
+void GestorEspecialidades::añadirEspecialidad(const std::string& nombre, const std::string& descripcion) {
+    int id = obtenerSiguienteID(); // Generar el próximo ID
+    especialidades.emplace_back(id, nombre, descripcion); // Crear y agregar la especialidad
+    std::cout << "Especialidad añadida exitosamente con ID " << id << ".\n";
+
+    // Guardar en el archivo
+    Archivo::guardarEspecialidades(especialidades, "./data/especialidades.csv");
+}

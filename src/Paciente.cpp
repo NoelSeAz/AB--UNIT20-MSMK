@@ -31,8 +31,3 @@ HistorialMedico Paciente::cargarHistorial() const{
     Archivo::cargarHistorialMedico(historial);
     return historial;
 }
-
-/*
-const HistorialMedico& Paciente::getHistorialMedico() const {
-    return historialMedico;
-}*/
