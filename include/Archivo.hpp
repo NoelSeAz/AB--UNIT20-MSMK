@@ -1,12 +1,14 @@
 #ifndef ARCHIVO_HPP
 #define ARCHIVO_HPP
 
-#include <string>
-#include <vector>
 #include "Paciente.hpp"
 #include "Medico.hpp"
 #include "Cita.hpp"
 #include "HistorialMedico.hpp"
+#include <vector>
+#include <string>
+#include <functional>
+#include <iostream>
 
 class Archivo {
 public:
@@ -16,14 +18,36 @@ public:
     static void guardarCitas(const std::vector<Cita>& citas, const std::string& archivo);
     static void guardarHistorialMedico(const HistorialMedico& historial);
 
-    // Cargar datos desde archivos
+    // Cargar datos desde archivos usando una función genérica
+    template <typename T>
+    static void cargarDatos(std::vector<T>& contenedor, const std::string& mensaje,
+        const std::string& archivoPorDefecto,
+        std::vector<T>(*cargarFuncion)(const std::string&)){
+        std::string archivo;
+        std::cout << mensaje << " (por defecto: " << archivoPorDefecto << "): ";
+        std::cin.ignore();
+        std::getline(std::cin, archivo);
+
+        if (archivo.empty()) {
+            archivo = archivoPorDefecto;
+        }
+
+        try {
+            std::vector<T> datos = cargarFuncion(archivo);
+            contenedor = std::move(datos);
+            std::cout << "Datos cargados exitosamente desde: " << archivo << "\n";
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Error al cargar el archivo: " << archivo << "\n";
+            std::cerr << e.what() << "\n";
+            std::cout << "No se realizaron cambios en los datos actuales.\n";
+        }
+    }
+
     static std::vector<Paciente> cargarPacientes(const std::string& archivo);
     static std::vector<Medico> cargarMedicos(const std::string& archivo);
     static std::vector<Cita> cargarCitas(const std::string& archivo);
     static void cargarHistorialMedico(HistorialMedico& historial);
-
-    // Realizar backup
-    //static void realizarBackup(const std::string& directorioDestino);
 };
 
 #endif

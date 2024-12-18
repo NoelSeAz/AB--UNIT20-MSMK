@@ -7,76 +7,98 @@
 
 // Guardar datos de pacientes
 void Archivo::guardarPacientes(const std::vector<Paciente>& pacientes, const std::string& nombreArchivo) {
-    std::ofstream archivo(nombreArchivo);
-    if (!archivo.is_open()) {
-        throw std::runtime_error("No se pudo abrir el archivo para guardar pacientes.");
-    }
+    try {
+        std::ofstream archivo(nombreArchivo);
+        if (!archivo.is_open()) {
+            throw std::runtime_error("No se pudo abrir el archivo para guardar pacientes.");
+        }
 
-    for (const auto& paciente : pacientes) {
-        archivo << paciente.getID() << ',' << paciente.getNombre() << ',' << paciente.getApellido() << ','
-            << paciente.getDireccion() << ',' << paciente.getEdad() << '\n';
-    }
+        for (const auto& paciente : pacientes) {
+            archivo << paciente.getID() << ',' << paciente.getNombre() << ',' << paciente.getApellido() << ','
+                << paciente.getDireccion() << ',' << paciente.getEdad() << '\n';
+        }
 
-    archivo.close();
+        archivo.close();
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error al guardar pacientes: " << e.what() << "\n";
+    }
 }
 
 // Guardar datos de médicos
 void Archivo::guardarMedicos(const std::vector<Medico>& medicos, const std::string& nombreArchivo) {
-    std::ofstream archivo(nombreArchivo);
-    if (!archivo.is_open()) {
-        throw std::runtime_error("No se pudo abrir el archivo para guardar médicos.");
-    }
+    try {
+        std::ofstream archivo(nombreArchivo);
+        if (!archivo.is_open()) {
+            throw std::runtime_error("No se pudo abrir el archivo para guardar médicos.");
+        }
 
-    for (const auto& medico : medicos) {
-        archivo << medico.getID() << ',' << medico.getNombre() << ',' << medico.getApellido() << ','
-            << medico.getEspecialidad() << ',' << medico.obtenerDisponibilidad() << '\n';
-    }
+        for (const auto& medico : medicos) {
+            archivo << medico.getID() << ',' << medico.getNombre() << ',' << medico.getApellido() << ','
+                << medico.getEspecialidad() << ',' << medico.obtenerDisponibilidad() << '\n';
+        }
 
-    archivo.close();
+        archivo.close();
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error al guardar medicos: " << e.what() << "\n";
+    }
 }
 
 // Guardar datos de citas
 void Archivo::guardarCitas(const std::vector<Cita>& citas, const std::string& nombreArchivo) {
-    std::ofstream archivo(nombreArchivo);
-    if (!archivo.is_open()) {
-        throw std::runtime_error("No se pudo abrir el archivo para guardar citas.");
-    }
+    try {
+        std::ofstream archivo(nombreArchivo);
+        if (!archivo.is_open()) {
+            throw std::runtime_error("No se pudo abrir el archivo para guardar citas.");
+        }
 
-    for (const auto& cita : citas) {
-        archivo << cita.getCitaIDHash() << ',' << cita.getCitaID() << ',' << cita.getPacienteID() << ',' << cita.getMedicoID() << ','
-            << cita.getFecha() << ',' << cita.getPrioridad() << '\n';
-    }
+        for (const auto& cita : citas) {
+            archivo << cita.getCitaIDHash() << ',' << cita.getCitaID() << ',' << cita.getPacienteID() << ',' << cita.getMedicoID() << ','
+                << cita.getFecha() << ',' << cita.getPrioridad() << '\n';
+        }
 
-    archivo.close();
+        archivo.close();
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error al guardar citas: " << e.what() << "\n";
+    }
 }
 
+//Guardar datos de historial médico
 void Archivo::guardarHistorialMedico(const HistorialMedico& historial) {
-    std::ofstream archivo("data/historial_" + historial.getPacienteID() + ".csv");
-    if (!archivo) {
-        std::cerr << "Error al abrir el archivo para guardar historial médico.\n";
-        return;
+    std::string rutaArchivo = "data/historial_" + historial.getPacienteID() + ".csv";
+    std::ofstream archivo(rutaArchivo);
+
+    if (!archivo.is_open()) {
+        // Si no se puede abrir el archivo, lanza una excepción o muestra un mensaje claro
+        std::cerr << "Error al abrir el archivo para guardar historial médico: " << rutaArchivo << "\n";
+        return; // Salir sin intentar escribir
     }
 
+    // Escribir los diagnósticos
     archivo << "Diagnosticos\n";
     for (const auto& [fecha, detalle] : historial.getDiagnosticos()) {
         archivo << fecha << "," << detalle << "\n";
     }
 
+    // Escribir las pruebas realizadas
     archivo << "Pruebas\n";
     for (const auto& [fecha, prueba] : historial.getPruebas()) {
         archivo << fecha << "," << prueba << "\n";
     }
 
+    // Escribir las enfermedades crónicas
     archivo << "Enfermedades\n";
     for (const auto& enfermedad : historial.getEnfermedadesCronicas()) {
-        archivo << enfermedad.getFechaDiagnostico() << ","
-            << enfermedad.getNombre() << ","
-            << enfermedad.getSeveridad() << ","
-            << enfermedad.getTratamiento() << "\n";
+        archivo << enfermedad.getFechaDiagnostico() << "," << enfermedad.getNombre() << ","
+            << enfermedad.getSeveridad() << "," << enfermedad.getTratamiento() << "\n";
     }
 
+    // Escribir las notas generales
     archivo << "Notas\n" << historial.getNotas();
-    archivo.close();
+
+    archivo.close(); // Asegúrate de cerrar el archivo
 }
 
 
@@ -84,12 +106,11 @@ void Archivo::guardarHistorialMedico(const HistorialMedico& historial) {
 // Cargar datos de pacientes
 std::vector<Paciente> Archivo::cargarPacientes(const std::string& archivo) {
     std::ifstream in(archivo);
-    std::vector<Paciente> pacientes;
-
     if (!in) {
-        std::cerr << "Error al abrir el archivo: " << archivo << "\n";
-        return pacientes;
+        throw std::runtime_error("No se pudo abrir el archivo: " + archivo);
     }
+
+    std::vector<Paciente> pacientes;
 
     std::string linea;
     while (std::getline(in, linea)) {
@@ -118,12 +139,11 @@ std::vector<Paciente> Archivo::cargarPacientes(const std::string& archivo) {
 // Cargar datos de médicos
 std::vector<Medico> Archivo::cargarMedicos(const std::string& archivo) {
     std::ifstream in(archivo);
-    std::vector<Medico> medicos;
-
     if (!in) {
-        std::cerr << "Error al abrir el archivo: " << archivo << "\n";
-        return medicos;
+        throw std::runtime_error("No se pudo abrir el archivo: " + archivo);
     }
+
+    std::vector<Medico> medicos;
 
     std::string linea;
     while (std::getline(in, linea)) {
@@ -154,12 +174,11 @@ std::vector<Medico> Archivo::cargarMedicos(const std::string& archivo) {
 //Cargar datos de citas
 std::vector<Cita> Archivo::cargarCitas(const std::string& archivo) {
     std::ifstream in(archivo);
-    std::vector<Cita> citas;
-
     if (!in) {
-        std::cerr << "Error al abrir el archivo: " << archivo << "\n";
-        return citas;
+        throw std::runtime_error("No se pudo abrir el archivo: " + archivo);
     }
+
+    std::vector<Cita> citas;
 
     std::string linea;
     while (std::getline(in, linea)) {
@@ -192,6 +211,7 @@ std::vector<Cita> Archivo::cargarCitas(const std::string& archivo) {
     return citas;
 }
 
+//Cargar datos de historial médico
 void Archivo::cargarHistorialMedico(HistorialMedico& historial) {
     std::ifstream archivo("data/historial_" + historial.getPacienteID() + ".csv");
     if (!archivo) return;
@@ -235,7 +255,7 @@ void Archivo::cargarHistorialMedico(HistorialMedico& historial) {
             std::getline(ss, fecha, ',');
             std::getline(ss, nombre, ',');
             ss >> severidad;
-            ss.ignore(); // Saltar la coma
+            ss.ignore();
             std::getline(ss, tratamiento);
 
             historial.agregarEnfermedadCronica(EnfermedadCronica(nombre, severidad, tratamiento, fecha));

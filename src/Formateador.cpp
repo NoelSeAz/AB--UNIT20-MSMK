@@ -3,6 +3,7 @@
 #include "EnfermedadCronica.hpp"
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 
 // Métodos para imprimir encabezados
 void Formateador::imprimirEncabezadoPacientes() {
@@ -94,41 +95,69 @@ void Formateador::imprimirTablaCitas(const std::vector<Cita>& citas) {
 }
 
 void Formateador::imprimirHistorialMedico(const HistorialMedico& historial) {
+    size_t anchoFecha = 20;
+    size_t anchoDiagnostico = 50;
+    size_t anchoPrueba = 50;
+    size_t anchoEnfermedad = 30;
+    size_t anchoSeveridad = 10;  // Mantén esto fijo
+    size_t anchoTratamiento = 50;
+
     std::cout << std::left;
     std::cout << "\n--- Historial Médico del Paciente ID: " << historial.getPacienteID() << " ---\n";
 
-    // Tabla de Diagnósticos
-    std::cout << "\n" << std::setw(20) << "Fecha" << std::setw(30) << "Diagnóstico" << "\n";
-    std::cout << std::string(50, '-') << "\n";
+    // Diagnósticos
+    std::cout << "\n" << std::setw(anchoFecha) << "Fecha"
+        << " " << std::setw(anchoDiagnostico) << "Diagnóstico" << "\n";
+    std::cout << std::string(anchoFecha + 1 + anchoDiagnostico, '-') << "\n";
     for (const auto& [fecha, diagnostico] : historial.getDiagnosticos()) {
-        std::cout << std::setw(20) << fecha << std::setw(30) << diagnostico << "\n";
+        auto lineas = dividirTexto(diagnostico, anchoDiagnostico);
+        std::cout << std::setw(anchoFecha) << fecha
+            << " " << lineas[0] << "\n";
+        for (size_t i = 1; i < lineas.size(); ++i) {
+            std::cout << std::setw(anchoFecha) << " "
+                << " " << lineas[i] << "\n";
+        }
     }
 
-    // Tabla de Pruebas Realizadas
-    std::cout << "\n" << std::setw(20) << "Fecha" << std::setw(30) << "Prueba Realizada" << "\n";
-    std::cout << std::string(50, '-') << "\n";
+    // Pruebas
+    std::cout << "\n" << std::setw(anchoFecha) << "Fecha"
+        << " " << std::setw(anchoPrueba) << "Prueba Realizada" << "\n";
+    std::cout << std::string(anchoFecha + 1 + anchoPrueba, '-') << "\n";
     for (const auto& [fecha, prueba] : historial.getPruebas()) {
-        std::cout << std::setw(20) << fecha << std::setw(30) << prueba << "\n";
+        auto lineas = dividirTexto(prueba, anchoPrueba);
+        std::cout << std::setw(anchoFecha) << fecha
+            << " " << lineas[0] << "\n";
+        for (size_t i = 1; i < lineas.size(); ++i) {
+            std::cout << std::setw(anchoFecha) << " "
+                << " " << lineas[i] << "\n";
+        }
     }
 
-    // Tabla de Enfermedades Crónicas
-    std::cout << "\n" << std::setw(20) << "Fecha Diagnóstico" << std::setw(25) << "Enfermedad"
-        << std::setw(15) << "Severidad" << std::setw(30) << "Tratamiento" << "\n";
-    std::cout << std::string(90, '-') << "\n";
+    // Enfermedades
+    std::cout << "\n" << std::setw(anchoFecha) << "Fecha Diagnóstico"
+        << " " << std::setw(anchoEnfermedad) << "Enfermedad"
+        << " " << std::setw(anchoSeveridad) << "Severidad"
+        << " " << std::setw(anchoTratamiento) << "Tratamiento" << "\n";
+    std::cout << std::string(anchoFecha + 1 + anchoEnfermedad + 5 + anchoSeveridad + 1 + anchoTratamiento, '-') << "\n";
     for (const auto& enfermedad : historial.getEnfermedadesCronicas()) {
-        std::cout << std::setw(20) << enfermedad.getFechaDiagnostico()
-            << std::setw(25) << enfermedad.getNombre()
-            << std::setw(15) << enfermedad.getSeveridad()
-            << std::setw(30) << enfermedad.getTratamiento() << "\n";
+        auto lineasEnfermedad = dividirTexto(enfermedad.getNombre(), anchoEnfermedad);
+        auto lineasTratamiento = dividirTexto(enfermedad.getTratamiento(), anchoTratamiento);
+
+        size_t maxLineas = std::max(lineasEnfermedad.size(), lineasTratamiento.size());
+        for (size_t i = 0; i < maxLineas; ++i) {
+            std::cout << std::setw(anchoFecha) << (i == 0 ? enfermedad.getFechaDiagnostico() : "")
+                << " " << std::setw(anchoEnfermedad) << (i < lineasEnfermedad.size() ? lineasEnfermedad[i] : "")
+                << " " << std::setw(anchoSeveridad) << (i == 0 ? "   " + std::to_string(enfermedad.getSeveridad()) : "")
+                << " " << std::setw(anchoTratamiento) << (i < lineasTratamiento.size() ? lineasTratamiento[i] : "") << "\n";
+        }
     }
 
     // Notas generales
     std::cout << "\nNotas Generales:\n";
     std::cout << historial.getNotas() << "\n";
-    std::cout << std::string(90, '-') << "\n";
+    std::cout << std::string(80, '-') << "\n";
 }
 
-// Imprimir Enfermedad Crónica
 void Formateador::imprimirEnfermedadCronica(const EnfermedadCronica& enfermedad) {
     std::cout << std::left;
     std::cout << "\n--- Detalles de Enfermedad Crónica ---\n";
@@ -142,14 +171,27 @@ void Formateador::imprimirEnfermedadCronica(const EnfermedadCronica& enfermedad)
         << std::setw(30) << enfermedad.getTratamiento() << "\n";
 }
 
+//Método para limpiar la pantalla
 void Formateador::limpiarPantalla() {
-    #ifdef _WIN32
-        system("cls");
-    #elif __linux__
-        system("clear");
-    #elif __APPLE__
-        system("clear");
+    #if defined(_WIN32)
+        std::system("cls");
+    #elif defined(__linux__) || defined(__APPLE__)
+        std::system("clear");
     #else
         std::cout << "\nLimpieza no soportada en este sistema operativo.\n";
     #endif
+}
+
+//Métodos para ajustar y ordenar el texto
+std::vector<std::string> Formateador::dividirTexto(const std::string& texto, size_t ancho) {
+    std::vector<std::string> lineas;
+    size_t inicio = 0;
+
+    while (inicio < texto.size()) {
+        size_t longitud = std::min(ancho, texto.size() - inicio);
+        lineas.push_back(texto.substr(inicio, longitud));
+        inicio += longitud;
+    }
+
+    return lineas;
 }

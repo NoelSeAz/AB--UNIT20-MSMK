@@ -31,6 +31,9 @@ public:
 
     // Limpieza de pantalla
     static void limpiarPantalla();
+
+    //Métodos para ajustar y ordenar el texto
+    static std::vector<std::string> dividirTexto(const std::string& texto, size_t ancho);
 };
 
 #endif

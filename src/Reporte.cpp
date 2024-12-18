@@ -1,5 +1,6 @@
 #include "Reporte.hpp"
 #include "Paciente.hpp"
+#include "HistorialMedico.hpp"
 #include <iostream>
 #include <algorithm>
 
@@ -39,25 +40,22 @@ void Reporte::generarCitasPendientes(const std::vector<Cita>& citas, const std::
     }
 }
 
-// Generar reporte de pacientes con enfermedades crónicas
 void Reporte::generarReporteEnfermedadesCronicas(const std::vector<Paciente>& pacientes) {
     std::cout << "\n--- Reporte de Enfermedades Crónicas ---\n";
     for (const auto& paciente : pacientes) {
-        const auto& historial = paciente.getHistorialMedico();
-        std::cout << "Paciente: " << paciente.getNombre() << " " << paciente.getApellido() << "\n";
-
+        HistorialMedico historial = paciente.cargarHistorial();
         const auto& enfermedades = historial.getEnfermedadesCronicas();
-        if (enfermedades.empty()) {
-            std::cout << "  No se registran enfermedades crónicas.\n";
-        }
-        else {
+
+        if (!enfermedades.empty()) {  // Filtra solo pacientes con enfermedades crónicas
+            std::cout << "Paciente: " << paciente.getNombre() << " " << paciente.getApellido() << "\n";
             for (const auto& enfermedad : enfermedades) {
                 std::cout << "  Enfermedad: " << enfermedad.getNombre()
-                    << ", Severidad: " << enfermedad.getSeveridad()
-                    << ", Tratamiento: " << enfermedad.getTratamiento()
-                    << ", Diagnóstico: " << enfermedad.getFechaDiagnostico() << "\n";
+                          << ", Severidad: " << enfermedad.getSeveridad()
+                          << ", Tratamiento: " << enfermedad.getTratamiento()
+                          << ", Diagnóstico: " << enfermedad.getFechaDiagnostico() << "\n";
             }
+            std::cout << "----------------------------------------\n";
         }
-        std::cout << "----------------------------------------\n";
     }
 }
+

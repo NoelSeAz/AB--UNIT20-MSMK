@@ -5,37 +5,32 @@
 #include <iomanip>
 
 // Constructor
-HistorialMedico::HistorialMedico(const std::string& pacienteID) : pacienteID(pacienteID), notas("") {
-    Archivo::cargarHistorialMedico(*this);
+HistorialMedico::HistorialMedico(const std::string& pacienteID)
+    : pacienteID(pacienteID) {
 }
 
 // Agregar diagnóstico
 void HistorialMedico::agregarDiagnostico(const std::string& fecha, const std::string& detalle) {
     diagnosticos[fecha] = detalle;
-    Archivo::guardarHistorialMedico(*this);
 }
 
 // Agregar prueba
 void HistorialMedico::agregarPrueba(const std::string& fecha, const std::string& detalle) {
     pruebas[fecha] = detalle;
-    Archivo::guardarHistorialMedico(*this);
 }
 
 // Agregar nota
 void HistorialMedico::agregarNota(const std::string& nota) {
     notas += nota + "\n";
-    Archivo::guardarHistorialMedico(*this);
 }
 
 //Agregar enfermedad crónica
 void HistorialMedico::agregarEnfermedadCronica(const EnfermedadCronica& enfermedad) {
     enfermedadesCronicas.push_back(enfermedad);
-    Archivo::guardarHistorialMedico(*this);
 }
 
 void HistorialMedico::asignarTratamiento(const std::string& tratamiento) {
     notas += "Tratamiento asignado: " + tratamiento + "\n";
-    Archivo::guardarHistorialMedico(*this);
 }
 
 // Getters

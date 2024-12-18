@@ -19,10 +19,8 @@ std::string InputValidator::obtenerFechaActual() {
 
 // Validar el formato de una fecha (dd/mm/aaaa)
 bool InputValidator::validarFormatoFecha(const std::string& fecha) {
-    std::tm fechaTm = {};
-    std::istringstream ss(fecha);
-    ss >> std::get_time(&fechaTm, "%d/%m/%Y");
-    return !ss.fail() && ss.eof();
+    static const std::regex formato("^\\d{2}/\\d{2}/\\d{4}$");
+    return std::regex_match(fecha, formato);
 }
 
 // Comparar dos fechas: -1 si fecha1 < fecha2, 0 si fecha1 == fecha2, 1 si fecha1 > fecha2

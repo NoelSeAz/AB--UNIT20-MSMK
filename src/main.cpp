@@ -3,10 +3,12 @@
 #include "Cita.hpp"
 #include "HistorialMedico.hpp"
 #include "EnfermedadCronica.hpp"
-#include "Administrador.hpp"
 #include "Formateador.hpp"
 #include "InputValidator.hpp"
 #include "Archivo.hpp"
+#include "GestorCitas.hpp"
+#include "GestorMedicos.hpp"
+#include "GestorPacientes.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -24,6 +26,27 @@ void mostrarMenuListados(const std::vector<Paciente>& pacientes, const std::vect
 void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos);
 void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos);
 
+// Función auxiliar para operar sobre el historial de un paciente
+template <typename Funcion>
+void operarHistorialPaciente(std::vector<Paciente>& pacientes, const std::string& id, Funcion operacion) {
+    auto paciente = GestorPacientes::buscarPacientePorID(pacientes, id);
+    if (paciente) {
+        HistorialMedico historial = paciente->cargarHistorial();
+        operacion(historial);
+
+        try {
+            Archivo::guardarHistorialMedico(historial);
+            std::cout << "Operación completada exitosamente.\n";
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Error al guardar el historial médico: " << e.what() << "\n";
+        }
+    }
+    else {
+        std::cout << "Paciente no encontrado.\n";
+    }
+}
+
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
@@ -32,21 +55,15 @@ int main() {
     std::filesystem::path raizProyecto = std::filesystem::current_path().parent_path().parent_path();
     std::filesystem::current_path(raizProyecto);
 
-    // Archivos por defecto
-    Archivo archivo;
-    const std::string archivoPacientes = "./data/archivo_pacientes.txt";
-    const std::string archivoMedicos = "./data/archivo_medicos.txt";
-    const std::string archivoCitas = "./data/archivo_citas.txt";
-
     std::vector<Paciente> pacientes;
     std::vector<Medico> medicos;
     std::vector<Cita> citas;
 
     try {
         // Cargar los archivos predeterminados
-        pacientes = archivo.cargarPacientes(archivoPacientes);
-        medicos = archivo.cargarMedicos(archivoMedicos);
-        citas = archivo.cargarCitas(archivoCitas);
+        pacientes = Archivo::cargarPacientes("./data/archivo_pacientes.txt");
+        medicos = Archivo::cargarMedicos("./data/archivo_medicos.txt");
+        citas = Archivo::cargarCitas("./data/archivo_citas.txt");
         std::cout << "Archivos predeterminados cargados correctamente.\n";
     }
     catch (const std::exception& e) {
@@ -140,33 +157,18 @@ void mostrarMenuGestionArchivos(std::vector<Paciente>& pacientes, std::vector<Me
         Formateador::limpiarPantalla();
 
         switch (opcion) {
-        case 1: {
-            std::string archivo;
-            std::cout << "Ingrese el archivo de pacientes (por defecto: ./data/archivo_pacientes.txt): ";
-            std::cin.ignore();
-            std::getline(std::cin, archivo);
-            if (archivo.empty()) archivo = "./data/archivo_pacientes.txt";
-            GestorAdministrativo::cargarPacientes(pacientes, archivo);
+        case 1:
+            Archivo::cargarDatos(pacientes, "Ingrese el archivo de pacientes",
+                "./data/archivo_pacientes.txt", Archivo::cargarPacientes);
             break;
-        }
-        case 2: {
-            std::string archivo;
-            std::cout << "Ingrese el archivo de médicos (por defecto: ./data/archivo_medicos.txt): ";
-            std::cin.ignore();
-            std::getline(std::cin, archivo);
-            if (archivo.empty()) archivo = "./data/archivo_medicos.txt";
-            GestorAdministrativo::cargarMedicos(medicos, archivo);
+        case 2:
+            Archivo::cargarDatos(medicos, "Ingrese el archivo de médicos",
+                "./data/archivo_medicos.txt", Archivo::cargarMedicos);
             break;
-        }
-        case 3: {
-            std::string archivo;
-            std::cout << "Ingrese el archivo de citas (por defecto: ./data/archivo_citas.txt): ";
-            std::cin.ignore();
-            std::getline(std::cin, archivo);
-            if (archivo.empty()) archivo = "./data/archivo_citas.txt";
-            GestorAdministrativo::cargarCitas(citas, archivo);
+        case 3:
+            Archivo::cargarDatos(citas, "Ingrese el archivo de citas",
+                "./data/archivo_citas.txt", Archivo::cargarCitas);
             break;
-        }
         case 0:
             std::cout << "Volviendo al menú administrador...\n";
             break;
@@ -230,7 +232,7 @@ void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& 
             std::cout << "Ingrese Apellido: "; std::cin >> apellido;
             std::cout << "Ingrese Dirección: "; std::cin.ignore(); std::getline(std::cin, direccion);
             std::cout << "Ingrese Edad: "; std::cin >> edad;
-            GestorAdministrativo::altaPaciente(pacientes, nombre, apellido, direccion, edad);
+            GestorPacientes::altaPaciente(pacientes, nombre, apellido, direccion, edad);
             break;
         }
         case 2: {
@@ -240,19 +242,19 @@ void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& 
             std::cout << "Ingrese Apellido: "; std::cin >> apellido;
             std::cout << "Ingrese Especialidad: "; std::cin.ignore(); std::getline(std::cin, especialidad);
             std::cout << "Disponibilidad (1 = Disponible, 0 = Ocupado): "; std::cin >> disponibilidad;
-            GestorAdministrativo::altaMedico(medicos, nombre, apellido, especialidad, disponibilidad);
+            GestorMedicos::altaMedico(medicos, nombre, apellido, especialidad, disponibilidad);
             break;
         }
         case 3: {
             std::string idPaciente;
             std::cout << "Ingrese ID del paciente a eliminar: "; std::cin >> idPaciente;
-            GestorAdministrativo::bajaPaciente(pacientes, idPaciente);
+            GestorPacientes::bajaPaciente(pacientes, idPaciente);
             break;
         }
         case 4: {
             std::string idMedico;
             std::cout << "Ingrese ID del médico a eliminar: "; std::cin >> idMedico;
-            GestorAdministrativo::bajaMedico(medicos, idMedico);
+            GestorMedicos::bajaMedico(medicos, idMedico);
             break;
         }
         case 0:
@@ -326,9 +328,8 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
             }
 
             // Crear cita usando el Administrador
-            AdministradorCitas gestorDeCitas;
             try {
-                gestorDeCitas.crearCita(citas, pacienteID, medicoID, fecha, prioridad);
+                GestorCitas::crearCita(citas, pacienteID, medicoID, fecha, prioridad);
             }
             catch (const std::exception& e) {
                 std::cerr << "Error al crear la cita: " << e.what() << "\n";
@@ -342,8 +343,7 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
             std::cout << "Ingrese el ID de la cita a cancelar: ";
             std::cin >> citaID;
 
-            AdministradorCitas gestorDeCitas;
-            gestorDeCitas.cancelarCita(citas, citaID);
+            GestorCitas::cancelarCita(citas, citaID);
             
             break;
         }
@@ -357,8 +357,7 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
             std::cout << "Ingrese la nueva prioridad (1 = Urgente, 2 = Normal): ";
             std::cin >> nuevaPrioridad;
 
-            AdministradorCitas gestorDeCitas;
-            gestorDeCitas.modificarCita(citas, citaID, nuevaFecha, nuevaPrioridad);
+            GestorCitas::modificarCita(citas, citaID, nuevaFecha, nuevaPrioridad);
             break;
         }
         case 4: {
@@ -410,7 +409,7 @@ void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& me
             std::string id;
             std::cout << "Ingrese ID del paciente: ";
             std::cin >> id;
-            auto paciente = GestorAdministrativo::buscarPacientePorID(pacientes, id);
+            auto paciente = GestorPacientes::buscarPacientePorID(pacientes, id);
             if (paciente) {
                 Formateador::imprimirEncabezadoPacientes();
                 Formateador::imprimirRegistro(*paciente);
@@ -422,58 +421,49 @@ void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& me
         }
 
         case 3: { // Agregar diagnóstico
-            std::string id, diagnostico, fecha;
+            std::string id;
             std::cout << "Ingrese ID del paciente: ";
             std::cin >> id;
-            auto paciente = GestorAdministrativo::buscarPacientePorID(pacientes, id);
-            if (paciente) {
+
+            operarHistorialPaciente(pacientes, id, [](HistorialMedico& historial) {
+                std::string diagnostico, fecha;
                 std::cout << "Ingrese diagnóstico: ";
                 std::cin.ignore();
                 std::getline(std::cin, diagnostico);
                 fecha = InputValidator::solicitarFecha("Ingrese fecha del diagnóstico: ");
-                paciente->getHistorialMedico().agregarDiagnostico(diagnostico, fecha);
-                std::cout << "Diagnóstico agregado exitosamente.\n";
-            }
-            else {
-                std::cout << "Paciente no encontrado.\n";
-            }
+                historial.agregarDiagnostico(fecha, diagnostico);
+                });
             break;
         }
 
         case 4: { // Agregar prueba médica
-            std::string id, prueba, fecha;
+            std::string id;
             std::cout << "Ingrese ID del paciente: ";
             std::cin >> id;
-            auto paciente = GestorAdministrativo::buscarPacientePorID(pacientes, id);
-            if (paciente) {
+
+            operarHistorialPaciente(pacientes, id, [](HistorialMedico& historial) {
+                std::string prueba, fecha;
                 std::cout << "Ingrese prueba médica: ";
                 std::cin.ignore();
                 std::getline(std::cin, prueba);
                 fecha = InputValidator::solicitarFecha("Ingrese fecha de la prueba: ");
-                paciente->getHistorialMedico().agregarPrueba(prueba, fecha);
-                std::cout << "Prueba médica agregada exitosamente.\n";
-            }
-            else {
-                std::cout << "Paciente no encontrado.\n";
-            }
+                historial.agregarPrueba(fecha, prueba);
+                });
             break;
         }
 
         case 5: { // Agregar nota general
-            std::string id, nota;
+            std::string id;
             std::cout << "Ingrese ID del paciente: ";
             std::cin >> id;
-            auto paciente = GestorAdministrativo::buscarPacientePorID(pacientes, id);
-            if (paciente) {
+
+            operarHistorialPaciente(pacientes, id, [](HistorialMedico& historial) {
+                std::string nota;
                 std::cout << "Ingrese nota general: ";
                 std::cin.ignore();
                 std::getline(std::cin, nota);
-                paciente->getHistorialMedico().agregarNota(nota);
-                std::cout << "Nota agregada exitosamente.\n";
-            }
-            else {
-                std::cout << "Paciente no encontrado.\n";
-            }
+                historial.agregarNota(nota);
+                });
             break;
         }
 
@@ -481,9 +471,11 @@ void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& me
             std::string id;
             std::cout << "Ingrese ID del paciente: ";
             std::cin >> id;
-            auto paciente = GestorAdministrativo::buscarPacientePorID(pacientes, id);
+
+            auto paciente = GestorPacientes::buscarPacientePorID(pacientes, id);
             if (paciente) {
-                Formateador::imprimirHistorialMedico(paciente->getHistorialMedico());
+                HistorialMedico historial = paciente->cargarHistorial();
+                Formateador::imprimirHistorialMedico(historial);
             }
             else {
                 std::cout << "Paciente no encontrado.\n";
@@ -492,13 +484,14 @@ void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& me
         }
 
         case 7: { // Agregar enfermedad crónica
-            std::string id, nombre, tratamiento, fechaDiagnostico;
-            int severidad;
-
+            std::string id;
             std::cout << "Ingrese ID del paciente: ";
             std::cin >> id;
-            auto paciente = GestorAdministrativo::buscarPacientePorID(pacientes, id);
-            if (paciente) {
+
+            operarHistorialPaciente(pacientes, id, [](HistorialMedico& historial) {
+                std::string nombre, tratamiento, fechaDiagnostico;
+                int severidad;
+
                 std::cout << "Ingrese nombre de la enfermedad: ";
                 std::cin.ignore();
                 std::getline(std::cin, nombre);
@@ -511,34 +504,27 @@ void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& me
                 std::getline(std::cin, tratamiento);
 
                 fechaDiagnostico = InputValidator::solicitarFecha("Ingrese fecha de diagnóstico: ");
-
                 EnfermedadCronica enfermedad(nombre, severidad, tratamiento, fechaDiagnostico);
-                paciente->getHistorialMedico().agregarEnfermedadCronica(enfermedad);
-                std::cout << "Enfermedad crónica agregada exitosamente.\n";
-            }
-            else {
-                std::cout << "Paciente no encontrado.\n";
-            }
+                historial.agregarEnfermedadCronica(enfermedad);
+                });
             break;
         }
 
         case 8: { // Asignar tratamiento
-            std::string id, tratamiento;
+            std::string id;
             std::cout << "Ingrese ID del paciente: ";
             std::cin >> id;
-            auto paciente = GestorAdministrativo::buscarPacientePorID(pacientes, id);
-            if (paciente) {
+
+            operarHistorialPaciente(pacientes, id, [](HistorialMedico& historial) {
+                std::string tratamiento;
                 std::cout << "Ingrese tratamiento a asignar: ";
                 std::cin.ignore();
                 std::getline(std::cin, tratamiento);
-                paciente->getHistorialMedico().asignarTratamiento(tratamiento);
-                std::cout << "Tratamiento asignado exitosamente.\n";
-            }
-            else {
-                std::cout << "Paciente no encontrado.\n";
-            }
+                historial.agregarNota("Tratamiento asignado: " + tratamiento);
+                });
             break;
         }
+
 
         case 0:
             std::cout << "Volviendo al menú principal...\n";
@@ -551,13 +537,12 @@ void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& me
     } while (opcion != 0);
 }
 
-
 void mostrarMenuPaciente(std::vector<Paciente>& pacientes) {
     std::string id;
     std::cout << "Ingrese su ID para acceder al sistema: ";
     std::cin >> id;
 
-    auto paciente = GestorAdministrativo::buscarPacientePorID(pacientes, id);
+    auto paciente = GestorPacientes::buscarPacientePorID(pacientes, id);
     if (!paciente) {
         std::cout << "Paciente no encontrado.\n";
         return;
@@ -579,7 +564,7 @@ void mostrarMenuPaciente(std::vector<Paciente>& pacientes) {
             Formateador::imprimirRegistro(*paciente);
             break;
         case 2:
-            Formateador::imprimirHistorialMedico(paciente->getHistorialMedico());
+            Formateador::imprimirHistorialMedico(paciente->cargarHistorial());
             break;
         case 0:
             std::cout << "Volviendo al menú principal...\n";

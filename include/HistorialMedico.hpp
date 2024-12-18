@@ -8,12 +8,12 @@
 
 class HistorialMedico {
 private:
-    std::string pacienteID;                          // ID del paciente
-    std::map<std::string, std::string> diagnosticos; // Fecha -> Diagnóstico
-    std::map<std::string, std::string> pruebas;      // Fecha -> Pruebas realizadas
-    std::map<std::string, std::string> citas;        // Fecha -> Resumen de cita
-    std::string notas;                               // Notas generales del historial médico
-    std::vector<EnfermedadCronica> enfermedadesCronicas;
+    std::string pacienteID;                                 // ID del paciente
+    std::map<std::string, std::string> diagnosticos;        // Fecha -> Diagnóstico
+    std::map<std::string, std::string> pruebas;             // Fecha -> Pruebas realizadas
+    std::map<std::string, std::string> citas;               // Fecha -> Resumen de cita
+    std::string notas;                                      // Notas generales del historial médico
+    std::vector<EnfermedadCronica> enfermedadesCronicas;    // Enfermedades crónicas
 
 public:
     // Constructor
@@ -33,7 +33,6 @@ public:
     const std::map<std::string, std::string>& getCitas() const;
     const std::string& getNotas() const;
     const std::vector<EnfermedadCronica>& getEnfermedadesCronicas() const;
-    HistorialMedico& getHistorialMedico();
 };
 
 #endif
