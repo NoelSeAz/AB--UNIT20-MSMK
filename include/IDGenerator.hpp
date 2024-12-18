@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-/// Clase encargada de generar IDs únicos para médicos y pacientes.
+/// Clase encargada de generar IDs únicos para médicos, pacientes y citas.
 class IDGenerator {
 public:
     /**
@@ -31,14 +31,14 @@ public:
     static std::string generarIDCita(const std::string& pacienteID, const std::string& medicoID, const std::string& fecha);
 
     /**
-     * @brief Genera un ID único para una cita en formato C-PacienteID-MedicoID-FechaHash.
+     * @brief Genera un hash único para una cita basado en sus datos.
      *
      * @param pacienteID ID del paciente asociado.
      * @param medicoID ID del médico asociado.
      * @param fecha Fecha de la cita (en formato dd/mm/yyyy).
-     * @return std::string ID único de la cita.
+     * @return unsigned long Hash único de la cita.
      */
-    static unsigned long generarIDCitaHash(const std::string& pacienteID, const std::string& medicoID, const std::string& fecha);
+    static unsigned long generarHashCita(const std::string& pacienteID, const std::string& medicoID, const std::string& fecha);
 
 private:
     /**

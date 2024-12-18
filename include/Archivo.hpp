@@ -44,6 +44,7 @@ public:
         }
     }
 
+    //Cargar datos de archivos
     static std::vector<Paciente> cargarPacientes(const std::string& archivo);
     static std::vector<Medico> cargarMedicos(const std::string& archivo);
     static std::vector<Cita> cargarCitas(const std::string& archivo);

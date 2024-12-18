@@ -71,9 +71,8 @@ void Archivo::guardarHistorialMedico(const HistorialMedico& historial) {
     std::ofstream archivo(rutaArchivo);
 
     if (!archivo.is_open()) {
-        // Si no se puede abrir el archivo, lanza una excepción o muestra un mensaje claro
         std::cerr << "Error al abrir el archivo para guardar historial médico: " << rutaArchivo << "\n";
-        return; // Salir sin intentar escribir
+        return;
     }
 
     // Escribir los diagnósticos
@@ -98,7 +97,7 @@ void Archivo::guardarHistorialMedico(const HistorialMedico& historial) {
     // Escribir las notas generales
     archivo << "Notas\n" << historial.getNotas();
 
-    archivo.close(); // Asegúrate de cerrar el archivo
+    archivo.close();
 }
 
 
@@ -120,7 +119,6 @@ std::vector<Paciente> Archivo::cargarPacientes(const std::string& archivo) {
         int edad;
         std::string id, nombre, apellido, direccion;
 
-        // Leer cada campo utilizando el delimitador '|'
         std::getline(ss, id, ',');
         std::getline(ss, nombre, ',');
         std::getline(ss, apellido, ',');
@@ -129,7 +127,6 @@ std::vector<Paciente> Archivo::cargarPacientes(const std::string& archivo) {
         std::getline(ss, token, ',');
         edad = std::stoi(token);
 
-        // Crear objeto Paciente y añadir al vector
         pacientes.emplace_back(id, nombre, apellido, direccion, edad);
     }
 
@@ -153,7 +150,6 @@ std::vector<Medico> Archivo::cargarMedicos(const std::string& archivo) {
         std::string id, nombre, apellido, especialidad;
         bool disponibilidad;
 
-        // Leer cada campo utilizando el delimitador '|'
         std::getline(ss, id, ',');
         
         std::getline(ss, nombre, ',');
@@ -164,7 +160,6 @@ std::vector<Medico> Archivo::cargarMedicos(const std::string& archivo) {
         std::getline(ss, token, ',');
         disponibilidad = (token == "1");
 
-        // Crear objeto Medico y añadir al vector
         medicos.emplace_back(id, nombre, apellido, especialidad, disponibilidad);
     }
 
@@ -185,27 +180,27 @@ std::vector<Cita> Archivo::cargarCitas(const std::string& archivo) {
         std::istringstream ss(linea);
         std::string token;
 
-        std::string citaIDHash, citaID, pacienteID, medicoID, fecha;
+        std::string citaIDHashStr, citaID, pacienteID, medicoID, fecha;
         int prioridad;
 
-        // Leer cada campo usando ',' como delimitador
-        std::getline(ss, citaIDHash, ',');   // 1. Hash ID
-        std::getline(ss, citaID, ',');       // 2. Cita ID
-        std::getline(ss, pacienteID, ',');   // 3. Paciente ID
-        std::getline(ss, medicoID, ',');     // 4. Medico ID
-        std::getline(ss, fecha, ',');        // 5. Fecha
-        std::getline(ss, token, ',');        // 6. Prioridad
+        std::getline(ss, citaIDHashStr, ',');
+        std::getline(ss, citaID, ',');
+        std::getline(ss, pacienteID, ',');
+        std::getline(ss, medicoID, ',');
+        std::getline(ss, fecha, ',');
+        std::getline(ss, token, ',');
 
         try {
-            prioridad = std::stoi(token); 
+            unsigned long citaIDHash = std::stoul(citaIDHashStr);
+            prioridad = std::stoi(token);                        
+
+            citas.emplace_back(citaIDHash, citaID, pacienteID, medicoID, fecha, prioridad, false);
         }
-        catch (...) {
-            std::cerr << "Error: La prioridad no es válida.\n";
+        catch (const std::exception& e) {
+            std::cerr << "Error al procesar la línea: " << linea << "\n";
+            std::cerr << "Detalle del error: " << e.what() << "\n";
             continue;
         }
-
-        // Crear y agregar la cita al vector
-        citas.emplace_back(citaIDHash, citaID, pacienteID, medicoID, fecha, prioridad, false);
     }
 
     return citas;

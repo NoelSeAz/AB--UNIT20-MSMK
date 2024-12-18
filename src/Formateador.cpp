@@ -138,7 +138,7 @@ void Formateador::imprimirHistorialMedico(const HistorialMedico& historial) {
         << " " << std::setw(anchoEnfermedad) << "Enfermedad"
         << " " << std::setw(anchoSeveridad) << "Severidad"
         << " " << std::setw(anchoTratamiento) << "Tratamiento" << "\n";
-    std::cout << std::string(anchoFecha + 1 + anchoEnfermedad + 5 + anchoSeveridad + 1 + anchoTratamiento, '-') << "\n";
+    std::cout << std::string(anchoFecha + 1 + anchoEnfermedad + 1 + anchoSeveridad + 1 + anchoTratamiento, '-') << "\n";
     for (const auto& enfermedad : historial.getEnfermedadesCronicas()) {
         auto lineasEnfermedad = dividirTexto(enfermedad.getNombre(), anchoEnfermedad);
         auto lineasTratamiento = dividirTexto(enfermedad.getTratamiento(), anchoTratamiento);

@@ -4,12 +4,17 @@
 #include <iomanip>
 
 // Constructor
-Cita::Cita(const std::string& citaIDHash, const std::string& citaID, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad, bool validar)
+Cita::Cita(const unsigned long citaIDHash, const std::string& citaID, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad, bool validar)
     : citaIDHash(citaIDHash), citaID(citaID), pacienteID(pacienteID), medicoID(medicoID), fecha(fecha), prioridad(prioridad) {
     if (validar && !InputValidator::esFechaFutura(fecha)) {
         throw std::invalid_argument("La fecha de la cita debe ser igual o posterior a la fecha actual.");
     }
-    this->fecha = fecha; // Asignar la fecha validada
+    this->fecha = fecha;
+}
+
+//Actualizar el hash de la cita
+void Cita::setCitaIDHash(const unsigned long nuevoHash) {
+    citaIDHash = nuevoHash;
 }
 
 // Modificar los detalles de una cita
@@ -55,7 +60,7 @@ void Cita::ordenarCitasPorPrioridad(std::vector<Cita>& citas) {
 }
 
 // Getters
-std::string Cita::getCitaIDHash() const { return citaIDHash;  }
+unsigned long Cita::getCitaIDHash() const { return citaIDHash;  }
 std::string Cita::getCitaID() const { return citaID; }
 std::string Cita::getPacienteID() const { return pacienteID; }
 std::string Cita::getMedicoID() const { return medicoID; }

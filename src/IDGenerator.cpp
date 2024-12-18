@@ -22,8 +22,7 @@ std::string IDGenerator::generarID(const std::string& tipo, const std::string& n
     return nuevoID;
 }
 
-// Método para generar el ID único de una cita Hash
-unsigned long IDGenerator::generarIDCitaHash(const std::string& pacienteID, const std::string& medicoID, const std::string& fecha) {
+unsigned long IDGenerator::generarHashCita(const std::string& pacienteID, const std::string& medicoID, const std::string& fecha) {
     // Concatenar todos los valores en una cadena alfanumérica
     std::string entrada = "C" + pacienteID + medicoID + fecha;
 
@@ -33,8 +32,8 @@ unsigned long IDGenerator::generarIDCitaHash(const std::string& pacienteID, cons
         hash = ((hash << 5) + hash) + c; // hash * 33 + c
     }
 
-    // Retornar el hash truncado a un rango numérico razonable
-    return hash % 100000000; // Limitamos a 8 dígitos para evitar desbordamientos
+    // Retornar el hash
+    return hash;
 }
 
 // Método para generar el ID único de una cita
