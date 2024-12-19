@@ -622,6 +622,7 @@ void mostrarMenuPaciente(std::vector<Paciente>& pacientes) {
         std::cout << "\n--- Menú Paciente ---\n";
         std::cout << "1. Ver información personal\n";
         std::cout << "2. Consultar historial clínico\n";
+        std::cout << "3. Modificar datos personales\n"; // Nueva opción
         std::cout << "0. Volver al menú principal\n";
         std::cout << "Seleccione una opción: ";
         std::cin >> opcion;
@@ -635,6 +636,22 @@ void mostrarMenuPaciente(std::vector<Paciente>& pacientes) {
         case 2:
             Formateador::imprimirHistorialMedico(paciente->cargarHistorial());
             break;
+        case 3: { // Implementación para modificar datos
+            std::string nuevaDireccion;
+            int nuevaEdad;
+
+            std::cin.ignore();
+            std::cout << "Ingrese nueva dirección: ";
+            std::getline(std::cin, nuevaDireccion);
+
+            std::cout << "Ingrese nueva edad: ";
+            std::cin >> nuevaEdad;
+
+            paciente->modificarDatos(nuevaDireccion, nuevaEdad);
+            Archivo::guardarPacientes(pacientes, "./data/archivo_pacientes.txt");
+            std::cout << "Datos modificados exitosamente.\n";
+            break;
+        }
         case 0:
             std::cout << "Volviendo al menú principal...\n";
             break;
@@ -642,5 +659,5 @@ void mostrarMenuPaciente(std::vector<Paciente>& pacientes) {
             std::cout << "Opción no válida. Intente nuevamente.\n";
             break;
         }
-    } while (opcion != 0); 
+    } while (opcion != 0);
 }
