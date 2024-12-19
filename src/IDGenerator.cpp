@@ -50,7 +50,7 @@ std::string IDGenerator::generarIDCita(const std::string& pacienteID, const std:
 // Método para extraer iniciales del nombre y apellido
 std::string IDGenerator::extraerIniciales(const std::string& nombre, const std::string& apellido) {
     std::string iniciales;
-    if (!nombre.empty()) iniciales += std::toupper(nombre[0]);
-    if (!apellido.empty()) iniciales += std::toupper(apellido[0]);
+    if (!nombre.empty()) iniciales += static_cast<char>(std::toupper(nombre[0]));
+    if (!apellido.empty()) iniciales += static_cast<char>(std::toupper(apellido[0]));
     return iniciales;
 }

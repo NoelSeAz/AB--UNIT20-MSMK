@@ -452,7 +452,7 @@ void mostrarMenuGestionEspecialidades(GestorEspecialidades& gestorEspecialidades
     } while (opcion != 0);
 }
 
-void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos) {
+void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& /*medicos*/) {
     int opcion;
     do {
         std::cout << "\n--- Menú Médico ---\n";
