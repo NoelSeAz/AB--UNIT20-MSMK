@@ -5,9 +5,11 @@
 #include <algorithm>
 
 // Constructor
-Medico::Medico(const std::string& id, const std::string& nombre, const std::string& apellido, 
-               const std::string& especialidad, bool disponibilidad)
-    : id(id), nombre(nombre), apellido(apellido), especialidad(especialidad), disponibilidad(disponibilidad) {}
+Medico::Medico(const std::string& idParam, const std::string& nombreParam, const std::string& apellidoParam,
+    const std::string& especialidadParam, bool disponibilidadParam)
+    : id(idParam), nombre(nombreParam), apellido(apellidoParam),
+    especialidad(especialidadParam), disponibilidad(disponibilidadParam) {
+}
 
 // Asignar una nueva especialidad
 void Medico::asignarEspecialidad(const std::string& nuevaEspecialidad) {

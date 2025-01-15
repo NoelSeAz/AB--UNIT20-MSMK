@@ -11,32 +11,32 @@
 
 class Formateador {
 public:
-    // Métodos para imprimir encabezados
+    // Mï¿½todos para imprimir encabezados
     static void imprimirEncabezadoPacientes();
     static void imprimirEncabezadoMedicos();
     static void imprimirEncabezadoCitas();
     static void imprimirEncabezadoEspecialidades();
 
-    // Métodos para imprimir registros individuales
+    // Mï¿½todos para imprimir registros individuales
     static void imprimirRegistro(const Paciente& paciente);
     static void imprimirRegistro(const Medico& medico);
     static void imprimirRegistro(const Cita& cita);
     static void imprimirRegistro(const Especialidad& especialidad);
 
-    // Métodos para imprimir tablas completas
+    // Mï¿½todos para imprimir tablas completas
     static void imprimirTablaPacientes(const std::vector<Paciente>& pacientes);
     static void imprimirTablaMedicos(const std::vector<Medico>& medicos);
     static void imprimirTablaCitas(const std::vector<Cita>& citas);
     static void imprimirTablaEspecialidades(const std::vector<Especialidad>& especialidades);
 
-    // Imprimir Historial Médico
+    // Imprimir Historial Mï¿½dico
     static void imprimirHistorialMedico(const HistorialMedico& historial);
     static void imprimirEnfermedadCronica(const EnfermedadCronica& enfermedad);
 
     // Limpieza de pantalla
     static void limpiarPantalla();
 
-    //Métodos para ajustar y ordenar el texto
+    //Mï¿½todos para ajustar y ordenar el texto
     static std::vector<std::string> dividirTexto(const std::string& texto, size_t ancho);
 };
 

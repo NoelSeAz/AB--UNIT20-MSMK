@@ -5,8 +5,8 @@
 #include <iomanip>
 
 // Constructor
-HistorialMedico::HistorialMedico(const std::string& pacienteID)
-    : pacienteID(pacienteID) {
+HistorialMedico::HistorialMedico(const std::string& pacienteIDParam)
+    : pacienteID(pacienteIDParam) {
 }
 
 // Agregar diagnóstico

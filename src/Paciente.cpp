@@ -5,9 +5,13 @@
 #include "Archivo.hpp"
 
 // Constructor
-Paciente::Paciente(const std::string& id, const std::string& nombre, const std::string& apellido,
-    const std::string& direccion, int edad)
-    : id(id), nombre(nombre), apellido(apellido), direccion(direccion), edad(edad) {
+Paciente::Paciente(const std::string& idParam, const std::string& nombreParam, const std::string& apellidoParam,
+    const std::string& direccionParam, int edadParam) {
+    id = idParam;
+    nombre = nombreParam;
+    apellido = apellidoParam;
+    direccion = direccionParam;
+    edad = edadParam;
 }
 
 // Modificar datos personales del paciente
@@ -25,7 +29,7 @@ std::string Paciente::getApellido() const { return apellido; }
 std::string Paciente::getDireccion() const { return direccion; }
 int Paciente::getEdad() const { return edad; }
 
-// Cargar historial clínico bajo demanda
+// Cargar historial clï¿½nico bajo demanda
 HistorialMedico Paciente::cargarHistorial() const{
     HistorialMedico historial(id);
     Archivo::cargarHistorialMedico(historial);

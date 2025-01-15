@@ -1,71 +1,71 @@
-# AB-UNIT20-MSMK: Simulador de Gestión Hospitalaria
+# AB-UNIT20-MSMK: Simulador de Gestiï¿½n Hospitalaria
 
-Este proyecto es un simulador de gestión hospitalaria desarrollado en C++. El sistema permite la gestión eficiente de información relacionada con pacientes, médicos, citas médicas, historiales clínicos y especialidades.
+Este proyecto es un simulador de gestiï¿½n hospitalaria desarrollado en C++. El sistema permite la gestiï¿½n eficiente de informaciï¿½n relacionada con pacientes, mï¿½dicos, citas mï¿½dicas, historiales clï¿½nicos y especialidades.
 
 ## Funcionalidades Principales
 
-### Gestión de Pacientes
-- Alta, baja y modificación de datos personales.
-- Búsqueda de pacientes por nombre, identificación o fecha de ingreso.
-- Registro y consulta de historial clínico.
+### Gestiï¿½n de Pacientes
+- Alta, baja y modificaciï¿½n de datos personales.
+- Bï¿½squeda de pacientes por nombre, identificaciï¿½n o fecha de ingreso.
+- Registro y consulta de historial clï¿½nico.
 
-### Gestión de Médicos
-- Alta y baja de médicos.
-- Asignación y consulta de especialidades.
-- Listado de médicos por especialidad o disponibilidad.
+### Gestiï¿½n de Mï¿½dicos
+- Alta y baja de mï¿½dicos.
+- Asignaciï¿½n y consulta de especialidades.
+- Listado de mï¿½dicos por especialidad o disponibilidad.
 
-### Gestión de Citas
-- Asignación de citas a pacientes y médicos.
-- Modificación y cancelación de citas.
-- Ordenación de citas por fecha o prioridad (urgencia).
+### Gestiï¿½n de Citas
+- Asignaciï¿½n de citas a pacientes y mï¿½dicos.
+- Modificaciï¿½n y cancelaciï¿½n de citas.
+- Ordenaciï¿½n de citas por fecha o prioridad (urgencia).
 
-### Generación de Reportes
+### Generaciï¿½n de Reportes
 - Listado de pacientes atendidos en un rango de fechas.
-- Reporte de citas pendientes por médico o especialidad.
-- Informe sobre pacientes con enfermedades crónicas.
+- Reporte de citas pendientes por mï¿½dico o especialidad.
+- Informe sobre pacientes con enfermedades crï¿½nicas.
 
 ### Manejo de Archivos
-- Guardar y cargar datos de pacientes, médicos, citas y especialidades.
-- Función de respaldo automático de la base de datos.
+- Guardar y cargar datos de pacientes, mï¿½dicos, citas y especialidades.
+- Funciï¿½n de respaldo automï¿½tico de la base de datos.
 
 ---
 
-## Requisitos Técnicos
+## Requisitos Tï¿½cnicos
 
 ### **Compilador**
 - C++17 o superior.
 - Sistema operativo compatible con compiladores como `g++` o `MSVC`.
 
-### **Librerías Utilizadas**
-- `<iostream>`: Entrada y salida estándar.
+### **Librerï¿½as Utilizadas**
+- `<iostream>`: Entrada y salida estï¿½ndar.
 - `<fstream>`: Manejo de archivos.
-- `<string>`: Manipulación de cadenas.
-- `<vector>`: Uso de arreglos dinámicos.
+- `<string>`: Manipulaciï¿½n de cadenas.
+- `<vector>`: Uso de arreglos dinï¿½micos.
 - `<map>`: Estructura de datos para pares clave-valor.
-- `<algorithm>`: Algoritmos de búsqueda y ordenación.
-- `<sstream>`: Manipulación de flujos de datos.
-- `<regex>`: Validación y procesamiento de cadenas con expresiones regulares.
+- `<algorithm>`: Algoritmos de bï¿½squeda y ordenaciï¿½n.
+- `<sstream>`: Manipulaciï¿½n de flujos de datos.
+- `<regex>`: Validaciï¿½n y procesamiento de cadenas con expresiones regulares.
 - `<ctime>` y `<iomanip>`: Manejo de fechas y formatos de salida.
-- `<optional>`: Gestión de valores opcionales (C++17).
+- `<optional>`: Gestiï¿½n de valores opcionales (C++17).
 - `<filesystem>`: Operaciones en el sistema de archivos (C++17).
 
 ---
 
 ## Instrucciones de Uso
 
-### **1. Configuración Inicial**
+### **1. Configuraciï¿½n Inicial**
 1. Clona este repositorio:
 ```
 git clone https://github.com/NoelSeAz/AB--UNIT20-MSMK.git
 ```
 
-2. Asegúrate de tener los archivos de datos necesarios en la carpeta data/:
+2. Asegï¿½rate de tener los archivos de datos necesarios en la carpeta data/:
 	- archivo_pacientes.txt
 	- archivo_medicos.txt
 	- archivo_citas.txt
 	- especialidades.csv
 
-### **2. Compilación**
+### **2. Compilaciï¿½n**
 
 ### Linux/macOS:
 ```
@@ -85,49 +85,50 @@ cmake --build . --config Debug
 	
 
 
-### **3. Ejecución**
-Después de compilar, puedes ejecutar el programa:
+### **3. Ejecuciï¿½n**
+Despuï¿½s de compilar, puedes ejecutar el programa:
 
 ### Linux/macOS:
-	```
-	./bin/Debug/UNIT20-AB
-	```
+```
+./UNIT20-AB
+```
 
 ### Windows:
-	```
-	.\Debug\UNIT20-AB.exe
-	```
+```
+cd .\Debug\
+.\UNIT20-AB.exe
+```
 
-	> Nota Importante: Asegúrate de ejecutar el programa desde el 
-	>directorio donde se generó el ejecutable (build/Debug o build/Release).
-	>Si ejecutas desde otro directorio, el programa podría no encontrar 
-	>los archivos necesarios en la carpeta data/.
+> Nota Importante: Asegï¿½rate de ejecutar el programa desde el 
+> directorio donde se generï¿½ el ejecutable (build/Debug o build/Release).
+> Si ejecutas desde otro directorio, el programa podrï¿½a no encontrar 
+> los archivos necesarios en la carpeta data/.
 
 ## Estructura del Proyecto
 
 	- main.cpp: Punto de entrada del programa.
 
 	- Clases Principales:
-		- Paciente: Gestión de pacientes.
-		- Medico: Gestión de médicos y especialidades.
-		- Cita: Gestión de citas médicas.
-		- HistorialMedico: Gestión del historial clínico.
+		- Paciente: Gestiï¿½n de pacientes.
+		- Medico: Gestiï¿½n de mï¿½dicos y especialidades.
+		- Cita: Gestiï¿½n de citas mï¿½dicas.
+		- HistorialMedico: Gestiï¿½n del historial clï¿½nico.
 
 	- Gestores:
-		- GestorCitas: Administración de las citas.
-		- GestorPacientes: Administración de los pacientes.
-		- GestorMedicos: Administración de los médicos y especialidades.
+		- GestorCitas: Administraciï¿½n de las citas.
+		- GestorPacientes: Administraciï¿½n de los pacientes.
+		- GestorMedicos: Administraciï¿½n de los mï¿½dicos y especialidades.
 
 	- Persistencia:
 		- Archivo: Carga y guarda datos en archivos.
 
 	- Utilidades:
-		- InputValidator: Validación de entradas.
+		- InputValidator: Validaciï¿½n de entradas.
 		- Formateador: Imprime datos de forma tabular y organizada.
-		- IDGenerator: Generación de IDs únicos.
+		- IDGenerator: Generaciï¿½n de IDs ï¿½nicos.
 
 ## Contribuciones
 Las contribuciones son bienvenidas. Por favor, abre un issue o un pull request si deseas mejorar el proyecto.
 
 ## Licencia
-Este proyecto está bajo la licencia MIT.
+Este proyecto estï¿½ bajo la licencia MIT.

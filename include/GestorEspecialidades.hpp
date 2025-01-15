@@ -49,7 +49,7 @@ public:
     // Métodos principales
     std::vector<Especialidad> obtenerListaEspecialidades() const;
     std::optional<Especialidad> buscarEspecialidadPorID(int id) const;
-    void añadirEspecialidad(const std::string& nombre, const std::string& descripcion);
+    void crearEspecialidad(const std::string& nombre, const std::string& descripcion);
 };
 
 #endif

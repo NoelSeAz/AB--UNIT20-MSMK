@@ -2,8 +2,8 @@
 #include <iostream>
 
 // Constructor
-EnfermedadCronica::EnfermedadCronica(const std::string& nombre, int severidad, const std::string& tratamiento, const std::string& fechaDiagnostico)
-    : nombre(nombre), severidad(severidad), tratamiento(tratamiento), fechaDiagnostico(fechaDiagnostico) {
+EnfermedadCronica::EnfermedadCronica(const std::string& nombreParam, int severidadParam, const std::string& tratamientoParam, const std::string& fechaDiagnosticoParam)
+    : nombre(nombreParam), severidad(severidadParam), tratamiento(tratamientoParam), fechaDiagnostico(fechaDiagnosticoParam) {
 }
 
 // Getters

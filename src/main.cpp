@@ -1,4 +1,4 @@
-﻿#include "Paciente.hpp"
+#include "Paciente.hpp"
 #include "Medico.hpp"
 #include "Cita.hpp"
 #include "HistorialMedico.hpp"
@@ -13,10 +13,13 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <windows.h>
 #include <memory>
 #include <filesystem>
 #include <fstream>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 // Funciones para los submenús
 void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas, GestorEspecialidades& gestorEspecialidades);
@@ -50,12 +53,26 @@ void operarHistorialPaciente(std::vector<Paciente>& pacientes, const std::string
 }
 
 int main() {
-    SetConsoleOutputCP(CP_UTF8);
-    SetConsoleCP(CP_UTF8);
 
-    // Establecer la raíz del proyecto como directorio actual
-    std::filesystem::path raizProyecto = std::filesystem::current_path().parent_path().parent_path();
-    std::filesystem::current_path(raizProyecto);
+    Formateador::limpiarPantalla();
+
+    #ifdef _WIN32
+        // Configurar la consola para UTF-8
+        SetConsoleOutputCP(CP_UTF8);
+        SetConsoleCP(CP_UTF8);
+    #endif
+
+    // Detectar el directorio raíz del proyecto
+    std::filesystem::path rutaBase = std::filesystem::current_path();
+
+    // Verificar si estamos en un subdirectorio como x64-debug y ajustar la ruta
+    if (rutaBase.filename() == "x64-debug" || rutaBase.filename() == "Release" || rutaBase.filename() == "Debug") {
+        rutaBase = rutaBase.parent_path().parent_path(); // Subir dos niveles
+    }
+    else {
+        rutaBase = rutaBase.parent_path(); // Subir un nivel
+    }
+    rutaBase /= "data"; // Añadir la carpeta data
 
     // Instanciar las estructuras principales
     std::vector<Paciente> pacientes;
@@ -65,10 +82,10 @@ int main() {
 
     try {
         // Cargar los archivos predeterminados
-        pacientes = Archivo::cargarPacientes("./data/archivo_pacientes.txt");
-        medicos = Archivo::cargarMedicos("./data/archivo_medicos.txt");
-        citas = Archivo::cargarCitas("./data/archivo_citas.txt");
-        especialidades = Archivo::cargarEspecialidades("./data/especialidades.csv");
+        pacientes = Archivo::cargarPacientes((rutaBase / "archivo_pacientes.txt").string());
+        medicos = Archivo::cargarMedicos((rutaBase / "archivo_medicos.txt").string());
+        citas = Archivo::cargarCitas((rutaBase / "archivo_citas.txt").string());
+        especialidades = Archivo::cargarEspecialidades((rutaBase / "especialidades.csv").string());
         std::cout << "Archivos predeterminados cargados correctamente.\n";
     }
     catch (const std::exception& e) {
@@ -438,7 +455,7 @@ void mostrarMenuGestionEspecialidades(GestorEspecialidades& gestorEspecialidades
             std::cout << "Ingrese una descripción para la especialidad: ";
             std::getline(std::cin, descripcion);
 
-            gestorEspecialidades.añadirEspecialidad(nombre, descripcion);
+            gestorEspecialidades.crearEspecialidad(nombre, descripcion);
             break;
         }
 

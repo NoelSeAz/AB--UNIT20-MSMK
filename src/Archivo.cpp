@@ -5,7 +5,7 @@
 #include <sstream>
 
 
-// Guardar datos de pacientes
+// Guardar datos de pacientes, medicos, citas, especialidades o historial mï¿½dico
 void Archivo::guardarPacientes(const std::vector<Paciente>& pacientes, const std::string& nombreArchivo) {
     try {
         std::ofstream archivo(nombreArchivo);
@@ -25,12 +25,11 @@ void Archivo::guardarPacientes(const std::vector<Paciente>& pacientes, const std
     }
 }
 
-// Guardar datos de médicos
 void Archivo::guardarMedicos(const std::vector<Medico>& medicos, const std::string& nombreArchivo) {
     try {
         std::ofstream archivo(nombreArchivo);
         if (!archivo.is_open()) {
-            throw std::runtime_error("No se pudo abrir el archivo para guardar médicos.");
+            throw std::runtime_error("No se pudo abrir el archivo para guardar mï¿½dicos.");
         }
 
         for (const auto& medico : medicos) {
@@ -45,7 +44,6 @@ void Archivo::guardarMedicos(const std::vector<Medico>& medicos, const std::stri
     }
 }
 
-// Guardar datos de citas
 void Archivo::guardarCitas(const std::vector<Cita>& citas, const std::string& nombreArchivo) {
     try {
         std::ofstream archivo(nombreArchivo);
@@ -79,17 +77,16 @@ void Archivo::guardarEspecialidades(const std::vector<Especialidad>& especialida
     outFile.close();
 }
 
-//Guardar datos de historial médico
 void Archivo::guardarHistorialMedico(const HistorialMedico& historial) {
     std::string rutaArchivo = "data/historial_" + historial.getPacienteID() + ".csv";
     std::ofstream archivo(rutaArchivo);
 
     if (!archivo.is_open()) {
-        std::cerr << "Error al abrir el archivo para guardar historial médico: " << rutaArchivo << "\n";
+        std::cerr << "Error al abrir el archivo para guardar historial mï¿½dico: " << rutaArchivo << "\n";
         return;
     }
 
-    // Escribir los diagnósticos
+    // Escribir los diagnï¿½sticos
     archivo << "Diagnosticos\n";
     for (const auto& [fecha, detalle] : historial.getDiagnosticos()) {
         archivo << fecha << "," << detalle << "\n";
@@ -101,7 +98,7 @@ void Archivo::guardarHistorialMedico(const HistorialMedico& historial) {
         archivo << fecha << "," << prueba << "\n";
     }
 
-    // Escribir las enfermedades crónicas
+    // Escribir las enfermedades crï¿½nicas
     archivo << "Enfermedades\n";
     for (const auto& enfermedad : historial.getEnfermedadesCronicas()) {
         archivo << enfermedad.getFechaDiagnostico() << "," << enfermedad.getNombre() << ","
@@ -116,7 +113,7 @@ void Archivo::guardarHistorialMedico(const HistorialMedico& historial) {
 
 
 
-// Cargar datos de pacientes
+// Cargar datos de pacientes, medicos, citas, especialidades o historial mï¿½dico
 std::vector<Paciente> Archivo::cargarPacientes(const std::string& archivo) {
     std::ifstream in(archivo);
     if (!in) {
@@ -147,7 +144,6 @@ std::vector<Paciente> Archivo::cargarPacientes(const std::string& archivo) {
     return pacientes;
 }
 
-// Cargar datos de médicos
 std::vector<Medico> Archivo::cargarMedicos(const std::string& archivo) {
     std::ifstream in(archivo);
     if (!in) {
@@ -180,7 +176,6 @@ std::vector<Medico> Archivo::cargarMedicos(const std::string& archivo) {
     return medicos;
 }
 
-//Cargar datos de citas
 std::vector<Cita> Archivo::cargarCitas(const std::string& archivo) {
     std::ifstream in(archivo);
     if (!in) {
@@ -211,7 +206,7 @@ std::vector<Cita> Archivo::cargarCitas(const std::string& archivo) {
             citas.emplace_back(citaIDHash, citaID, pacienteID, medicoID, fecha, prioridad, false);
         }
         catch (const std::exception& e) {
-            std::cerr << "Error al procesar la línea: " << linea << "\n";
+            std::cerr << "Error al procesar la lï¿½nea: " << linea << "\n";
             std::cerr << "Detalle del error: " << e.what() << "\n";
             continue;
         }
@@ -220,10 +215,10 @@ std::vector<Cita> Archivo::cargarCitas(const std::string& archivo) {
     return citas;
 }
 
-//Cargar datos de especialidades
 std::vector<Especialidad> Archivo::cargarEspecialidades(const std::string& archivo) {
     std::vector<Especialidad> especialidades;
     std::ifstream inFile(archivo);
+
     if (!inFile.is_open()) {
         std::cerr << "Error al abrir el archivo de especialidades: " << archivo << "\n";
         return especialidades;
@@ -232,13 +227,14 @@ std::vector<Especialidad> Archivo::cargarEspecialidades(const std::string& archi
     std::string linea;
     while (std::getline(inFile, linea)) {
         std::istringstream ss(linea);
-        int id;
-        std::string nombre, descripcion;
+        std::string idStr, nombre, descripcion;
 
-        ss >> id;
-        ss.ignore(); // Ignorar el separador
+        // Lee el ID como una cadena y conviÃ©rtelo a entero
+        std::getline(ss, idStr, ',');
         std::getline(ss, nombre, ',');
         std::getline(ss, descripcion);
+
+        int id = std::stoi(idStr); // Convierte el ID a entero
 
         if (!nombre.empty() && !descripcion.empty()) {
             especialidades.emplace_back(id, nombre, descripcion);
@@ -249,7 +245,7 @@ std::vector<Especialidad> Archivo::cargarEspecialidades(const std::string& archi
     return especialidades;
 }
 
-//Cargar datos de historial médico
+
 void Archivo::cargarHistorialMedico(HistorialMedico& historial) {
     std::ifstream archivo("data/historial_" + historial.getPacienteID() + ".csv");
     if (!archivo) return;

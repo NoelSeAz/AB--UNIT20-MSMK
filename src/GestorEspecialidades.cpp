@@ -6,8 +6,8 @@
 
 // --- Clase Especialidad ---
 
-Especialidad::Especialidad(int id, const std::string& nombre, const std::string& descripcion)
-    : id(id), nombre(nombre), descripcion(descripcion) {
+Especialidad::Especialidad(int idParam, const std::string& nombreParam, const std::string& descripcionParam)
+    : id(idParam), nombre(nombreParam), descripcion(descripcionParam) {
 }
 
 int Especialidad::getID() const {
@@ -23,7 +23,7 @@ std::string Especialidad::getDescripcion() const {
 }
 
 void Especialidad::imprimir() const {
-    std::cout << "ID: " << id << " | Nombre: " << nombre << " | Descripción: " << descripcion << "\n";
+    std::cout << "ID: " << id << " | Nombre: " << nombre << " | Descripciï¿½n: " << descripcion << "\n";
 }
 
 // --- Clase GestorEspecialidades ---
@@ -45,10 +45,10 @@ std::optional<Especialidad> GestorEspecialidades::buscarEspecialidadPorID(int id
     return std::nullopt;
 }
 
-void GestorEspecialidades::añadirEspecialidad(const std::string& nombre, const std::string& descripcion) {
-    int id = obtenerSiguienteID(); // Generar el próximo ID
+void GestorEspecialidades::crearEspecialidad(const std::string& nombre, const std::string& descripcion) {
+    int id = obtenerSiguienteID(); // Generar el prï¿½ximo ID
     especialidades.emplace_back(id, nombre, descripcion); // Crear y agregar la especialidad
-    std::cout << "Especialidad añadida exitosamente con ID " << id << ".\n";
+    std::cout << "Especialidad aï¿½adida exitosamente con ID " << id << ".\n";
 
     // Guardar en el archivo
     Archivo::guardarEspecialidades(especialidades, "./data/especialidades.csv");

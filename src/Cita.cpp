@@ -4,13 +4,15 @@
 #include <iomanip>
 
 // Constructor
-Cita::Cita(const unsigned long citaIDHash, const std::string& citaID, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad, bool validar)
-    : citaIDHash(citaIDHash), citaID(citaID), pacienteID(pacienteID), medicoID(medicoID), fecha(fecha), prioridad(prioridad) {
+Cita::Cita(const unsigned long citaIDHashParam, const std::string& citaIDParam, const std::string& pacienteIDParam,
+    const std::string& medicoIDParam, const std::string& fechaParam, int prioridadParam, bool validar)
+    : citaIDHash(citaIDHashParam), citaID(citaIDParam), pacienteID(pacienteIDParam),
+    medicoID(medicoIDParam), fecha(fechaParam), prioridad(prioridadParam) {
     if (validar && !InputValidator::esFechaFutura(fecha)) {
         throw std::invalid_argument("La fecha de la cita debe ser igual o posterior a la fecha actual.");
     }
-    this->fecha = fecha;
 }
+
 
 //Actualizar el hash de la cita
 void Cita::setCitaIDHash(const unsigned long nuevoHash) {
