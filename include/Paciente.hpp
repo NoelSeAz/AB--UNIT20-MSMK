@@ -16,7 +16,7 @@ public:
     Paciente(const std::string& id, const std::string& nombre, const std::string& apellido,
         const std::string& direccion, int edad);
 
-    // Método para modificar datos personales
+    // MÃ©todo para modificar datos personales
     void modificarDatos(const std::string& nuevaDireccion, int nuevaEdad);
 
     // Getters
@@ -26,7 +26,7 @@ public:
     std::string getDireccion() const;
     int getEdad() const;
     
-    // Método para cargar el historial bajo demanda
+    // MÃ©todo para cargar el historial bajo demanda
     HistorialMedico cargarHistorial() const;
     //const HistorialMedico& getHistorialMedico() const;
 };

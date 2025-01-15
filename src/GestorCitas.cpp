@@ -8,7 +8,7 @@ void GestorCitas::crearCita(std::vector<Cita>& citas, const std::string& pacient
         throw std::invalid_argument("La fecha debe ser igual o posterior a la fecha actual.");
     }
 
-    // Generar IDs únicos
+    // Generar IDs Ãºnicos
     std::string citaID = IDGenerator::generarIDCita(pacienteID, medicoID, fecha);
     unsigned long hash = IDGenerator::generarHashCita(pacienteID, medicoID, fecha);
 
@@ -36,7 +36,7 @@ void GestorCitas::modificarCita(std::vector<Cita>& citas, const std::string& cit
         std::cout << "Cita modificada exitosamente con nuevo ID Hash: " << nuevoHash << "\n";
     }
     else {
-        std::cerr << "Error: No se encontró una cita con el ID " << citaID << ".\n";
+        std::cerr << "Error: No se encontrÃ³ una cita con el ID " << citaID << ".\n";
     }
 }
 
@@ -48,6 +48,6 @@ void GestorCitas::cancelarCita(std::vector<Cita>& citas, const std::string& cita
         std::cout << "Cita cancelada exitosamente.\n";
     }
     else {
-        std::cerr << "Error: No se encontró una cita con el ID " << citaID << ".\n";
+        std::cerr << "Error: No se encontrÃ³ una cita con el ID " << citaID << ".\n";
     }
 }

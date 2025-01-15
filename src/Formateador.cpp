@@ -3,13 +3,13 @@
 #include <iomanip>
 #include <sstream>
 
-// M�todos para imprimir encabezados
+// Métodos para imprimir encabezados
 void Formateador::imprimirEncabezadoPacientes() {
     std::cout << std::left;
     std::cout << std::setw(10) << "ID"
         << std::setw(20) << "Nombre"
         << std::setw(20) << "Apellido"
-        << std::setw(30) << "Direcci�n"
+        << std::setw(30) << "Direccién"
         << std::setw(5) << "Edad"
         << "\n";
     std::cout << std::string(100, '-') << "\n";
@@ -31,7 +31,7 @@ void Formateador::imprimirEncabezadoCitas() {
     std::cout << std::setw(15) << "Cita ID Hash"
         << std::setw(25) << "Cita ID"
         << std::setw(15) << "Paciente ID"
-        << std::setw(15) << "M�dico ID"
+        << std::setw(15) << "Médico ID"
         << std::setw(15) << "Fecha"
         << std::setw(15) << "Prioridad"
         << "\n";
@@ -41,12 +41,12 @@ void Formateador::imprimirEncabezadoCitas() {
 void Formateador::imprimirEncabezadoEspecialidades() {
     std::cout << std::left << std::setw(5) << "ID"
         << std::setw(20) << "Nombre"
-        << std::setw(50) << "Descripci�n"
+        << std::setw(50) << "Descripción"
         << "\n";
     std::cout << std::string(75, '-') << "\n";
 }
 
-// M�todos para imprimir registros individuales
+// Métodos para imprimir registros individuales
 void Formateador::imprimirRegistro(const Paciente& paciente) {
     std::cout << std::left;
     std::cout << std::setw(10) << paciente.getID()
@@ -88,7 +88,7 @@ void Formateador::imprimirRegistro(const Especialidad& especialidad) {
 
 
 
-// M�todos para imprimir tablas completas
+// Métodos para imprimir tablas completas
 void Formateador::imprimirTablaPacientes(const std::vector<Paciente>& pacientes) {
     imprimirEncabezadoPacientes();
     for (const auto& paciente : pacientes) {
@@ -133,11 +133,11 @@ void Formateador::imprimirHistorialMedico(const HistorialMedico& historial) {
     int anchoTratamiento = 50;
 
     std::cout << std::left;
-    std::cout << "\n--- Historial M�dico del Paciente ID: " << historial.getPacienteID() << " ---\n";
+    std::cout << "\n--- Historial Médico del Paciente ID: " << historial.getPacienteID() << " ---\n";
 
-    // Diagn�sticos
+    // Diagnósticos
     std::cout << "\n" << std::setw(anchoFecha) << "Fecha"
-        << " " << std::setw(anchoDiagnostico) << "Diagn�stico" << "\n";
+        << " " << std::setw(anchoDiagnostico) << "Diagnóstico" << "\n";
     std::cout << std::string(anchoFecha + 1 + anchoDiagnostico, '-') << "\n";
     for (const auto& [fecha, diagnostico] : historial.getDiagnosticos()) {
         auto lineas = dividirTexto(diagnostico, anchoDiagnostico);
@@ -164,7 +164,7 @@ void Formateador::imprimirHistorialMedico(const HistorialMedico& historial) {
     }
 
     // Enfermedades
-    std::cout << "\n" << std::setw(anchoFecha) << "Fecha Diagn�stico"
+    std::cout << "\n" << std::setw(anchoFecha) << "Fecha Diagnóstico"
         << " " << std::setw(anchoEnfermedad) << "Enfermedad"
         << " " << std::setw(anchoSeveridad) << "Severidad"
         << " " << std::setw(anchoTratamiento) << "Tratamiento" << "\n";
@@ -190,9 +190,9 @@ void Formateador::imprimirHistorialMedico(const HistorialMedico& historial) {
 
 void Formateador::imprimirEnfermedadCronica(const EnfermedadCronica& enfermedad) {
     std::cout << std::left;
-    std::cout << "\n--- Detalles de Enfermedad Cr�nica ---\n";
+    std::cout << "\n--- Detalles de Enfermedad Crónica ---\n";
     std::cout << std::setw(20) << "Nombre"
-        << std::setw(20) << "Fecha Diagn�stico"
+        << std::setw(20) << "Fecha Diagnóstico"
         << std::setw(30) << "Tratamiento Actual" << "\n";
     std::cout << std::string(70, '-') << "\n";
 
@@ -201,7 +201,7 @@ void Formateador::imprimirEnfermedadCronica(const EnfermedadCronica& enfermedad)
         << std::setw(30) << enfermedad.getTratamiento() << "\n";
 }
 
-//M�todo para limpiar la pantalla
+//Método para limpiar la pantalla
 void Formateador::limpiarPantalla() {
     #if defined(_WIN32)
         std::system("cls");
@@ -212,7 +212,7 @@ void Formateador::limpiarPantalla() {
     #endif
 }
 
-//M�todos para ajustar y ordenar el texto
+//Métodos para ajustar y ordenar el texto
 std::vector<std::string> Formateador::dividirTexto(const std::string& texto, size_t ancho) {
     std::vector<std::string> lineas;
     size_t inicio = 0;

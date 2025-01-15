@@ -7,10 +7,10 @@
 
     class Cita {
     private:
-        unsigned long citaIDHash;      // Identificador único de la cita Hash
-        std::string citaID;            // Identificador único de la cita
+        unsigned long citaIDHash;      // Identificador Ãºnico de la cita Hash
+        std::string citaID;            // Identificador Ãºnico de la cita
         std::string pacienteID;        // ID del paciente asociado
-        std::string medicoID;          // ID del médico asociado
+        std::string medicoID;          // ID del mÃ©dico asociado
         std::string fecha;             // Fecha de la cita (formato: "DD/MM/YYYY")
         int prioridad;                 // Prioridad de la cita (0: normal, 1: urgente)
 
@@ -22,10 +22,10 @@
         // Constructor
         Cita(const unsigned long citaIDHash, const std::string& citaID, const std::string& pacienteID, const std::string& medicoID, const std::string& fecha, int prioridad, bool validar = true);
 
-        // Métodos para gestionar la cita
+        // MÃ©todos para gestionar la cita
         void modificarCita(const std::string& nuevaFecha, int nuevaPrioridad);
 
-        // Métodos estáticos para ordenar citas
+        // MÃ©todos estÃ¡ticos para ordenar citas
         static void ordenarCitasPorFecha(std::vector<Cita>& citas);
         static void ordenarCitasPorPrioridad(std::vector<Cita>& citas);
 

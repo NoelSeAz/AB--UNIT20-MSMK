@@ -24,12 +24,12 @@ void Reporte::generarListadoPacientes(const std::vector<Paciente>& pacientes, co
     }
 }
 
-// Generar listado de citas pendientes por médico
+// Generar listado de citas pendientes por mÃ©dico
 void Reporte::generarCitasPendientes(const std::vector<Cita>& citas, const std::vector<Medico>& medicos) {
-    std::cout << "Citas pendientes por médico:\n";
+    std::cout << "Citas pendientes por mÃ©dico:\n";
 
     for (const auto& medico : medicos) {
-        std::cout << "\nMédico: " << medico.getNombre() << " " << medico.getApellido()
+        std::cout << "\nMÃ©dico: " << medico.getNombre() << " " << medico.getApellido()
             << " (ID: " << medico.getID() << ")\n";
         for (const auto& cita : citas) {
             if (cita.getMedicoID() == medico.getID() && cita.getFecha() >= "2024-11-26") {
@@ -41,18 +41,18 @@ void Reporte::generarCitasPendientes(const std::vector<Cita>& citas, const std::
 }
 
 void Reporte::generarReporteEnfermedadesCronicas(const std::vector<Paciente>& pacientes) {
-    std::cout << "\n--- Reporte de Enfermedades Crónicas ---\n";
+    std::cout << "\n--- Reporte de Enfermedades CrÃ³nicas ---\n";
     for (const auto& paciente : pacientes) {
         HistorialMedico historial = paciente.cargarHistorial();
         const auto& enfermedades = historial.getEnfermedadesCronicas();
 
-        if (!enfermedades.empty()) {  // Filtra solo pacientes con enfermedades crónicas
+        if (!enfermedades.empty()) {  // Filtra solo pacientes con enfermedades crÃ³nicas
             std::cout << "Paciente: " << paciente.getNombre() << " " << paciente.getApellido() << "\n";
             for (const auto& enfermedad : enfermedades) {
                 std::cout << "  Enfermedad: " << enfermedad.getNombre()
                           << ", Severidad: " << enfermedad.getSeveridad()
                           << ", Tratamiento: " << enfermedad.getTratamiento()
-                          << ", Diagnóstico: " << enfermedad.getFechaDiagnostico() << "\n";
+                          << ", DiagnÃ³stico: " << enfermedad.getFechaDiagnostico() << "\n";
             }
             std::cout << "----------------------------------------\n";
         }

@@ -8,13 +8,13 @@ private:
     std::string nombre;           // Nombre de la enfermedad
     int severidad;                // Nivel de severidad
     std::string tratamiento;      // Tratamiento actual
-    std::string fechaDiagnostico; // Fecha del diagnóstico
+    std::string fechaDiagnostico; // Fecha del diagnÃ³stico
 
 public:
     // Constructor
     EnfermedadCronica(const std::string& nombre, int severidad, const std::string& tratamiento, const std::string& fechaDiagnostico);
 
-    // Métodos
+    // MÃ©todos
     std::string getNombre() const;
     int getSeveridad() const;
     std::string getTratamiento() const;

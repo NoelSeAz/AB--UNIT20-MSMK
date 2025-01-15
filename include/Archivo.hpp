@@ -20,7 +20,7 @@ public:
     static void guardarEspecialidades(const std::vector<Especialidad>& especialidades, const std::string& archivo);
     static void guardarHistorialMedico(const HistorialMedico& historial);
 
-    // Cargar datos desde archivos usando una función genérica
+    // Cargar datos desde archivos usando una funciÃ³n genÃ©rica
     template <typename T>
     static void cargarDatos(std::vector<T>& contenedor, const std::string& mensaje,
         const std::string& archivoPorDefecto,

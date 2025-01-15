@@ -31,7 +31,7 @@ bool InputValidator::validarFormatoFecha(const std::string& fecha) {
 // Comparar dos fechas: -1 si fecha1 < fecha2, 0 si fecha1 == fecha2, 1 si fecha1 > fecha2
 int InputValidator::compararFechas(const std::string& fecha1, const std::string& fecha2) {
     if (!validarFormatoFecha(fecha1) || !validarFormatoFecha(fecha2)) {
-        throw std::invalid_argument("Formato de fecha no válido.");
+        throw std::invalid_argument("Formato de fecha no vÃ¡lido.");
     }
 
     // Convertir ambas fechas a std::tm
@@ -64,7 +64,7 @@ bool InputValidator::esFechaPosterior(const std::string& fechaComparada, const s
     return compararFechas(fechaComparada, fechaReferencia) >= 0;
 }
 
-// Solicitar una fecha con validación de formato y rango opcional
+// Solicitar una fecha con validaciÃ³n de formato y rango opcional
 std::string InputValidator::solicitarFecha(const std::string& mensaje, const std::optional<std::string>& fechaInicio, const std::optional<std::string>& fechaFin) {
     std::string fecha;
     while (true) {
@@ -73,7 +73,7 @@ std::string InputValidator::solicitarFecha(const std::string& mensaje, const std
 
         // Validar formato de fecha
         if (!validarFormatoFecha(fecha)) {
-            std::cout << "Formato de fecha no válido. Intente nuevamente.\n";
+            std::cout << "Formato de fecha no vÃ¡lido. Intente nuevamente.\n";
             continue;
         }
 
@@ -97,7 +97,7 @@ std::string InputValidator::solicitarFecha(const std::string& mensaje, const std
     }
 }
 
-// Validar que un rango de fechas es lógico
+// Validar que un rango de fechas es lÃ³gico
 bool InputValidator::validarRangoFechas(const std::string& fechaInicio, const std::string& fechaFin) {
     return compararFechas(fechaInicio, fechaFin) <= 0;
 }

@@ -9,17 +9,17 @@
 class HistorialMedico {
 private:
     std::string pacienteID;                                 // ID del paciente
-    std::map<std::string, std::string> diagnosticos;        // Fecha -> Diagnóstico
+    std::map<std::string, std::string> diagnosticos;        // Fecha -> DiagnÃ³stico
     std::map<std::string, std::string> pruebas;             // Fecha -> Pruebas realizadas
     std::map<std::string, std::string> citas;               // Fecha -> Resumen de cita
-    std::string notas;                                      // Notas generales del historial médico
-    std::vector<EnfermedadCronica> enfermedadesCronicas;    // Enfermedades crónicas
+    std::string notas;                                      // Notas generales del historial mÃ©dico
+    std::vector<EnfermedadCronica> enfermedadesCronicas;    // Enfermedades crÃ³nicas
 
 public:
     // Constructor
     HistorialMedico(const std::string& pacienteID);
 
-    // Métodos para agregar datos al historial
+    // MÃ©todos para agregar datos al historial
     void agregarDiagnostico(const std::string& fecha, const std::string& detalle);
     void agregarPrueba(const std::string& fecha, const std::string& detalle);
     void agregarNota(const std::string& nota);

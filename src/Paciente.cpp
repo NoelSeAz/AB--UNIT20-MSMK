@@ -29,7 +29,7 @@ std::string Paciente::getApellido() const { return apellido; }
 std::string Paciente::getDireccion() const { return direccion; }
 int Paciente::getEdad() const { return edad; }
 
-// Cargar historial cl�nico bajo demanda
+// Cargar historial clínico bajo demanda
 HistorialMedico Paciente::cargarHistorial() const{
     HistorialMedico historial(id);
     Archivo::cargarHistorialMedico(historial);

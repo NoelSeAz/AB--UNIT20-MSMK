@@ -24,10 +24,10 @@ public:
     // Validar que una fecha es igual o posterior a otra
     static bool esFechaPosterior(const std::string& fechaComparada, const std::string& fechaReferencia);
 
-    // Validar que un rango de fechas es lógico (inicio <= fin)
+    // Validar que un rango de fechas es lÃ³gico (inicio <= fin)
     static bool validarRangoFechas(const std::string& fechaInicio, const std::string& fechaFin);
 
-    // Solicitar una fecha con validación de formato y rango opcional
+    // Solicitar una fecha con validaciÃ³n de formato y rango opcional
     static std::string solicitarFecha(const std::string& mensaje, const std::optional<std::string>& fechaInicio = std::nullopt, const std::optional<std::string>& fechaFin = std::nullopt);
 };
 

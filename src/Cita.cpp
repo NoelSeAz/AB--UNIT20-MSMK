@@ -22,10 +22,10 @@ void Cita::setCitaIDHash(const unsigned long nuevoHash) {
 // Modificar los detalles de una cita
 void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad) {
     if (!InputValidator::validarFormatoFecha(nuevaFecha)) {
-        throw std::invalid_argument("El formato de la nueva fecha es inv醠ido.");
+        throw std::invalid_argument("El formato de la nueva fecha es inv贸lido.");
     }
 
-    // Obtener la fecha actual para comparaci髇
+    // Obtener la fecha actual para comparaci贸n
     std::string fechaActual = InputValidator::obtenerFechaActual(); 
 
     // Validar que la nueva fecha no sea anterior a hoy
@@ -40,12 +40,12 @@ void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad) {
     std::cout << "Nueva fecha: " << nuevaFecha << ", Nueva prioridad: " << nuevaPrioridad << "\n";
 }
 
-// Funci髇 de comparaci髇 por fecha
+// Funci贸n de comparaci贸n por fecha
 bool Cita::compararPorFecha(const Cita& a, const Cita& b) {
     return a.fecha < b.fecha; // Orden ascendente
 }
 
-// Funci髇 de comparaci髇 por prioridad
+// Funci贸n de comparaci贸n por prioridad
 bool Cita::compararPorPrioridad(const Cita& a, const Cita& b) {
     return a.prioridad > b.prioridad; // Orden descendente
 }

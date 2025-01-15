@@ -9,7 +9,7 @@ HistorialMedico::HistorialMedico(const std::string& pacienteIDParam)
     : pacienteID(pacienteIDParam) {
 }
 
-// Agregar diagnóstico
+// Agregar diagnÃ³stico
 void HistorialMedico::agregarDiagnostico(const std::string& fecha, const std::string& detalle) {
     diagnosticos[fecha] = detalle;
 }
@@ -24,7 +24,7 @@ void HistorialMedico::agregarNota(const std::string& nota) {
     notas += nota + "\n";
 }
 
-//Agregar enfermedad crónica
+//Agregar enfermedad crÃ³nica
 void HistorialMedico::agregarEnfermedadCronica(const EnfermedadCronica& enfermedad) {
     enfermedadesCronicas.push_back(enfermedad);
 }

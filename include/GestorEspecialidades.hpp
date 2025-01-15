@@ -20,7 +20,7 @@ public:
     std::string getNombre() const;
     std::string getDescripcion() const;
 
-    // Mostrar información de la especialidad
+    // Mostrar informaciÃ³n de la especialidad
     void imprimir() const;
 };
 
@@ -32,7 +32,7 @@ private:
             return 1; // Primer ID si no hay especialidades
         }
 
-        // Buscar el ID más alto en la lista de especialidades
+        // Buscar el ID mÃ¡s alto en la lista de especialidades
         int maxID = 0;
         for (const auto& especialidad : especialidades) {
             if (especialidad.getID() > maxID) {
@@ -46,7 +46,7 @@ public:
     // Constructor: carga especialidades al iniciar
     GestorEspecialidades(const std::vector<Especialidad>& especialidadesIniciales);
 
-    // Métodos principales
+    // MÃ©todos principales
     std::vector<Especialidad> obtenerListaEspecialidades() const;
     std::optional<Especialidad> buscarEspecialidadPorID(int id) const;
     void crearEspecialidad(const std::string& nombre, const std::string& descripcion);

@@ -22,7 +22,7 @@ void GestorPacientes::bajaPaciente(std::vector<Paciente>& pacientes, const std::
         Archivo::guardarPacientes(pacientes, "./data/archivo_pacientes.txt");
     }
     else {
-        std::cerr << "Error: No se encontró un paciente con el ID " << id << ".\n";
+        std::cerr << "Error: No se encontrÃ³ un paciente con el ID " << id << ".\n";
     }
 }
 
