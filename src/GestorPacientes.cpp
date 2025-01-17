@@ -11,7 +11,7 @@ void GestorPacientes::altaPaciente(std::vector<Paciente>& pacientes, const std::
     pacientes.emplace_back(ID, nombre, apellido, direccion, edad);
     std::cout << "Paciente dado de alta exitosamente:\n";
     Formateador::imprimirRegistro(pacientes.back());
-    Archivo::guardarPacientes(pacientes, "./data/archivo_pacientes.txt");
+    Archivo::guardarPacientes(pacientes, "archivo_pacientes.txt");
 }
 
 void GestorPacientes::bajaPaciente(std::vector<Paciente>& pacientes, const std::string& id) {
@@ -19,7 +19,7 @@ void GestorPacientes::bajaPaciente(std::vector<Paciente>& pacientes, const std::
     if (it != pacientes.end()) {
         pacientes.erase(it, pacientes.end());
         std::cout << "Paciente con ID " << id << " dado de baja exitosamente.\n";
-        Archivo::guardarPacientes(pacientes, "./data/archivo_pacientes.txt");
+        Archivo::guardarPacientes(pacientes, "archivo_pacientes.txt");
     }
     else {
         std::cerr << "Error: No se encontró un paciente con el ID " << id << ".\n";

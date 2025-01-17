@@ -51,5 +51,5 @@ void GestorEspecialidades::crearEspecialidad(const std::string& nombre, const st
     std::cout << "Especialidad creada exitosamente con ID " << id << ".\n";
 
     // Guardar en el archivo
-    Archivo::guardarEspecialidades(especialidades, "./data/especialidades.csv");
+    Archivo::guardarEspecialidades(especialidades, "especialidades.csv");
 }

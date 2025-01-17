@@ -1,5 +1,6 @@
 #include "Cita.hpp"
 #include "InputValidator.hpp"
+#include "IDGenerator.hpp"
 #include <iostream>
 #include <iomanip>
 
@@ -13,32 +14,40 @@ Cita::Cita(const unsigned long citaIDHashParam, const std::string& citaIDParam, 
     }
 }
 
-
-//Actualizar el hash de la cita
+// Actualizar el hash de la cita
 void Cita::setCitaIDHash(const unsigned long nuevoHash) {
     citaIDHash = nuevoHash;
 }
 
 // Modificar los detalles de una cita
 void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad) {
+    // Validar formato de la nueva fecha
     if (!InputValidator::validarFormatoFecha(nuevaFecha)) {
-        throw std::invalid_argument("El formato de la nueva fecha es invólido.");
+        throw std::invalid_argument("El formato de la nueva fecha es inválido.");
     }
 
-    // Obtener la fecha actual para comparación
-    std::string fechaActual = InputValidator::obtenerFechaActual(); 
-
-    // Validar que la nueva fecha no sea anterior a hoy
-    if (!InputValidator::esFechaPosterior(nuevaFecha, fechaActual)) {
+    // Validar que la nueva fecha no sea anterior a la actual
+    if (!InputValidator::esFechaPosterior(nuevaFecha, InputValidator::obtenerFechaActual())) {
         throw std::invalid_argument("La nueva fecha debe ser igual o posterior a la fecha actual.");
     }
 
-    // Si la nueva fecha es anterior a la fecha original, se permite mientras sea igual o posterior a hoy
+    // Validar prioridad
+    if (nuevaPrioridad != 1 && nuevaPrioridad != 2) {
+        throw std::invalid_argument("Prioridad inválida. Debe ser 1 (Urgente) o 2 (Normal).");
+    }
+
+    // Actualizar atributos
     this->fecha = nuevaFecha;
     this->prioridad = nuevaPrioridad;
 
-    std::cout << "Nueva fecha: " << nuevaFecha << ", Nueva prioridad: " << nuevaPrioridad << "\n";
+    // Regenerar citaID
+    this->citaID = IDGenerator::generarIDCita(this->pacienteID, this->medicoID, this->fecha);
+
+    std::cout << "Cita modificada exitosamente:\n";
+    std::cout << "Nuevo ID: " << this->citaID << ", Fecha: " << this->fecha
+        << ", Prioridad: " << (this->prioridad == 1 ? "Urgente" : "Normal") << "\n";
 }
+
 
 // Función de comparación por fecha
 bool Cita::compararPorFecha(const Cita& a, const Cita& b) {
@@ -50,18 +59,8 @@ bool Cita::compararPorPrioridad(const Cita& a, const Cita& b) {
     return a.prioridad > b.prioridad; // Orden descendente
 }
 
-// Ordenar citas por fecha
-void Cita::ordenarCitasPorFecha(std::vector<Cita>& citas) {
-    std::sort(citas.begin(), citas.end(), compararPorFecha);
-}
-
-// Ordenar citas por prioridad
-void Cita::ordenarCitasPorPrioridad(std::vector<Cita>& citas) {
-    std::sort(citas.begin(), citas.end(), compararPorPrioridad);
-}
-
 // Getters
-unsigned long Cita::getCitaIDHash() const { return citaIDHash;  }
+unsigned long Cita::getCitaIDHash() const { return citaIDHash; }
 std::string Cita::getCitaID() const { return citaID; }
 std::string Cita::getPacienteID() const { return pacienteID; }
 std::string Cita::getMedicoID() const { return medicoID; }

@@ -10,6 +10,7 @@
 #include <string>
 #include <functional>
 #include <iostream>
+#include <filesystem>
 
 class Archivo {
 public:
@@ -52,6 +53,9 @@ public:
     static std::vector<Cita> cargarCitas(const std::string& archivo);
     static std::vector<Especialidad> cargarEspecialidades(const std::string& archivo);
     static void cargarHistorialMedico(HistorialMedico& historial);
+
+    //Obtener ruta base
+    static std::filesystem::path obtenerRutaBase(const std::string& nombreArchivo);
 };
 
 #endif

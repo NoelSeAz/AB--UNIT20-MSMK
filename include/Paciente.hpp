@@ -6,11 +6,11 @@
 
 class Paciente {
 private:
-    std::string id;
-    std::string nombre;
-    std::string apellido;
-    std::string direccion;
-    int edad;
+    std::string id;                   // Identificador único del paciente
+    std::string nombre;               // Nombre del paciente
+    std::string apellido;             // Apellido del paciente
+    std::string direccion;            // Dirección del paciente
+    int edad;                         // Edad del paciente
 
 public:
     Paciente(const std::string& id, const std::string& nombre, const std::string& apellido,
@@ -28,7 +28,6 @@ public:
     
     // Método para cargar el historial bajo demanda
     HistorialMedico cargarHistorial() const;
-    //const HistorialMedico& getHistorialMedico() const;
 };
 
 #endif

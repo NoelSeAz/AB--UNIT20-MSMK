@@ -25,7 +25,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(
         "$<$<CONFIG:Debug>:/W4;/DDEBUG;/Od;/Zi>" # /W4: Nivel de advertencias alto, /Od: Sin optimización, /Zi: Depuración
-        "$<$<CONFIG:Release>:/O2;/W4>"          # /O2: Optimización, /W3: Advertencias moderadas
+        "$<$<CONFIG:Release>:/W4;/O2>"          # /O2: Optimización, /W3: Advertencias moderadas
     )
 endif()
 

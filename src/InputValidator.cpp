@@ -31,7 +31,7 @@ bool InputValidator::validarFormatoFecha(const std::string& fecha) {
 // Comparar dos fechas: -1 si fecha1 < fecha2, 0 si fecha1 == fecha2, 1 si fecha1 > fecha2
 int InputValidator::compararFechas(const std::string& fecha1, const std::string& fecha2) {
     if (!validarFormatoFecha(fecha1) || !validarFormatoFecha(fecha2)) {
-        throw std::invalid_argument("Formato de fecha no válido.");
+        return -2;
     }
 
     // Convertir ambas fechas a std::tm
@@ -51,22 +51,41 @@ int InputValidator::compararFechas(const std::string& fecha1, const std::string&
 
 // Validar que la fecha ingresada es futura (>= hoy)
 bool InputValidator::esFechaFutura(const std::string& fecha) {
-    return compararFechas(fecha, obtenerFechaActual()) >= 0;
+    int resultado = compararFechas(fecha, obtenerFechaActual());
+    if (resultado == -2) {
+        std::cerr << "Error: Formato de fecha no válido en esFechaFutura.\n";
+        return false;
+    }
+    return resultado >= 0;
 }
+
 
 // Validar que la fecha ingresada es pasada o actual (<= hoy)
 bool InputValidator::esFechaPasadaOActual(const std::string& fecha) {
-    return compararFechas(fecha, obtenerFechaActual()) <= 0;
+    int resultado = compararFechas(fecha, obtenerFechaActual());
+    if (resultado == -2) {
+        std::cerr << "Error: Formato de fecha no válido en esFechaPasadaOActual.\n";
+        return false;
+    }
+    return resultado <= 0;
 }
+
 
 // Validar que fechaComparada es igual o posterior a fechaReferencia
 bool InputValidator::esFechaPosterior(const std::string& fechaComparada, const std::string& fechaReferencia) {
-    return compararFechas(fechaComparada, fechaReferencia) >= 0;
+    int resultado = compararFechas(fechaComparada, fechaReferencia);
+    if (resultado == -2) {
+        std::cerr << "Error: Formato de fecha no válido en esFechaPosterior.\n";
+        return false;
+    }
+    return resultado >= 0;
 }
+
 
 // Solicitar una fecha con validación de formato y rango opcional
 std::string InputValidator::solicitarFecha(const std::string& mensaje, const std::optional<std::string>& fechaInicio, const std::optional<std::string>& fechaFin) {
     std::string fecha;
+
     while (true) {
         std::cout << mensaje << " (dd/mm/aaaa): ";
         std::cin >> fecha;
@@ -78,19 +97,23 @@ std::string InputValidator::solicitarFecha(const std::string& mensaje, const std
         }
 
         // Comparar con rango de fechas si es necesario
-        try {
-            if (fechaInicio && compararFechas(fecha, *fechaInicio) < 0) {
+        if (fechaInicio || fechaFin) {
+            int resultadoInicio = fechaInicio ? compararFechas(fecha, *fechaInicio) : 0;
+            int resultadoFin = fechaFin ? compararFechas(fecha, *fechaFin) : 0;
+
+            if (resultadoInicio == -2 || resultadoFin == -2) {
+                std::cout << "Error en la comparación de fechas. Verifique el formato.\n";
+                continue;
+            }
+
+            if (resultadoInicio < 0) {
                 std::cout << "La fecha no puede ser menor que " << *fechaInicio << ". Intente nuevamente.\n";
                 continue;
             }
-            if (fechaFin && compararFechas(fecha, *fechaFin) > 0) {
+            if (resultadoFin > 0) {
                 std::cout << "La fecha no puede ser mayor que " << *fechaFin << ". Intente nuevamente.\n";
                 continue;
             }
-        }
-        catch (const std::invalid_argument& e) {
-            std::cout << e.what() << "\n";
-            continue;
         }
 
         return fecha;
