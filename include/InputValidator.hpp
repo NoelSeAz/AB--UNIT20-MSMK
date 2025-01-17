@@ -69,6 +69,8 @@ public:
 
     // Validar valor prioridad
     static int solicitarPrioridad();
+
+    static bool validarDisponibilidad(int disponibilidad);
 };
 
 #endif

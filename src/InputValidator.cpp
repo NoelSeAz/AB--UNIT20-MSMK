@@ -151,3 +151,7 @@ int InputValidator::solicitarPrioridad() {
         }
     }
 }
+
+bool InputValidator::validarDisponibilidad(int disponibilidad) {
+    return disponibilidad == 0 || disponibilidad == 1;
+}

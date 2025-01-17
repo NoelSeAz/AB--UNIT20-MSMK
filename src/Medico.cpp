@@ -39,3 +39,4 @@ std::string Medico::getID() const { return id; }
 std::string Medico::getNombre() const { return nombre; }
 std::string Medico::getApellido() const { return apellido; }
 std::string Medico::getEspecialidad() const { return especialidad; }
+bool Medico::getDisponibilidad() const { return disponibilidad; }

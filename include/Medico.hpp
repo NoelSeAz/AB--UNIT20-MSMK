@@ -34,6 +34,7 @@ public:
     std::string getNombre() const;
     std::string getApellido() const;
     std::string getEspecialidad() const;
+    bool getDisponibilidad() const;
 };
 
 

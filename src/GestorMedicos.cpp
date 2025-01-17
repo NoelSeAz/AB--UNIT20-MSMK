@@ -1,6 +1,7 @@
 #include "GestorMedicos.hpp"
 #include "Formateador.hpp"
 #include "IDGenerator.hpp"
+#include "InputValidator.hpp"
 #include "Archivo.hpp"
 #include "iostream"
 
@@ -78,3 +79,38 @@ Medico* GestorMedicos::buscarMedicoPorID(std::vector<Medico>& medicos, const std
         });
     return (it != medicos.end()) ? &(*it) : nullptr;
 }
+
+void GestorMedicos::cambiarDisponibilidad(std::vector<Medico>& medicos, const std::string& medicoID) {
+    auto itMedico = std::find_if(medicos.begin(), medicos.end(), [&medicoID](const Medico& medico) {
+        return medico.getID() == medicoID;
+        });
+
+    if (itMedico == medicos.end()) {
+        std::cerr << "Error: Médico no encontrado con el ID proporcionado.\n";
+        return;
+    }
+
+    std::cout << "Disponibilidad actual del médico: "
+        << (itMedico->obtenerDisponibilidad() ? "Disponible" : "Ocupado") << ".\n";
+
+
+    int nuevaDisponibilidad;
+    while (true) {
+        std::cout << "Ingrese la nueva disponibilidad (1 = Disponible, 0 = Ocupado): ";
+        std::cin >> nuevaDisponibilidad;
+
+        if (std::cin.fail() || !InputValidator::validarDisponibilidad(nuevaDisponibilidad)) {
+            std::cerr << "Error: Disponibilidad inválida. Debe ser 1 (Disponible) o 0 (Ocupado).\n";
+            std::cin.clear();
+            std::cin.ignore(1000, '\n');
+        }
+        else {
+            break;
+        }
+    }
+
+    itMedico->cambiarDisponibilidad(nuevaDisponibilidad);
+    std::cout << "Disponibilidad del médico con ID " << medicoID << " actualizada a "
+        << (nuevaDisponibilidad ? "Disponible" : "Ocupado") << ".\n";
+}
+

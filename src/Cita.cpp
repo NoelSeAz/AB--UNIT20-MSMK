@@ -1,8 +1,10 @@
 #include "Cita.hpp"
 #include "InputValidator.hpp"
 #include "IDGenerator.hpp"
+#include "Formateador.hpp"
 #include <iostream>
 #include <iomanip>
+#include <optional>
 
 // Constructor
 Cita::Cita(const unsigned long citaIDHashParam, const std::string& citaIDParam, const std::string& pacienteIDParam,
@@ -20,7 +22,7 @@ void Cita::setCitaIDHash(const unsigned long nuevoHash) {
 }
 
 // Modificar los detalles de una cita
-void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad) {
+void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad,  const std::optional<std::string>& nuevoMedicoID) {
     // Validar formato de la nueva fecha
     if (!InputValidator::validarFormatoFecha(nuevaFecha)) {
         throw std::invalid_argument("El formato de la nueva fecha es inválido.");
@@ -37,17 +39,17 @@ void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad) {
     }
 
     // Actualizar atributos
+    if (nuevoMedicoID.has_value() && !nuevoMedicoID.value().empty()) {
+        this->medicoID = nuevoMedicoID.value();
+        std::cout << "Médico actualizado a: " << this->medicoID << "\n";
+    }
+
     this->fecha = nuevaFecha;
     this->prioridad = nuevaPrioridad;
 
     // Regenerar citaID
     this->citaID = IDGenerator::generarIDCita(this->pacienteID, this->medicoID, this->fecha);
-
-    std::cout << "Cita modificada exitosamente:\n";
-    std::cout << "Nuevo ID: " << this->citaID << ", Fecha: " << this->fecha
-        << ", Prioridad: " << (this->prioridad == 1 ? "Urgente" : "Normal") << "\n";
 }
-
 
 // Función de comparación por fecha
 bool Cita::compararPorFecha(const Cita& a, const Cita& b) {

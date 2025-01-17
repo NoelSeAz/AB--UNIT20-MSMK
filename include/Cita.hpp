@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <optional>
 
 class Cita {
 private:
@@ -21,7 +22,7 @@ public:
         const std::string& medicoID, const std::string& fecha, int prioridad, bool validar = true);
 
     // Métodos para gestionar la cita
-    void modificarCita(const std::string& nuevaFecha, int nuevaPrioridad);
+    void modificarCita(const std::string& nuevaFecha, int nuevaPrioridad, const std::optional<std::string>& nuevoMedicoID = std::nullopt);
 
     // Métodos para comparar citas
     static bool compararPorFecha(const Cita& a, const Cita& b);

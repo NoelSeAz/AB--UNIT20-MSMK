@@ -11,6 +11,8 @@ public:
     static void altaMedico(std::vector<Medico>& medicos, GestorEspecialidades& gestorEspecialidades);
     static void bajaMedico(std::vector<Medico>& medicos, const std::string& id);
     static Medico* buscarMedicoPorID(std::vector<Medico>& medicos, const std::string& id);
+    static void cambiarDisponibilidad(std::vector<Medico>& medicos, const std::string& medicoID);
+
 };
 
 #endif
