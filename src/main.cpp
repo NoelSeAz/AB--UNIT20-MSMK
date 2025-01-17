@@ -314,54 +314,29 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
 
         switch (opcion) {
         case 1: {
-            std::string medicoID, pacienteID, fecha;
-            int prioridad;
 
             // Solicitar ID del médico
-            std::cout << "Ingrese el ID del médico: ";
-            std::cin >> medicoID;
-
-            auto itMedico = std::find_if(medicos.begin(), medicos.end(), [&medicoID](const Medico& medico) {
-                return medico.getID() == medicoID;
-                });
-
-            if (itMedico == medicos.end()) {
-                std::cerr << "Error: Médico no encontrado.\n";
-                break;
-            }
+            std::string medicoID = InputValidator::solicitarID <Medico>(
+                "Ingrese el ID del médico: ",
+                medicos,
+                [](const Medico& medico) {
+                    return medico.getID();
+                }
+            );
 
             // Solicitar ID del paciente
-            std::cout << "Ingrese el ID del paciente: ";
-            std::cin >> pacienteID;
-
-            auto itPaciente = std::find_if(pacientes.begin(), pacientes.end(), [&pacienteID](const Paciente& paciente) {
-                return paciente.getID() == pacienteID;
+            std::string pacienteID = InputValidator::solicitarID<Paciente>(
+                "Ingrese el ID del paciente: ",
+                pacientes,
+                [](const Paciente& paciente) {
+                return paciente.getID();
                 });
 
-            if (itPaciente == pacientes.end()) {
-                std::cerr << "Error: Paciente no encontrado.\n";
-                break;
-            }
-
             // Solicitar fecha
-            try {
-                fecha = InputValidator::solicitarFecha("Ingrese la fecha de la cita", InputValidator::obtenerFechaActual(), {});
-            }
-            catch (const std::exception& e) {
-                std::cerr << "Error: " << e.what() << "\n";
-                break;
-            }
+            std::string fecha = InputValidator::solicitarFecha("Ingrese la fecha de la cita", InputValidator::obtenerFechaActual(), {});
 
             // Solicitar prioridad
-            std::cout << "Ingrese la prioridad de la cita (1 = Urgente, 2 = Normal): ";
-            std::cin >> prioridad;
-
-            if (std::cin.fail() || (prioridad != 1 && prioridad != 2)) {
-                std::cerr << "Error: Prioridad inválida.\n";
-                std::cin.clear();
-                std::cin.ignore(1000, '\n');
-                break;
-            }
+            int prioridad = InputValidator::solicitarPrioridad();
 
             // Crear cita
             try {
@@ -379,6 +354,8 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
             std::cout << "Ingrese el ID de la cita a cancelar: ";
             std::cin >> citaID;
 
+            citaID = InputValidator::convertirAMayusculas(citaID);
+
             try {
                 GestorCitas::cancelarCita(citas, citaID);
             }
@@ -391,28 +368,36 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
 
         case 3: {
             std::string citaID, nuevaFecha;
-            int nuevaPrioridad, opcionCita;
+            int opcionCita;
 
             // Submenú para seleccionar cómo buscar la cita
             std::cout << "¿Cómo desea buscar la cita a modificar?\n";
             std::cout << "1. Ver citas por paciente\n";
             std::cout << "2. Ver citas por médico\n";
             std::cout << "3. Ingresar el ID de la cita directamente\n";
+            std::cout << "0. Salir\n";
             std::cout << "Seleccione una opción: ";
             std::cin >> opcionCita;
 
-            if (std::cin.fail() || opcionCita < 1 || opcionCita > 3) {
+            if (std::cin.fail() || opcionCita < 0 || opcionCita > 3) {
                 std::cerr << "Error: Opción inválida.\n";
                 std::cin.clear();
                 std::cin.ignore(1000, '\n');
                 break;
             }
 
-            if (opcionCita == 1) {
+            if (opcionCita == 0) {
+                std::cout << "Volviendo al submenú ...\n";
+                break;
+            }
+
+            else if (opcionCita == 1) {
                 // Mostrar citas por paciente
                 std::string pacienteID;
                 std::cout << "Ingrese el ID del paciente: ";
                 std::cin >> pacienteID;
+
+                pacienteID = InputValidator::convertirAMayusculas(pacienteID);
 
                 auto citasPorPaciente = std::vector<Cita>();
                 std::copy_if(citas.begin(), citas.end(), std::back_inserter(citasPorPaciente),
@@ -431,12 +416,16 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
 
                 std::cout << "Ingrese el ID de la cita a modificar: ";
                 std::cin >> citaID;
+
+                citaID = InputValidator::convertirAMayusculas(citaID);
             }
             else if (opcionCita == 2) {
                 // Mostrar citas por médico
                 std::string medicoID;
                 std::cout << "Ingrese el ID del médico: ";
                 std::cin >> medicoID;
+
+                medicoID = InputValidator::convertirAMayusculas(medicoID);
 
                 auto citasPorMedico = std::vector<Cita>();
                 std::copy_if(citas.begin(), citas.end(), std::back_inserter(citasPorMedico),
@@ -455,11 +444,15 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
 
                 std::cout << "Ingrese el ID de la cita a modificar: ";
                 std::cin >> citaID;
+
+                citaID = InputValidator::convertirAMayusculas(citaID);
             }
             else if (opcionCita == 3) {
                 // Ingresar directamente el citaID
                 std::cout << "Ingrese el ID de la cita a modificar: ";
                 std::cin >> citaID;
+
+                citaID = InputValidator::convertirAMayusculas(citaID);
             }
 
             // Buscar la cita
@@ -471,6 +464,7 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
                 std::cerr << "Error: No se encontró una cita con el ID proporcionado.\n";
                 break;
             }
+            
 
             // Solicitar nueva fecha
             while (true) {
@@ -484,19 +478,8 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
             }
 
             // Solicitar nueva prioridad
-            while (true) {
-                std::cout << "Ingrese la nueva prioridad (1 = Urgente, 2 = Normal): ";
-                std::cin >> nuevaPrioridad;
+            int nuevaPrioridad = InputValidator::solicitarPrioridad();
 
-                if (std::cin.fail() || (nuevaPrioridad != 1 && nuevaPrioridad != 2)) {
-                    std::cerr << "Error: Prioridad inválida. Debe ser 1 (Urgente) o 2 (Normal).\n";
-                    std::cin.clear();
-                    std::cin.ignore(1000, '\n');
-                }
-                else {
-                    break;
-                }
-            }
 
             // Modificar la cita
             try {
@@ -514,6 +497,8 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
             std::string pacienteID;
             std::cout << "Ingrese el ID del paciente: ";
             std::cin >> pacienteID;
+
+            pacienteID = InputValidator::convertirAMayusculas(pacienteID);
 
             std::cout << "Citas del paciente:\n";
             for (const auto& cita : citas) {

@@ -4,7 +4,8 @@
 #include <sstream>
 #include <ctime>
 #include <iomanip>
-#include <optional>
+#include <vector>
+#include <functional>
 
 // Obtener la fecha actual en formato "dd/mm/aaaa"
 std::string InputValidator::obtenerFechaActual() {
@@ -83,44 +84,70 @@ bool InputValidator::esFechaPosterior(const std::string& fechaComparada, const s
 
 
 // Solicitar una fecha con validación de formato y rango opcional
-std::string InputValidator::solicitarFecha(const std::string& mensaje, const std::optional<std::string>& fechaInicio, const std::optional<std::string>& fechaFin) {
+std::string InputValidator::solicitarFecha(const std::string& mensaje,
+                                           const std::optional<std::string>& fechaInicio,
+                                           const std::optional<std::string>& fechaFin) {
     std::string fecha;
 
     while (true) {
-        std::cout << mensaje << " (dd/mm/aaaa): ";
-        std::cin >> fecha;
+        try {
+            std::cout << mensaje << " (DD/MM/AAAA): ";
+            std::cin >> fecha;
 
-        // Validar formato de fecha
-        if (!validarFormatoFecha(fecha)) {
-            std::cout << "Formato de fecha no válido. Intente nuevamente.\n";
-            continue;
+            if (!validarFormatoFecha(fecha)) {
+                throw std::invalid_argument("Formato de fecha no válido.");
+            }
+
+            // Validar rango de fechas si se especifica
+            if (fechaInicio || fechaFin) {
+                int resultadoInicio = fechaInicio ? compararFechas(fecha, *fechaInicio) : 0;
+                int resultadoFin = fechaFin ? compararFechas(fecha, *fechaFin) : 0;
+
+                if (resultadoInicio < 0) {
+                    throw std::out_of_range("La fecha no puede ser menor que " + *fechaInicio + ".");
+                }
+                if (resultadoFin > 0) {
+                    throw std::out_of_range("La fecha no puede ser mayor que " + *fechaFin + ".");
+                }
+            }
+
+            return fecha; // Fecha válida
         }
-
-        // Comparar con rango de fechas si es necesario
-        if (fechaInicio || fechaFin) {
-            int resultadoInicio = fechaInicio ? compararFechas(fecha, *fechaInicio) : 0;
-            int resultadoFin = fechaFin ? compararFechas(fecha, *fechaFin) : 0;
-
-            if (resultadoInicio == -2 || resultadoFin == -2) {
-                std::cout << "Error en la comparación de fechas. Verifique el formato.\n";
-                continue;
-            }
-
-            if (resultadoInicio < 0) {
-                std::cout << "La fecha no puede ser menor que " << *fechaInicio << ". Intente nuevamente.\n";
-                continue;
-            }
-            if (resultadoFin > 0) {
-                std::cout << "La fecha no puede ser mayor que " << *fechaFin << ". Intente nuevamente.\n";
-                continue;
-            }
+        catch (const std::exception& e) {
+            std::cerr << "Error: " << e.what() << "\nIntente nuevamente.\n";
         }
-
-        return fecha;
     }
 }
 
 // Validar que un rango de fechas es lógico
 bool InputValidator::validarRangoFechas(const std::string& fechaInicio, const std::string& fechaFin) {
     return compararFechas(fechaInicio, fechaFin) <= 0;
+}
+
+//Convertir minúsculas a mayúsculas
+std::string InputValidator::convertirAMayusculas(const std::string& input) {
+    std::string resultado = input;
+    for (char& c : resultado) {
+        c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
+    }
+    return resultado;
+}
+
+//Validar valor prioridad
+int InputValidator::solicitarPrioridad() {
+    int prioridad;
+
+    while (true) {
+        std::cout << "Ingrese la prioridad de la cita (1 = Urgente, 2 = Normal): ";
+        std::cin >> prioridad;
+
+        if (std::cin.fail() || (prioridad != 1 && prioridad != 2)) {
+            std::cerr << "Error: Prioridad inválida. Debe ser 1 (Urgente) o 2 (Normal).\n";
+            std::cin.clear(); // Limpia el estado de error
+            std::cin.ignore(1000, '\n'); // Descarta la entrada inválida
+        }
+        else {
+            return prioridad; // Valor válido
+        }
+    }
 }
