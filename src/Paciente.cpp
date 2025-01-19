@@ -4,6 +4,12 @@
 #include <iomanip>
 #include "Archivo.hpp"
 
+//constructor vacio
+Paciente::Paciente()
+    : id("N/A"), nombre("No seleccionado"), apellido(""), direccion(""), edad(0) {
+}
+
+
 // Constructor
 Paciente::Paciente(const std::string& idParam, const std::string& nombreParam, const std::string& apellidoParam,
     const std::string& direccionParam, int edadParam) {

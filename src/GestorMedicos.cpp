@@ -5,11 +5,10 @@
 #include "Archivo.hpp"
 #include "iostream"
 
-void GestorMedicos::altaMedico(std::vector<Medico>& medicos, GestorEspecialidades& gestorEspecialidades) {
+void GestorMedicos::altaMedico(std::vector<Medico>& medicos, GestorEspecialidades& gestorEspecialidades, ArchivosActivos& archivos) {
     std::string nombre, apellido;
     int disponibilidad;
 
-    // Recolección de datos básicos
     std::cout << "Ingrese Nombre: ";
     if (!(std::cin >> nombre)) {
         std::cerr << "Error: Entrada inválida para el nombre.\n";
@@ -28,7 +27,6 @@ void GestorMedicos::altaMedico(std::vector<Medico>& medicos, GestorEspecialidade
         return;
     }
 
-    // Selección de especialidad
     auto listaEspecialidades = gestorEspecialidades.obtenerListaEspecialidades();
     if (listaEspecialidades.empty()) {
         std::cerr << "Error: No hay especialidades registradas. No se puede dar de alta al médico.\n";
@@ -49,24 +47,33 @@ void GestorMedicos::altaMedico(std::vector<Medico>& medicos, GestorEspecialidade
         return;
     }
 
-    // Crear y registrar el médico
-    std::string ID = IDGenerator::generarID("M", nombre, apellido, {});
-    medicos.emplace_back(ID, nombre, apellido, especialidad->getNombre(), static_cast<bool>(disponibilidad));
+    std::vector<std::string> idsExistentes;
+    for (const auto& medico : medicos) {
+        idsExistentes.push_back(medico.getID());
+    }
 
-    // Confirmación del registro
+    std::string ID = IDGenerator::generarID("M", nombre, apellido, idsExistentes);
+    medicos.emplace_back(ID, nombre, apellido, especialidad->getNombre(), static_cast<bool>(disponibilidad));
     std::cout << "Médico registrado exitosamente:\n";
     Formateador::imprimirRegistro(medicos.back());
-
-    // Guardar los médicos en el archivo
-    Archivo::guardarMedicos(medicos, "archivo_medicos.txt");
+    Archivo::guardarMedicos(medicos, archivos.medicos);
 }
 
-void GestorMedicos::bajaMedico(std::vector<Medico>& medicos, const std::string& id) {
-    auto it = std::remove_if(medicos.begin(), medicos.end(), [&id](const Medico& m) { return m.getID() == id; });
+void GestorMedicos::bajaMedico(std::vector<Medico>& medicos, const std::string& id, ArchivosActivos& archivos) {
+    auto it = std::remove_if(medicos.begin(), medicos.end(), [&id](const Medico& m) { 
+        return m.getID() == id; 
+        });
+
     if (it != medicos.end()) {
         medicos.erase(it, medicos.end());
         std::cout << "Médico con ID " << id << " dado de baja exitosamente.\n";
-        Archivo::guardarMedicos(medicos, "archivo_medicos.txt");
+        try {
+            Archivo::guardarMedicos(medicos, archivos.medicos);
+            std::cout << "Archivo de médicos actualizado correctamente.";
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Error al guardar el archivo de médicos: " << e.what() << "\n";
+        }
     }
     else {
         std::cerr << "Error: No se encontró un médico con el ID " << id << ".\n";
@@ -111,6 +118,6 @@ void GestorMedicos::cambiarDisponibilidad(std::vector<Medico>& medicos, const st
 
     itMedico->cambiarDisponibilidad(nuevaDisponibilidad);
     std::cout << "Disponibilidad del médico con ID " << medicoID << " actualizada a "
-        << (nuevaDisponibilidad ? "Disponible" : "Ocupado") << ".\n";
+        << (nuevaDisponibilidad ? "Disponible" : "Ocupado");
 }
 

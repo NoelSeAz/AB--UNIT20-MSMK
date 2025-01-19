@@ -132,150 +132,126 @@ void Archivo::guardarHistorialMedico(const HistorialMedico& historial) {
 }
 
 // Cargar datos de pacientes, medicos, citas, especialidades o historial médico
-std::vector<Paciente> Archivo::cargarPacientes(const std::string& nombreArchivo) {
-    try {
-        // Obtener la ruta completa del archivo
-        std::filesystem::path rutaArchivo = obtenerRutaBase(nombreArchivo);
+std::vector<Paciente> Archivo::cargarPacientes(const std::string& nombreArchivo)
+{
+    std::filesystem::path ruta = obtenerRutaBase(nombreArchivo);
 
-        std::ifstream archivo(rutaArchivo.string());
-        if (!archivo.is_open()) {
-            throw std::runtime_error("No se pudo abrir el archivo: " + rutaArchivo.string());
-        }
+    std::ifstream file(ruta);
+    if (!file.is_open()) {
+        throw std::runtime_error("No se pudo abrir el archivo: " + ruta.string());
+    }
 
-        std::vector<Paciente> pacientes;
-        std::string linea;
+    std::vector<Paciente> pacientes;
+    std::string linea;
 
-        while (std::getline(archivo, linea)) {
-            std::istringstream ss(linea);
-            std::string id, nombre, apellido, direccion, edadStr;
-            int edad;
-
-            std::getline(ss, id, ',');
-            std::getline(ss, nombre, ',');
-            std::getline(ss, apellido, ',');
-            std::getline(ss, direccion, ',');
-            std::getline(ss, edadStr, ',');
-
-            edad = std::stoi(edadStr);
+    while (std::getline(file, linea)) {
+        std::istringstream ss(linea);
+        std::string id, nombre, apellido, direccion, edadStr;
+        if (std::getline(ss, id, ',') &&
+            std::getline(ss, nombre, ',') &&
+            std::getline(ss, apellido, ',') &&
+            std::getline(ss, direccion, ',') &&
+            std::getline(ss, edadStr, ','))
+        {
+            int edad = std::stoi(edadStr);
             pacientes.emplace_back(id, nombre, apellido, direccion, edad);
         }
+    }
 
-        return pacientes;
-    }
-    catch (const std::exception& e) {
-        std::cerr << "Error al cargar pacientes: " << e.what() << "\n";
-        return {};
-    }
+    return pacientes;
 }
 
 std::vector<Medico> Archivo::cargarMedicos(const std::string& nombreArchivo) {
-    try {
-        // Obtener la ruta completa del archivo
-        std::filesystem::path rutaArchivo = obtenerRutaBase(nombreArchivo);
+        
+    std::filesystem::path ruta = obtenerRutaBase(nombreArchivo);
 
-        std::ifstream archivo(rutaArchivo.string());
-        if (!archivo.is_open()) {
-            throw std::runtime_error("No se pudo abrir el archivo: " + rutaArchivo.string());
-        }
-
-        std::vector<Medico> medicos;
-        std::string linea;
-
-        while (std::getline(archivo, linea)) {
-            std::istringstream ss(linea);
-            std::string id, nombre, apellido, especialidad, disponibilidadStr;
-            bool disponibilidad;
-
-            std::getline(ss, id, ',');
-            std::getline(ss, nombre, ',');
-            std::getline(ss, apellido, ',');
-            std::getline(ss, especialidad, ',');
-            std::getline(ss, disponibilidadStr, ',');
-
-            disponibilidad = (disponibilidadStr == "1");
-            medicos.emplace_back(id, nombre, apellido, especialidad, disponibilidad);
-        }
-
-        return medicos;
+    std::ifstream file(ruta);
+    if (!file.is_open()) {
+        throw std::runtime_error("No se pudo abrir el archivo: " + ruta.string());
     }
-    catch (const std::exception& e) {
-        std::cerr << "Error al cargar médicos: " << e.what() << "\n";
-        return {};
+
+    std::vector<Medico> medicos;
+    std::string linea;
+
+    while (std::getline(file, linea)) {
+        std::istringstream ss(linea);
+        std::string id, nombre, apellido, especialidad, disponibilidadStr;
+        bool disponibilidad;
+
+        std::getline(ss, id, ',');
+        std::getline(ss, nombre, ',');
+        std::getline(ss, apellido, ',');
+        std::getline(ss, especialidad, ',');
+        std::getline(ss, disponibilidadStr, ',');
+
+        disponibilidad = (disponibilidadStr == "1");
+        medicos.emplace_back(id, nombre, apellido, especialidad, disponibilidad);
     }
+
+    return medicos;
 }
 
 std::vector<Cita> Archivo::cargarCitas(const std::string& nombreArchivo) {
-    try {
-        // Obtener la ruta completa del archivo
-        std::filesystem::path rutaArchivo = obtenerRutaBase(nombreArchivo);
 
-        std::ifstream archivo(rutaArchivo.string());
-        if (!archivo.is_open()) {
-            throw std::runtime_error("No se pudo abrir el archivo: " + rutaArchivo.string());
-        }
+    std::filesystem::path ruta = obtenerRutaBase(nombreArchivo);
 
-        std::vector<Cita> citas;
-        std::string linea;
-
-        while (std::getline(archivo, linea)) {
-            std::istringstream ss(linea);
-            std::string citaIDHashStr, citaID, pacienteID, medicoID, fecha, prioridadStr;
-            unsigned long citaIDHash;
-            int prioridad;
-
-            std::getline(ss, citaIDHashStr, ',');
-            std::getline(ss, citaID, ',');
-            std::getline(ss, pacienteID, ',');
-            std::getline(ss, medicoID, ',');
-            std::getline(ss, fecha, ',');
-            std::getline(ss, prioridadStr, ',');
-
-            citaIDHash = std::stoul(citaIDHashStr);
-            prioridad = std::stoi(prioridadStr);
-
-            citas.emplace_back(citaIDHash, citaID, pacienteID, medicoID, fecha, prioridad, false);
-        }
-
-        return citas;
+    std::ifstream file(ruta);
+    if (!file.is_open()) {
+        throw std::runtime_error("No se pudo abrir el archivo: " + ruta.string());
     }
-    catch (const std::exception& e) {
-        std::cerr << "Error al cargar citas: " << e.what() << "\n";
-        return {};
+
+    std::vector<Cita> citas;
+    std::string linea;
+
+    while (std::getline(file, linea)) {
+        std::istringstream ss(linea);
+        std::string citaIDHashStr, citaID, pacienteID, medicoID, fecha, prioridadStr;
+        unsigned long citaIDHash;
+        int prioridad;
+
+        std::getline(ss, citaIDHashStr, ',');
+        std::getline(ss, citaID, ',');
+        std::getline(ss, pacienteID, ',');
+        std::getline(ss, medicoID, ',');
+        std::getline(ss, fecha, ',');
+        std::getline(ss, prioridadStr, ',');
+
+        citaIDHash = std::stoul(citaIDHashStr);
+        prioridad = std::stoi(prioridadStr);
+
+        citas.emplace_back(citaIDHash, citaID, pacienteID, medicoID, fecha, prioridad, false);
     }
+
+    return citas;
 }
 
 std::vector<Especialidad> Archivo::cargarEspecialidades(const std::string& archivo) {
-    try {
-        // Obtener la ruta completa del archivo
-        std::filesystem::path rutaArchivo = obtenerRutaBase(archivo);
 
-        std::ifstream outFile(rutaArchivo.string());
-        if (!outFile.is_open()) {
-            throw std::runtime_error("No se pudo abrir el archivo: " + rutaArchivo.string());
-        }
+    // Obtener la ruta completa del archivo
+    std::filesystem::path rutaArchivo = obtenerRutaBase(archivo);
 
-        std::vector<Especialidad> especialidades;
-        std::string linea;
-
-        while (std::getline(outFile, linea)) {
-            std::istringstream ss(linea);
-            std::string idStr, nombre, descripcion;
-            int id;
-
-            std::getline(ss, idStr, ',');
-            std::getline(ss, nombre, ',');
-            std::getline(ss, descripcion);
-
-            id = std::stoi(idStr);
-            especialidades.emplace_back(id, nombre, descripcion);
-        }
-
-        return especialidades;
+    std::ifstream outFile(rutaArchivo.string());
+    if (!outFile.is_open()) {
+        throw std::runtime_error("No se pudo abrir el archivo: " + rutaArchivo.string());
     }
-    catch (const std::exception& e) {
-        std::cerr << "Error al cargar especialidades: " << e.what() << "\n";
-        return {};
+
+    std::vector<Especialidad> especialidades;
+    std::string linea;
+
+    while (std::getline(outFile, linea)) {
+        std::istringstream ss(linea);
+        std::string idStr, nombre, descripcion;
+        int id;
+
+        std::getline(ss, idStr, ',');
+        std::getline(ss, nombre, ',');
+        std::getline(ss, descripcion);
+
+        id = std::stoi(idStr);
+        especialidades.emplace_back(id, nombre, descripcion);
     }
+
+    return especialidades;
 }
 
 void Archivo::cargarHistorialMedico(HistorialMedico& historial) {
@@ -339,25 +315,22 @@ void Archivo::cargarHistorialMedico(HistorialMedico& historial) {
 //
 std::filesystem::path Archivo::obtenerRutaBase(const std::string& nombreArchivo) {
     try {
-        // Obtener el directorio actual
         std::filesystem::path rutaBase = std::filesystem::current_path();
 
-        // Verificar si estamos en un subdirectorio como x64-debug, Release o Debug
         if (rutaBase.filename() == "x64-debug" || rutaBase.filename() == "Release" || rutaBase.filename() == "Debug") {
-            rutaBase = rutaBase.parent_path().parent_path(); // Subir dos niveles
+            rutaBase = rutaBase.parent_path().parent_path();
         }
         else {
-            rutaBase = rutaBase.parent_path(); // Subir un nivel
+            rutaBase = rutaBase.parent_path();
         }
 
-        rutaBase /= "data"; // Añadir la carpeta data
+        rutaBase /= "data";
 
-        // Crear el directorio si no existe
         if (!std::filesystem::exists(rutaBase)) {
             std::filesystem::create_directories(rutaBase);
         }
 
-        rutaBase /= nombreArchivo; // Añadir el nombre del archivo
+        rutaBase /= nombreArchivo;
         return rutaBase;
 
     }

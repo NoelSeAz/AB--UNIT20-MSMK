@@ -16,11 +16,6 @@ Cita::Cita(const unsigned long citaIDHashParam, const std::string& citaIDParam, 
     }
 }
 
-// Actualizar el hash de la cita
-void Cita::setCitaIDHash(const unsigned long nuevoHash) {
-    citaIDHash = nuevoHash;
-}
-
 // Modificar los detalles de una cita
 void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad,  const std::optional<std::string>& nuevoMedicoID) {
     // Validar formato de la nueva fecha
@@ -47,18 +42,19 @@ void Cita::modificarCita(const std::string& nuevaFecha, int nuevaPrioridad,  con
     this->fecha = nuevaFecha;
     this->prioridad = nuevaPrioridad;
 
-    // Regenerar citaID
+    // Regenerar citaID y citaIDHash
     this->citaID = IDGenerator::generarIDCita(this->pacienteID, this->medicoID, this->fecha);
+    this->citaIDHash = IDGenerator::generarHashCita(this->pacienteID, this->medicoID, this->fecha);
 }
 
 // Función de comparación por fecha
 bool Cita::compararPorFecha(const Cita& a, const Cita& b) {
-    return a.fecha < b.fecha; // Orden ascendente
+    return a.fecha < b.fecha;
 }
 
 // Función de comparación por prioridad
 bool Cita::compararPorPrioridad(const Cita& a, const Cita& b) {
-    return a.prioridad > b.prioridad; // Orden descendente
+    return a.prioridad < b.prioridad;
 }
 
 // Getters

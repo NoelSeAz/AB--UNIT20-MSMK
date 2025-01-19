@@ -15,6 +15,7 @@ private:
     std::vector<int> listaCitas;      // IDs de las citas asignadas al médico
 
 public:
+
     // Constructor
     Medico(const std::string& id, const std::string& nombre, const std::string& apellido,
         const std::string& especialidad, bool disponibilidad);

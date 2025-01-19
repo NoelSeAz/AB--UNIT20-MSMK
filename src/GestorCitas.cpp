@@ -6,7 +6,10 @@
 
 // Crear una nueva cita
 void GestorCitas::crearCita(std::vector<Cita>& citas, const std::vector<Paciente>& pacientes,
-    const std::vector<Medico>& medicos) {
+    const std::vector<Medico>& medicos, ArchivosActivos& archivos) {
+    //Mostrar Médicos
+    Formateador::imprimirTablaMedicos(medicos);
+
     // Solicitar ID del médico
     std::string medicoID = InputValidator::solicitarID<Medico>(
         "Ingrese el ID del médico: ",
@@ -25,6 +28,9 @@ void GestorCitas::crearCita(std::vector<Cita>& citas, const std::vector<Paciente
         std::cerr << "Error: El médico seleccionado no está disponible para asignar citas.\n";
         return;
     }
+
+    //Mostrar Pacientes
+    Formateador::imprimirTablaPacientes(pacientes);
 
     // Solicitar ID del paciente
     std::string pacienteID = InputValidator::solicitarID<Paciente>(
@@ -49,11 +55,11 @@ void GestorCitas::crearCita(std::vector<Cita>& citas, const std::vector<Paciente
     std::cout << "Cita creada exitosamente con ID: " << citaID << "\n";
 
     // Guardar las citas en el archivo
-    Archivo::guardarCitas(citas, "archivo_citas.txt");
+    Archivo::guardarCitas(citas, archivos.citas);
 }
 
 // Modificar una cita existente
-bool GestorCitas::modificarCita(std::vector<Cita>& citas, const std::string& citaID, const std::vector<Medico>& medicos) {
+bool GestorCitas::modificarCita(std::vector<Cita>& citas, const std::string& citaID, const std::vector<Medico>& medicos, ArchivosActivos& archivos) {
     // Buscar la cita
     auto itCita = std::find_if(citas.begin(), citas.end(), [&citaID](const Cita& cita) {
         return cita.getCitaID() == citaID;
@@ -129,7 +135,7 @@ bool GestorCitas::modificarCita(std::vector<Cita>& citas, const std::string& cit
         Formateador::imprimirEncabezadoCitas();
         Formateador::imprimirRegistro(*itCita);
         std::cout << std::string(100, '-') << "\n\n";
-        Archivo::guardarCitas(citas, "archivo_citas.txt");
+        Archivo::guardarCitas(citas, archivos.citas);
     }
     catch (const std::exception& e) {
         std::cerr << "Error al modificar la cita: " << e.what() << "\n";
@@ -140,7 +146,7 @@ bool GestorCitas::modificarCita(std::vector<Cita>& citas, const std::string& cit
 }
 
 // Cancelar una cita
-void GestorCitas::cancelarCita(std::vector<Cita>& citas, const std::string& citaID) {
+void GestorCitas::cancelarCita(std::vector<Cita>& citas, const std::string& citaID, ArchivosActivos& archivos) {
     auto it = std::remove_if(citas.begin(), citas.end(), [&citaID](const Cita& cita) {
         return cita.getCitaID() == citaID;
         });
@@ -148,6 +154,13 @@ void GestorCitas::cancelarCita(std::vector<Cita>& citas, const std::string& cita
     if (it != citas.end()) {
         citas.erase(it, citas.end());
         std::cout << "Cita cancelada exitosamente.\n";
+        try {
+            Archivo::guardarCitas(citas, archivos.citas);
+            std::cout << "Archivo de citas actualizado correctamente.\n";
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Error al guardar el archivo de citas: " << e.what() << "\n";
+        }
     }
     else {
         std::cerr << "Error: No se encontró una cita con el ID proporcionado.\n";

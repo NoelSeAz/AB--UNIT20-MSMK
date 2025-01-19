@@ -13,6 +13,8 @@ private:
     int edad;                         // Edad del paciente
 
 public:
+    Paciente();
+
     Paciente(const std::string& id, const std::string& nombre, const std::string& apellido,
         const std::string& direccion, int edad);
 

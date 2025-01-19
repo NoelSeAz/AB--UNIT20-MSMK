@@ -35,9 +35,6 @@ public:
     std::string getMedicoID() const;
     std::string getFecha() const;
     int getPrioridad() const;
-
-    // Setters
-    void setCitaIDHash(unsigned long nuevoHash);
 };
 
 #endif

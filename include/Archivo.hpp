@@ -21,32 +21,6 @@ public:
     static void guardarEspecialidades(const std::vector<Especialidad>& especialidades, const std::string& archivo);
     static void guardarHistorialMedico(const HistorialMedico& historial);
 
-    // Cargar datos desde archivos usando una función genérica
-    template <typename T>
-    static void cargarDatos(std::vector<T>& contenedor, const std::string& mensaje,
-        const std::string& archivoPorDefecto,
-        std::vector<T>(*cargarFuncion)(const std::string&)){
-        std::string archivo;
-        std::cout << mensaje << " (por defecto: " << archivoPorDefecto << "): ";
-        std::cin.ignore();
-        std::getline(std::cin, archivo);
-
-        if (archivo.empty()) {
-            archivo = archivoPorDefecto;
-        }
-
-        try {
-            std::vector<T> datos = cargarFuncion(archivo);
-            contenedor = std::move(datos);
-            std::cout << "Datos cargados exitosamente desde: " << archivo << "\n";
-        }
-        catch (const std::exception& e) {
-            std::cerr << "Error al cargar el archivo: " << archivo << "\n";
-            std::cerr << e.what() << "\n";
-            std::cout << "No se realizaron cambios en los datos actuales.\n";
-        }
-    }
-
     //Cargar datos de archivos
     static std::vector<Paciente> cargarPacientes(const std::string& archivo);
     static std::vector<Medico> cargarMedicos(const std::string& archivo);
@@ -56,6 +30,44 @@ public:
 
     //Obtener ruta base
     static std::filesystem::path obtenerRutaBase(const std::string& nombreArchivo);
+
+    template <typename T>
+    static void cargarDatos(
+        std::vector<T>& contenedor,
+        const std::string& mensaje,
+        std::string& archivo,
+        std::function<std::vector<T>(const std::string&)> parser,
+        bool interactivo = true
+    )
+    {
+        // -- Parte 1: Determinar la ruta del archivo (interactivo o por defecto)
+        std::string ruta = archivo;
+        if (interactivo) {
+            std::cout << mensaje <<": ";
+            std::string inputUsuario;
+            std::getline(std::cin, inputUsuario);
+
+            if (!inputUsuario.empty()) {
+                ruta = inputUsuario;
+            }
+        }
+
+        // -- Parte 2: Intentar parsear el archivo con la función específica
+        try {
+            std::vector<T> datos = parser(ruta);
+            contenedor = std::move(datos);
+            archivo = ruta;
+
+            std::cout << "Datos cargados exitosamente desde: " << ruta << "\n";
+        }
+        catch (const std::exception& e) {
+            // Manejo de la excepción: mostramos error y conservamos los datos anteriores
+            std::cerr << "Error al cargar el archivo: " << ruta << "\n";
+            std::cerr << e.what() << "\n";
+            std::cout << "No se realizaron cambios en los datos actuales.\n";
+        }
+    }
+
 };
 
 #endif

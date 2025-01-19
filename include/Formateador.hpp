@@ -11,6 +11,9 @@
 
 class Formateador {
 public:
+    //Encabezados Menús
+    static void imprimirEncabezadoMenuMedico(const Paciente& paciente);
+
     // Métodos para imprimir encabezados
     static void imprimirEncabezadoPacientes();
     static void imprimirEncabezadoMedicos();

@@ -1,3 +1,14 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <limits>
+#include <stdexcept>
+
+#ifdef _WIN32
+#define NOMINMAX
+#include <windows.h>
+#endif
+
 #include "Paciente.hpp"
 #include "Medico.hpp"
 #include "Cita.hpp"
@@ -10,69 +21,30 @@
 #include "GestorMedicos.hpp"
 #include "GestorPacientes.hpp"
 #include "GestorEspecialidades.hpp"
-#include <iostream>
-#include <vector>
-#include <string>
-#include <memory>
-#include <filesystem>
-#include <fstream>
-
-#ifdef _WIN32
-#include <windows.h>
-#endif
+#include "ArchivosActivos.hpp"
 
 // Funciones para los submenús
-void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas, GestorEspecialidades& gestorEspecialidades);
-void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos);
-void mostrarMenuPaciente(std::vector<Paciente>& pacientes);
-void mostrarMenuGestionArchivos(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas);
-void mostrarMenuListados(const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos, const std::vector<Cita>& citas);
-void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, GestorEspecialidades& gestorEspecialidades);
-void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos);
-void mostrarMenuGestionEspecialidades(GestorEspecialidades& gestorEspecialidades);
-
-// Función auxiliar para operar sobre el historial de un paciente
-template <typename Funcion>
-void operarHistorialPaciente(std::vector<Paciente>& pacientes, const std::string& id, Funcion operacion) {
-    auto paciente = GestorPacientes::buscarPacientePorID(pacientes, id);
-    if (paciente) {
-        HistorialMedico historial = paciente->cargarHistorial();
-        operacion(historial);
-
-        try {
-            Archivo::guardarHistorialMedico(historial);
-            std::cout << "Operación completada exitosamente.\n";
-        }
-        catch (const std::exception& e) {
-            std::cerr << "Error al guardar el historial médico: " << e.what() << "\n";
-        }
-    }
-    else {
-        std::cout << "Paciente no encontrado.\n";
-    }
-}
+void mostrarMenuPrincipal(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas, std::vector<Especialidad>& especialidades, ArchivosActivos& archivos, GestorEspecialidades& gestorEspecialidades);
+void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas, std::vector<Especialidad>& especialidades, ArchivosActivos& archivos, GestorEspecialidades& gestorEspecialidades);
+void mostrarMenuMedico(std::vector<Paciente>& pacientes);
+void mostrarMenuPaciente(std::vector<Paciente>& pacientes, ArchivosActivos& archivos);
+void mostrarMenuGestionArchivos(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas, std::vector<Especialidad>& especialidades, ArchivosActivos& archivos);
+void mostrarMenuListados(const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos, std::vector<Cita>& citas);
+void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, GestorEspecialidades& gestorEspecialidades, ArchivosActivos& archivos);
+void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos, ArchivosActivos& archivos);
+void mostrarMenuGestionEspecialidades(GestorEspecialidades& gestorEspecialidades, ArchivosActivos& archivos);
 
 int main() {
 
     Formateador::limpiarPantalla();
 
-    #ifdef _WIN32
-        // Configurar la consola para UTF-8
-        SetConsoleOutputCP(CP_UTF8);
-        SetConsoleCP(CP_UTF8);
-    #endif
+#ifdef _WIN32
+    // Configurar la consola para UTF-8
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+#endif
 
-    // Detectar el directorio raíz del proyecto
-    std::filesystem::path rutaBase = std::filesystem::current_path();
-
-    // Verificar si estamos en un subdirectorio como x64-debug y ajustar la ruta
-    if (rutaBase.filename() == "x64-debug" || rutaBase.filename() == "Release" || rutaBase.filename() == "Debug") {
-        rutaBase = rutaBase.parent_path().parent_path();
-    }
-    else {
-        rutaBase = rutaBase.parent_path();
-    }
-    rutaBase /= "data";
+    ArchivosActivos archivos;
 
     // Instanciar las estructuras principales
     std::vector<Paciente> pacientes;
@@ -81,11 +53,47 @@ int main() {
     std::vector<Especialidad> especialidades;
 
     try {
-        // Cargar los archivos predeterminados
-        pacientes = Archivo::cargarPacientes((rutaBase / "archivo_pacientes.txt").string());
-        medicos = Archivo::cargarMedicos((rutaBase / "archivo_medicos.txt").string());
-        citas = Archivo::cargarCitas((rutaBase / "archivo_citas.txt").string());
-        especialidades = Archivo::cargarEspecialidades((rutaBase / "especialidades.csv").string());
+        // Cargar los archivos predeterminados automáticamente
+        Archivo::cargarDatos<Paciente>(
+            pacientes,
+            "Cargando archivo predeterminado de pacientes",
+            archivos.pacientes,
+            [](const std::string& ruta) {
+                return Archivo::cargarPacientes(ruta);
+            },
+            false
+        );
+
+        Archivo::cargarDatos<Medico>(
+            medicos,
+            "Cargando archivo predeterminado de médicos",
+            archivos.medicos,
+            [](const std::string& ruta) {
+                return Archivo::cargarMedicos(ruta);
+            },
+            false
+        );
+
+        Archivo::cargarDatos<Cita>(
+            citas,
+            "Cargando archivo predeterminado de citas",
+            archivos.citas,
+            [](const std::string& ruta) {
+                return Archivo::cargarCitas(ruta);
+            },
+            false
+        );
+
+        Archivo::cargarDatos<Especialidad>(
+            especialidades,
+            "Cargando archivo predeterminado de especialidades",
+            archivos.especialidades,
+            [](const std::string& ruta) {
+                return Archivo::cargarEspecialidades(ruta);
+            },
+            false
+        );
+
         std::cout << "Archivos predeterminados cargados correctamente.\n";
     }
     catch (const std::exception& e) {
@@ -96,43 +104,47 @@ int main() {
 
     GestorEspecialidades gestorEspecialidades(especialidades);
 
-    // Menú principal
-    int opcion;
+    mostrarMenuPrincipal(pacientes, medicos, citas, especialidades, archivos, gestorEspecialidades);
+
+    return 0;
+}
+
+void mostrarMenuPrincipal(std::vector<Paciente>&pacientes, std::vector<Medico>&medicos, 
+                          std::vector<Cita>&citas, std::vector<Especialidad>& especialidades, ArchivosActivos& archivos, GestorEspecialidades & gestorEspecialidades){
+    int opcion = -1;
     do {
         std::cout << "\n--- Sistema de Gestión Hospitalaria ---\n";
         std::cout << "1. Entrar como Administrador\n";
         std::cout << "2. Entrar como Médico\n";
         std::cout << "3. Entrar como Paciente\n";
         std::cout << "0. Salir\n";
-        std::cout << "Seleccione una opción: ";
-        std::cin >> opcion;
+
+        opcion = InputValidator::leerEnteroConsola("Seleccione una opción: ");
         Formateador::limpiarPantalla();
 
         switch (opcion) {
         case 1:
-            mostrarMenuAdministrador(pacientes, medicos, citas, gestorEspecialidades);
+            mostrarMenuAdministrador(pacientes, medicos, citas, especialidades, archivos, gestorEspecialidades);
             break;
         case 2:
-            mostrarMenuMedico(pacientes, medicos);
+            mostrarMenuMedico(pacientes);
             break;
         case 3:
-            mostrarMenuPaciente(pacientes);
+            mostrarMenuPaciente(pacientes, archivos);
             break;
         case 0:
             std::cout << "Saliendo del sistema...\n";
             break;
-        default:
+        default:    
             std::cout << "Opción no válida. Intente nuevamente.\n";
             break;
         }
     } while (opcion != 0);
-
-    return 0;
 }
 
-void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos,
-    std::vector<Cita>& citas, GestorEspecialidades& gestorEspecialidades) {
-    int opcion;
+void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas,
+    std::vector<Especialidad>& especialidades, ArchivosActivos& archivos, GestorEspecialidades& gestorEspecialidades) {
+    int opcion = -1;
     do {
         std::cout << "\n--- Menú Administrador ---\n";
         std::cout << "1. Gestión de Archivos\n";
@@ -141,25 +153,25 @@ void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medi
         std::cout << "4. Gestión de Citas\n";
         std::cout << "5. Gestionar Especialidades\n";
         std::cout << "0. Volver al Menú Principal\n";
-        std::cout << "Seleccione una opción: ";
-        std::cin >> opcion;
+
+        opcion = InputValidator::leerEnteroConsola("Seleccione una opción: ");
         Formateador::limpiarPantalla();
 
         switch (opcion) {
         case 1:
-            mostrarMenuGestionArchivos(pacientes, medicos, citas);
+            mostrarMenuGestionArchivos(pacientes, medicos, citas, especialidades, archivos);
             break;
         case 2:
             mostrarMenuListados(pacientes, medicos, citas);
             break;
         case 3:
-            mostrarMenuAltaBaja(pacientes, medicos, gestorEspecialidades);
+            mostrarMenuAltaBaja(pacientes, medicos, gestorEspecialidades, archivos);
             break;
         case 4:
-            mostrarMenuGestionCitas(citas, pacientes, medicos);
+            mostrarMenuGestionCitas(citas, pacientes, medicos, archivos);
             break;
         case 5:
-            mostrarMenuGestionEspecialidades(gestorEspecialidades);
+            mostrarMenuGestionEspecialidades(gestorEspecialidades, archivos);
             break;
         case 0:
             std::cout << "Volviendo al Menú Principal...\n";
@@ -171,51 +183,116 @@ void mostrarMenuAdministrador(std::vector<Paciente>& pacientes, std::vector<Medi
     } while (opcion != 0);
 }
 
-void mostrarMenuGestionArchivos(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas) {
-    int opcion;
+void mostrarMenuGestionArchivos(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, std::vector<Cita>& citas, 
+    std::vector<Especialidad>& especialidades, ArchivosActivos& archivos){
+    int opcion = -1;
     do {
         std::cout << "\n--- Gestión de Archivos ---\n";
-        std::cout << "1. Cargar Pacientes\n";
-        std::cout << "2. Cargar Médicos\n";
-        std::cout << "3. Cargar Citas\n";
+        std::cout << "1. Cambiar archivo de Pacientes (y cargarlo)\n";
+        std::cout << "2. Cambiar archivo de Médicos (y cargarlo)\n";
+        std::cout << "3. Cambiar archivo de Citas (y cargarlo)\n";
+        std::cout << "4. Cambiar archivo de Especialidades (y cargarlo)\n";
+        std::cout << "5. Volver a archivos por defecto\n";
         std::cout << "0. Volver al Menú Administrador\n\n";
-        std::cout << "Seleccione una opción: ";
-        std::cin >> opcion;
+
+        opcion = InputValidator::leerEnteroConsola("Seleccione una opción: ");
         Formateador::limpiarPantalla();
 
         switch (opcion) {
-        case 1:
-            Archivo::cargarDatos(pacientes, "Ingrese el archivo de pacientes",
-                "./data/archivo_pacientes.txt", Archivo::cargarPacientes);
+        case 1: { // Cambiar archivo de Pacientes
+            std::cout << "Archivo actual: " << archivos.pacientes << "\n";
+            Archivo::cargarDatos<Paciente>(
+                pacientes,
+                "Ingrese el archivo de pacientes",
+                archivos.pacientes,
+                [](const std::string& ruta) {
+                    return Archivo::cargarPacientes(ruta);
+                },
+                true
+            );
             break;
-        case 2:
-            Archivo::cargarDatos(medicos, "Ingrese el archivo de médicos",
-                "./data/archivo_medicos.txt", Archivo::cargarMedicos);
+        }
+        case 2: { // Cambiar archivo de Medicos
+            std::cout << "Archivo actual: " << archivos.medicos << "\n";
+            Archivo::cargarDatos<Medico>(
+                medicos,
+                "Ingrese el archivo de medicos",
+                archivos.medicos,
+                [](const std::string& ruta) {
+                    return Archivo::cargarMedicos(ruta);
+                },
+                true
+            );
             break;
-        case 3:
-            Archivo::cargarDatos(citas, "Ingrese el archivo de citas",
-                "./data/archivo_citas.txt", Archivo::cargarCitas);
+        }
+        case 3: { // Cambiar archivo de Citas
+            std::cout << "Archivo actual: " << archivos.citas << "\n";
+            Archivo::cargarDatos<Cita>(
+                citas,
+                "Ingrese el archivo de citas",
+                archivos.citas,
+                [](const std::string& ruta) {
+                    return Archivo::cargarCitas(ruta);
+                },
+                true
+            );
             break;
+        }
+        case 4: {
+            std::cout << "Archivo actual: " << archivos.especialidades << "\n";
+            Archivo::cargarDatos<Especialidad>(
+                especialidades,
+                "Ingrese el archivo de especialidades",
+                archivos.especialidades,
+                [](const std::string& ruta) {
+                    return Archivo::cargarEspecialidades(ruta);
+                },
+                true
+            );
+            break;
+        }
+
+        case 5: {
+            archivos.pacientes = "archivo_pacientes.txt";
+            archivos.medicos = "archivo_medicos.txt";
+            archivos.citas = "archivo_citas.txt";
+            archivos.especialidades = "especialidades.csv";
+
+            try {
+                pacientes = Archivo::cargarPacientes(archivos.pacientes);
+                medicos = Archivo::cargarMedicos(archivos.medicos);
+                citas = Archivo::cargarCitas(archivos.citas);
+                especialidades = Archivo::cargarEspecialidades(archivos.especialidades);
+                std::cout << "Archivos por defecto cargados nuevamente.\n";
+            }
+            catch (...) {
+                std::cerr << "Error al cargar archivos por defecto.\n";
+            }
+            break;
+        }
         case 0:
             std::cout << "Volviendo al menú administrador...\n";
             break;
         default:
             std::cout << "Opción no válida. Intente nuevamente.\n";
             break;
-        }
+
+        } 
     } while (opcion != 0);
 }
 
-void mostrarMenuListados(const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos, const std::vector<Cita>& citas) {
-    int opcion;
+void mostrarMenuListados(const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos, std::vector<Cita>& citas){
+    int opcion = -1;
     do {
         std::cout << "\n--- Ver Listados ---\n";
         std::cout << "1. Lista de Pacientes\n";
         std::cout << "2. Lista de Médicos\n";
         std::cout << "3. Lista de Citas\n";
+        std::cout << "4. Ordenar citas por fecha\n";
+        std::cout << "5. Ordenar citas por prioridad\n";
         std::cout << "0. Volver al Menú Administrador\n\n";
-        std::cout << "Seleccione una opción: ";
-        std::cin >> opcion;
+
+        opcion = InputValidator::leerEnteroConsola("Seleccione una opción: ");
         Formateador::limpiarPantalla();
 
         switch (opcion) {
@@ -228,6 +305,18 @@ void mostrarMenuListados(const std::vector<Paciente>& pacientes, const std::vect
         case 3:
             Formateador::imprimirTablaCitas(citas);
             break;
+        case 4: { // Ordenar citas por fecha
+            GestorCitas::ordenarCitasPorFecha(citas);
+            std::cout << "Citas ordenadas por fecha:\n";
+            Formateador::imprimirTablaCitas(citas);
+            break;
+        }
+        case 5: { // Ordenar citas por prioridad
+            GestorCitas::ordenarCitasPorPrioridad(citas);
+            std::cout << "Citas ordenadas por prioridad:\n";
+            Formateador::imprimirTablaCitas(citas);
+            break;
+        }
         case 0:
             std::cout << "Volviendo al menú administrador...\n";
             break;
@@ -238,8 +327,8 @@ void mostrarMenuListados(const std::vector<Paciente>& pacientes, const std::vect
     } while (opcion != 0);
 }
 
-void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, GestorEspecialidades& gestorEspecialidades) {
-    int opcion;
+void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& medicos, GestorEspecialidades& gestorEspecialidades, ArchivosActivos& archivos) {
+    int opcion = -1;
     do {
         std::cout << "\n--- Alta y Baja de Registros ---\n";
         std::cout << "1. Dar de Alta a un Paciente\n";
@@ -248,41 +337,35 @@ void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& 
         std::cout << "4. Dar de Baja a un Médico\n";
         std::cout << "5. Cambiar Disponibilidad de un Médico\n";
         std::cout << "0. Volver al Menú Administrador\n\n";
-        std::cout << "Seleccione una opción: ";
-        std::cin >> opcion;
+
+        opcion = InputValidator::leerEnteroConsola("Seleccione una opción: ");
         Formateador::limpiarPantalla();
 
         switch (opcion) {
         case 1: {
-            int edad;
-            std::string nombre, apellido, direccion;
-            std::cout << "Ingrese Nombre: "; std::cin >> nombre;
-            std::cout << "Ingrese Apellido: "; std::cin >> apellido;
-            std::cout << "Ingrese Dirección: "; std::cin.ignore(); std::getline(std::cin, direccion);
-            std::cout << "Ingrese Edad: "; std::cin >> edad;
-            GestorPacientes::altaPaciente(pacientes, nombre, apellido, direccion, edad);
+            GestorPacientes::altaPaciente(pacientes, archivos);
             break;
         }
 
         case 2: {
-            GestorMedicos::altaMedico(medicos, gestorEspecialidades);
+            GestorMedicos::altaMedico(medicos, gestorEspecialidades, archivos);
             break;
         }
 
         case 3: {
             std::string idPaciente;
             std::cout << "Ingrese ID del paciente a eliminar: "; std::cin >> idPaciente;
-            GestorPacientes::bajaPaciente(pacientes, idPaciente);
+            GestorPacientes::bajaPaciente(pacientes, idPaciente, archivos);
             break;
         }
         case 4: {
             std::string idMedico;
             std::cout << "Ingrese ID del médico a eliminar: "; std::cin >> idMedico;
-            GestorMedicos::bajaMedico(medicos, idMedico);
+            GestorMedicos::bajaMedico(medicos, idMedico, archivos);
             break;
         }
         case 5: {
-            // Solicitar el ID del médico
+            Formateador::imprimirTablaMedicos(medicos);
             std::string medicoID = InputValidator::solicitarID <Medico>(
                 "Ingrese el ID del médico: ",
                 medicos,
@@ -305,33 +388,25 @@ void mostrarMenuAltaBaja(std::vector<Paciente>& pacientes, std::vector<Medico>& 
     } while (opcion != 0);
 }
 
-void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos) {
-    int opcion;
+void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Paciente>& pacientes, const std::vector<Medico>& medicos, ArchivosActivos& archivos) {
+    int opcion = -1;
 
     do {
         std::cout << "\n--- Gestión de Citas ---\n";
         std::cout << "1. Crear Cita\n";
-        std::cout << "2. Cancelar Cita\n";
-        std::cout << "3. Modificar Cita\n";
+        std::cout << "2. Modificar Cita\n";
+        std::cout << "3. Cancelar Cita\n";
         std::cout << "4. Ver Citas por Paciente\n";
         std::cout << "5. Ver Citas por Médico\n";
         std::cout << "0. Volver al Menú Administrador\n\n";
-        std::cout << "Seleccione una opción: ";
-        std::cin >> opcion;
-
-        if (std::cin.fail()) {
-            std::cerr << "Error: Entrada inválida. Intente nuevamente.\n";
-            std::cin.clear();
-            std::cin.ignore(1000, '\n');
-            continue;
-        }
-
+        
+        opcion = InputValidator::leerEnteroConsola("Seleccione una opción: ");
         Formateador::limpiarPantalla();
 
         switch (opcion) {
         case 1: {
             try {
-                GestorCitas::crearCita(citas, pacientes, medicos);
+                GestorCitas::crearCita(citas, pacientes, medicos, archivos);
             }
             catch (const std::exception& e) {
                 std::cerr << "Error al crear la cita: " << e.what() << "\n";
@@ -341,13 +416,28 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
 
         case 2: {
             std::string citaID;
+
+            // Solicitar ID de la cita
+            std::cout << "Ingrese el ID de la cita a modificar: ";
+            std::cin >> citaID;
+
+            // Modificar la cita
+            if (!GestorCitas::modificarCita(citas, citaID, medicos, archivos)) {
+                std::cerr << "No se pudo modificar la cita. Verifique los datos ingresados.";
+            }
+
+            break;
+        }
+
+        case 3: {
+            std::string citaID;
             std::cout << "Ingrese el ID de la cita a cancelar: ";
             std::cin >> citaID;
 
             citaID = InputValidator::convertirAMayusculas(citaID);
 
             try {
-                GestorCitas::cancelarCita(citas, citaID);
+                GestorCitas::cancelarCita(citas, citaID, archivos);
             }
             catch (const std::exception& e) {
                 std::cerr << "Error al cancelar la cita: " << e.what() << "\n";
@@ -356,22 +446,9 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
             break;
         }
 
-        case 3: {
-            std::string citaID;
-
-            // Solicitar ID de la cita
-            std::cout << "Ingrese el ID de la cita a modificar: ";
-            std::cin >> citaID;
-
-            // Modificar la cita
-            if (!GestorCitas::modificarCita(citas, citaID, medicos)) {
-                std::cerr << "No se pudo modificar la cita. Verifique los datos ingresados.\n";
-            }
-
-            break;
-        }
-
         case 4: {
+            Formateador::imprimirTablaPacientes(pacientes);
+
             std::string pacienteID = InputValidator::solicitarID<Paciente>(
                 "Ingrese el ID del paciente: ",
                 pacientes,
@@ -387,6 +464,8 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
             break;
         }
         case 5: { // Ver citas por médico
+            Formateador::imprimirTablaMedicos(medicos);
+
             std::string medicoID = InputValidator::solicitarID<Medico>(
                 "Ingrese el ID del médico: ",
                 medicos,
@@ -413,16 +492,16 @@ void mostrarMenuGestionCitas(std::vector<Cita>& citas, const std::vector<Pacient
     } while (opcion != 0);
 }
 
-void mostrarMenuGestionEspecialidades(GestorEspecialidades& gestorEspecialidades) {
-    int opcion;
+void mostrarMenuGestionEspecialidades(GestorEspecialidades& gestorEspecialidades, ArchivosActivos& archivos) {
+    int opcion = -1;
     do {
         std::cout << "\n--- Gestión de Especialidades ---\n";
         std::cout << "1. Listar Especialidades\n";
         std::cout << "2. Buscar Especialidad por ID\n";
         std::cout << "3. Añadir Nueva Especialidad\n";
         std::cout << "0. Volver al Menú Administrador\n";
-        std::cout << "Seleccione una opción: ";
-        std::cin >> opcion;
+
+        opcion = InputValidator::leerEnteroConsola("Seleccione una opción: ");
         Formateador::limpiarPantalla();
 
         switch (opcion) {
@@ -446,7 +525,7 @@ void mostrarMenuGestionEspecialidades(GestorEspecialidades& gestorEspecialidades
                 Formateador::imprimirRegistro(*especialidad);
             }
             else {
-                std::cout << "Especialidad no encontrada.\n";
+                std::cout << "Especialidad no encontrada.";
             }
             break;
         }
@@ -454,15 +533,13 @@ void mostrarMenuGestionEspecialidades(GestorEspecialidades& gestorEspecialidades
         case 3: { // Añadir una nueva especialidad
             std::string nombre, descripcion;
 
-            std::cin.ignore();
-
             std::cout << "Ingrese el nombre de la especialidad: ";
             std::getline(std::cin, nombre);
 
             std::cout << "Ingrese una descripción para la especialidad: ";
             std::getline(std::cin, descripcion);
 
-            gestorEspecialidades.crearEspecialidad(nombre, descripcion);
+            gestorEspecialidades.crearEspecialidad(nombre, descripcion, archivos);
             break;
         }
 
@@ -476,68 +553,73 @@ void mostrarMenuGestionEspecialidades(GestorEspecialidades& gestorEspecialidades
     } while (opcion != 0);
 }
 
-void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& /*medicos*/) {
-    int opcion;
+void mostrarMenuMedico(std::vector<Paciente>& pacientes) {
+    int opcion = -1;
+    const Paciente* pacienteSeleccionado = nullptr;
+    
     do {
+        
         std::cout << "\n--- Menú Médico ---\n";
-        std::cout << "1. Ver lista de pacientes\n";
-        std::cout << "2. Buscar paciente por ID\n";
-        std::cout << "3. Agregar diagnóstico a un paciente\n";
-        std::cout << "4. Agregar prueba médica a un paciente\n";
-        std::cout << "5. Agregar nota general al historial de un paciente\n";
-        std::cout << "6. Ver historial médico de un paciente\n";
-        std::cout << "7. Agregar enfermedad crónica a un paciente\n";
-        std::cout << "8. Asignar tratamiento a un paciente\n";
-        std::cout << "0. Volver al menú principal\n\n";
-        std::cout << "Seleccione una opción: ";
-        std::cin >> opcion;
+
+        if (pacienteSeleccionado) {
+            Formateador::imprimirEncabezadoMenuMedico(*pacienteSeleccionado);
+        }
+        else {
+            std::cout << "\n--- No hay paciente seleccionado ---\n\n";
+        }
+
+        // Mostrar el menú
+        std::cout << "1. Seleccionar paciente por ID\n";
+        std::cout << "2. Agregar diagnóstico a un paciente\n";
+        std::cout << "3. Agregar prueba médica a un paciente\n";
+        std::cout << "4. Asignar tratamiento a un paciente\n";
+        std::cout << "5. Agregar enfermedad crónica a un paciente\n";
+        std::cout << "6. Agregar nota general al historial de un paciente\n";
+        std::cout << "7. Ver historial médico de un paciente\n";
+        std::cout << "0. Salir\n";
+
+        opcion = InputValidator::leerEnteroConsola("Seleccione una opción: ");
         Formateador::limpiarPantalla();
 
         switch (opcion) {
-        case 1: // Ver lista de pacientes
+        case 1: { // Seleccionar paciente por ID
             Formateador::imprimirTablaPacientes(pacientes);
-            break;
-
-        case 2: { // Buscar paciente por ID
-            std::string id;
-            std::cout << "Ingrese ID del paciente: ";
-            std::cin >> id;
-            auto paciente = GestorPacientes::buscarPacientePorID(pacientes, id);
-            if (paciente) {
-                Formateador::imprimirEncabezadoPacientes();
-                Formateador::imprimirRegistro(*paciente);
-            }
-            else {
-                std::cout << "Paciente no encontrado.\n";
-            }
+            Paciente* p = InputValidator::solicitarObjeto<Paciente>(
+                "Ingrese el ID del paciente a seleccionar: ",
+                pacientes,
+                [](const Paciente& pac) {
+                    return pac.getID();
+                }
+            );
+            pacienteSeleccionado = p;
             break;
         }
 
-        case 3: { // Agregar diagnóstico
-            std::string id;
-            std::cout << "Ingrese ID del paciente: ";
-            std::cin >> id;
+        case 2: { // Agregar diagnóstico
+            if (!pacienteSeleccionado) {
+                std::cerr << "Error: No hay ningún paciente seleccionado. Seleccione uno primero.\n";
+                break;
+            }
 
-            operarHistorialPaciente(pacientes, id, [](HistorialMedico& historial) {
+            GestorPacientes::operarHistorialPaciente(pacientes, pacienteSeleccionado->getID(), [](HistorialMedico& historial) {
                 std::string diagnostico, fecha;
                 std::cout << "Ingrese diagnóstico: ";
-                std::cin.ignore();
                 std::getline(std::cin, diagnostico);
-                fecha = InputValidator::solicitarFecha("Ingrese fecha del diagnóstico: ");
+                fecha = InputValidator::solicitarFechaPasadaOActual("Ingrese fecha del diagnóstico: ");
                 historial.agregarDiagnostico(fecha, diagnostico);
                 });
             break;
         }
 
-        case 4: { // Agregar prueba médica
-            std::string id;
-            std::cout << "Ingrese ID del paciente: ";
-            std::cin >> id;
+        case 3: { // Agregar prueba médica
+            if (!pacienteSeleccionado) {
+                std::cerr << "Error: No hay ningún paciente seleccionado. Seleccione uno primero.\n";
+                break;
+            }
 
-            operarHistorialPaciente(pacientes, id, [](HistorialMedico& historial) {
+            GestorPacientes::operarHistorialPaciente(pacientes, pacienteSeleccionado->getID(), [](HistorialMedico& historial) {
                 std::string prueba, fecha;
                 std::cout << "Ingrese prueba médica: ";
-                std::cin.ignore();
                 std::getline(std::cin, prueba);
                 fecha = InputValidator::solicitarFecha("Ingrese fecha de la prueba: ");
                 historial.agregarPrueba(fecha, prueba);
@@ -545,79 +627,90 @@ void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& /*
             break;
         }
 
-        case 5: { // Agregar nota general
-            std::string id;
-            std::cout << "Ingrese ID del paciente: ";
-            std::cin >> id;
-
-            operarHistorialPaciente(pacientes, id, [](HistorialMedico& historial) {
-                std::string nota;
-                std::cout << "Ingrese nota general: ";
-                std::cin.ignore();
-                std::getline(std::cin, nota);
-                historial.agregarNota(nota);
-                });
-            break;
-        }
-
-        case 6: { // Ver historial médico
-            std::string id;
-            std::cout << "Ingrese ID del paciente: ";
-            std::cin >> id;
-
-            auto paciente = GestorPacientes::buscarPacientePorID(pacientes, id);
-            if (paciente) {
-                HistorialMedico historial = paciente->cargarHistorial();
-                Formateador::imprimirHistorialMedico(historial);
+        case 4: { // Asignar tratamiento
+            if (!pacienteSeleccionado) {
+                std::cerr << "Error: No hay ningún paciente seleccionado. Seleccione uno primero.\n";
+                break;
             }
-            else {
-                std::cout << "Paciente no encontrado.\n";
-            }
-            break;
-        }
 
-        case 7: { // Agregar enfermedad crónica
-            std::string id;
-            std::cout << "Ingrese ID del paciente: ";
-            std::cin >> id;
-
-            operarHistorialPaciente(pacientes, id, [](HistorialMedico& historial) {
-                std::string nombre, tratamiento, fechaDiagnostico;
-                int severidad;
-
-                std::cout << "Ingrese nombre de la enfermedad: ";
-                std::cin.ignore();
-                std::getline(std::cin, nombre);
-
-                std::cout << "Ingrese severidad (1-10): ";
-                std::cin >> severidad;
-
-                std::cout << "Ingrese tratamiento recomendado: ";
-                std::cin.ignore();
-                std::getline(std::cin, tratamiento);
-
-                fechaDiagnostico = InputValidator::solicitarFecha("Ingrese fecha de diagnóstico: ");
-                EnfermedadCronica enfermedad(nombre, severidad, tratamiento, fechaDiagnostico);
-                historial.agregarEnfermedadCronica(enfermedad);
-                });
-            break;
-        }
-
-        case 8: { // Asignar tratamiento
-            std::string id;
-            std::cout << "Ingrese ID del paciente: ";
-            std::cin >> id;
-
-            operarHistorialPaciente(pacientes, id, [](HistorialMedico& historial) {
+            GestorPacientes::operarHistorialPaciente(pacientes, pacienteSeleccionado->getID(), [](HistorialMedico& historial) {
                 std::string tratamiento;
                 std::cout << "Ingrese tratamiento a asignar: ";
-                std::cin.ignore();
                 std::getline(std::cin, tratamiento);
                 historial.agregarNota("Tratamiento asignado: " + tratamiento);
                 });
             break;
         }
 
+        case 5: { // Agregar enfermedad crónica
+            if (!pacienteSeleccionado) {
+                std::cerr << "Error: No hay ningún paciente seleccionado. Seleccione uno primero.\n";
+                break;
+            }
+
+            GestorPacientes::operarHistorialPaciente(pacientes, pacienteSeleccionado->getID(),
+                [](HistorialMedico& historial)
+                {
+                    std::string nombre, tratamiento, fechaDiagnostico;
+
+                    std::cout << "Ingrese nombre de la enfermedad: ";
+                    std::getline(std::cin, nombre);
+
+                    int severidad;
+                    while (true) {
+                        severidad = InputValidator::leerEnteroConsola("Ingrese severidad (1-10): ");
+                        if (severidad >= 1 && severidad <= 10) {
+                            break;
+                        }
+                        std::cerr << "Error: La severidad debe estar entre 1 y 10. Intente nuevamente.\n";
+                    }
+
+                    std::cout << "Ingrese tratamiento recomendado: ";
+                    std::getline(std::cin, tratamiento);
+
+                    fechaDiagnostico = InputValidator::solicitarFechaPasadaOActual("Ingrese fecha del diagnóstico: ");
+
+                    EnfermedadCronica enfermedad(nombre, severidad, tratamiento, fechaDiagnostico);
+                    historial.agregarEnfermedadCronica(enfermedad);
+                }
+            );
+            break;
+        }
+
+        case 6: { // Agregar nota general
+            if (!pacienteSeleccionado) {
+                std::cerr << "Error: No hay ningún paciente seleccionado. Seleccione uno primero.\n";
+                break;
+            }
+
+            GestorPacientes::operarHistorialPaciente(pacientes, pacienteSeleccionado->getID(), [](HistorialMedico& historial) {
+                std::string nota;
+                std::cout << "Ingrese nota general: ";
+                std::getline(std::cin, nota);
+                historial.agregarNota(nota);
+                });
+            break;
+        }
+
+        case 7: { // Ver historial médico
+            if (!pacienteSeleccionado) {
+                std::cerr << "Error: No hay ningún paciente seleccionado. Seleccione uno primero.\n";
+                break;
+            }
+
+            auto paciente = GestorPacientes::buscarPacientePorID(pacientes, pacienteSeleccionado->getID());
+            if (paciente) {
+                HistorialMedico historial = paciente->cargarHistorial();
+                Formateador::imprimirHistorialMedico(historial);
+                std::cout << "\nPresione enter para continuar...";
+                std::cin.get();
+                Formateador::limpiarPantalla();
+            }
+            else {
+                std::cout << "Paciente no encontrado.\n";
+            }
+            break;
+        }
 
         case 0:
             std::cout << "Volviendo al menú principal...\n";
@@ -630,26 +723,25 @@ void mostrarMenuMedico(std::vector<Paciente>& pacientes, std::vector<Medico>& /*
     } while (opcion != 0);
 }
 
-void mostrarMenuPaciente(std::vector<Paciente>& pacientes) {
-    std::string id;
-    std::cout << "Ingrese su ID para acceder al sistema: ";
-    std::cin >> id;
+void mostrarMenuPaciente(std::vector<Paciente>& pacientes, ArchivosActivos& archivos) {
+    Formateador::imprimirTablaPacientes(pacientes);
+    Paciente* paciente = InputValidator::solicitarObjeto<Paciente>(
+        "Ingrese el ID del paciente a seleccionar: ",
+        pacientes,
+        [](const Paciente& p) {
+            return p.getID();
+        }
+    );
 
-    auto paciente = GestorPacientes::buscarPacientePorID(pacientes, id);
-    if (!paciente) {
-        std::cout << "Paciente no encontrado.\n";
-        return;
-    }
-
-    int opcion;
+    int opcion = -1;
     do {
         std::cout << "\n--- Menú Paciente ---\n";
         std::cout << "1. Ver información personal\n";
         std::cout << "2. Consultar historial clínico\n";
         std::cout << "3. Modificar datos personales\n";
         std::cout << "0. Volver al menú principal\n";
-        std::cout << "Seleccione una opción: ";
-        std::cin >> opcion;
+
+        opcion = InputValidator::leerEnteroConsola("Seleccione una opción: ");
         Formateador::limpiarPantalla();
 
         switch (opcion) {
@@ -660,21 +752,20 @@ void mostrarMenuPaciente(std::vector<Paciente>& pacientes) {
 
         case 2:
             Formateador::imprimirHistorialMedico(paciente->cargarHistorial());
+            std::cout << "\nPresione enter para continuar...";
+            std::cin.get();
+            Formateador::limpiarPantalla();
             break;
 
         case 3: {
             std::string nuevaDireccion;
-            int nuevaEdad;
-
-            std::cin.ignore();
             std::cout << "Ingrese nueva dirección: ";
             std::getline(std::cin, nuevaDireccion);
 
-            std::cout << "Ingrese nueva edad: ";
-            std::cin >> nuevaEdad;
+            int nuevaEdad = InputValidator::leerEnteroConsola("Ingrese nueva edad: ");
 
             paciente->modificarDatos(nuevaDireccion, nuevaEdad);
-            Archivo::guardarPacientes(pacientes, "./data/archivo_pacientes.txt");
+            Archivo::guardarPacientes(pacientes, archivos.pacientes);
             std::cout << "Datos modificados exitosamente.\n";
             break;
         }

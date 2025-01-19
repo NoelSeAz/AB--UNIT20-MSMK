@@ -3,8 +3,16 @@
 #include <iomanip>
 #include <sstream>
 
+//Métodos para impirmir encabezado Menu Médico
+void Formateador::imprimirEncabezadoMenuMedico(const Paciente& paciente) {
+    std::cout << std::string(100, '-') << "\n";
+    std::cout << std::left << std::setw(15) << "Paciente" << std::setw(15) << paciente.getID() << "\n";
+    std::cout << std::string(100, '-') << "\n";
+}
+
 // Métodos para imprimir encabezados
 void Formateador::imprimirEncabezadoPacientes() {
+    std::cout << std::string(100, '-') << "\n";
     std::cout << std::left;
     std::cout << std::setw(10) << "ID"
         << std::setw(20) << "Nombre"
@@ -16,6 +24,7 @@ void Formateador::imprimirEncabezadoPacientes() {
 }
 
 void Formateador::imprimirEncabezadoMedicos() {
+    std::cout << std::string(100, '-') << "\n";
     std::cout << std::left;
     std::cout << std::setw(10) << "ID"
         << std::setw(20) << "Nombre"
@@ -27,6 +36,7 @@ void Formateador::imprimirEncabezadoMedicos() {
 }
 
 void Formateador::imprimirEncabezadoCitas() {
+    std::cout << std::string(100, '-') << "\n";
     std::cout << std::left;
     std::cout << std::setw(15) << "Cita ID Hash"
         << std::setw(25) << "Cita ID"
@@ -39,11 +49,12 @@ void Formateador::imprimirEncabezadoCitas() {
 }
 
 void Formateador::imprimirEncabezadoEspecialidades() {
+    std::cout << std::string(100, '-') << "\n";
     std::cout << std::left << std::setw(5) << "ID"
         << std::setw(20) << "Nombre"
         << std::setw(50) << "Descripción"
         << "\n";
-    std::cout << std::string(75, '-') << "\n";
+    std::cout << std::string(100, '-') << "\n";
 }
 
 // Métodos para imprimir registros individuales
@@ -94,6 +105,7 @@ void Formateador::imprimirTablaPacientes(const std::vector<Paciente>& pacientes)
     for (const auto& paciente : pacientes) {
         imprimirRegistro(paciente);
     }
+    std::cout << std::string(100, '-') << "\n\n";
 }
 
 void Formateador::imprimirTablaMedicos(const std::vector<Medico>& medicos) {
@@ -101,6 +113,7 @@ void Formateador::imprimirTablaMedicos(const std::vector<Medico>& medicos) {
     for (const auto& medico : medicos) {
         imprimirRegistro(medico);
     }
+    std::cout << std::string(100, '-') << "\n\n";
 }
 
 void Formateador::imprimirTablaCitas(const std::vector<Cita>& citas) {
@@ -108,18 +121,15 @@ void Formateador::imprimirTablaCitas(const std::vector<Cita>& citas) {
     for (const auto& cita : citas) {
         imprimirRegistro(cita);
     }
+    std::cout << std::string(100, '-') << "\n\n";
 }
 
 void Formateador::imprimirTablaEspecialidades(const std::vector<Especialidad>& especialidades) {
-    std::cout << std::left
-        << std::setw(5) << "ID"
-        << std::setw(25) << "Nombre"
-        << "Descripción\n";
-    std::cout << std::string(75, '-') << "\n";
-
+    imprimirEncabezadoEspecialidades();
     for (const auto& especialidad : especialidades) {
         imprimirRegistro(especialidad);
     }
+    std::cout << std::string(100, '-') << "\n\n";
 }
 
 

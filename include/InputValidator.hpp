@@ -30,10 +30,23 @@ public:
 
     static bool validarRangoFechas(const std::string& fechaInicio, const std::string& fechaFin);
 
+    static int leerEnteroConsola(const std::string& mensaje);
+
     // Solicitar una fecha con validación de formato y rango opcional
     static std::string solicitarFecha(const std::string& mensaje,
         const std::optional<std::string>& fechaInicio = std::nullopt,
         const std::optional<std::string>& fechaFin = std::nullopt);
+
+    // Convertir minúsculas a mayúsculas
+    static std::string convertirAMayusculas(const std::string& input);
+
+    // Validar valor prioridad
+    static int solicitarPrioridad();
+
+    static bool validarDisponibilidad(int disponibilidad);
+
+    static std::string solicitarFechaPasadaOActual(const std::string& mensaje);
+
 
     // Función plantilla para solicitar un ID genérico
     template <typename T>
@@ -64,13 +77,35 @@ public:
         }
     }
 
-    // Convertir minúsculas a mayúsculas
-    static std::string convertirAMayusculas(const std::string& input);
+    template <typename T>
+    static T* solicitarObjeto(
+        const std::string& mensaje,
+        std::vector<T>& objetos,
+        const std::function<std::string(const T&)>& obtenerID)
+    {
+        while (true) {
+            std::cout << mensaje;
+            std::string idIngresado;
+            if (!std::getline(std::cin, idIngresado)) {
+                throw std::runtime_error("No se pudo leer la entrada");
+            }
+            idIngresado = convertirAMayusculas(idIngresado);
 
-    // Validar valor prioridad
-    static int solicitarPrioridad();
+            // Buscar el objeto con ese ID
+            auto it = std::find_if(objetos.begin(), objetos.end(),
+                [&idIngresado, &obtenerID](T& obj) {
+                    return obtenerID(obj) == idIngresado;
+                }
+            );
 
-    static bool validarDisponibilidad(int disponibilidad);
+            if (it != objetos.end()) {
+                return &(*it);
+            }
+            else {
+                std::cerr << "Error: ID no encontrado. Intente nuevamente.\n";
+            }
+        }
+    }
 };
 
 #endif

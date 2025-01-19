@@ -60,17 +60,14 @@ bool InputValidator::esFechaFutura(const std::string& fecha) {
     return resultado >= 0;
 }
 
-
 // Validar que la fecha ingresada es pasada o actual (<= hoy)
 bool InputValidator::esFechaPasadaOActual(const std::string& fecha) {
     int resultado = compararFechas(fecha, obtenerFechaActual());
     if (resultado == -2) {
-        std::cerr << "Error: Formato de fecha no válido en esFechaPasadaOActual.\n";
         return false;
     }
     return resultado <= 0;
 }
-
 
 // Validar que fechaComparada es igual o posterior a fechaReferencia
 bool InputValidator::esFechaPosterior(const std::string& fechaComparada, const std::string& fechaReferencia) {
@@ -82,11 +79,38 @@ bool InputValidator::esFechaPosterior(const std::string& fechaComparada, const s
     return resultado >= 0;
 }
 
+// Validar que un rango de fechas es lógico
+bool InputValidator::validarRangoFechas(const std::string& fechaInicio, const std::string& fechaFin) {
+    return compararFechas(fechaInicio, fechaFin) <= 0;
+}
+
+//Validar entrada consola
+int InputValidator::leerEnteroConsola(const std::string& mensaje){
+    while (true) {
+        std::cout << mensaje;
+        std::string linea;
+        if (!std::getline(std::cin, linea)) {
+            std::cout << "\nNo se pudo leer la entrada (EOF o error). Saliendo...\n";
+            return 0;
+        }
+
+        try {
+            int valor = std::stoi(linea);
+            return valor;
+        }
+        catch (const std::invalid_argument&) {
+            std::cerr << "Error: Entrada inválida (no numérico). Intente nuevamente.\n";
+        }
+        catch (const std::out_of_range&) {
+            std::cerr << "Error: Número fuera de rango. Intente nuevamente.\n";
+        }
+    }
+}
 
 // Solicitar una fecha con validación de formato y rango opcional
 std::string InputValidator::solicitarFecha(const std::string& mensaje,
-                                           const std::optional<std::string>& fechaInicio,
-                                           const std::optional<std::string>& fechaFin) {
+    const std::optional<std::string>& fechaInicio,
+    const std::optional<std::string>& fechaFin) {
     std::string fecha;
 
     while (true) {
@@ -104,14 +128,14 @@ std::string InputValidator::solicitarFecha(const std::string& mensaje,
                 int resultadoFin = fechaFin ? compararFechas(fecha, *fechaFin) : 0;
 
                 if (resultadoInicio < 0) {
-                    throw std::out_of_range("La fecha no puede ser menor que " + *fechaInicio + ".");
+                    throw std::out_of_range("La fecha no puede ser anterior que " + *fechaInicio + ".");
                 }
                 if (resultadoFin > 0) {
-                    throw std::out_of_range("La fecha no puede ser mayor que " + *fechaFin + ".");
+                    throw std::out_of_range("La fecha no puede ser posterior que " + *fechaFin + ".");
                 }
             }
 
-            return fecha; // Fecha válida
+            return fecha;
         }
         catch (const std::exception& e) {
             std::cerr << "Error: " << e.what() << "\nIntente nuevamente.\n";
@@ -119,10 +143,19 @@ std::string InputValidator::solicitarFecha(const std::string& mensaje,
     }
 }
 
-// Validar que un rango de fechas es lógico
-bool InputValidator::validarRangoFechas(const std::string& fechaInicio, const std::string& fechaFin) {
-    return compararFechas(fechaInicio, fechaFin) <= 0;
+std::string InputValidator::solicitarFechaPasadaOActual(const std::string& mensaje) {
+    while (true) {
+        std::string fecha = solicitarFecha(mensaje);
+
+        if (!esFechaPasadaOActual(fecha)) {
+            std::cerr << "Error: la fecha no puede ser futura. Intente nuevamente.\n";
+            continue;
+        }
+
+        return fecha;
+    }
 }
+
 
 //Convertir minúsculas a mayúsculas
 std::string InputValidator::convertirAMayusculas(const std::string& input) {

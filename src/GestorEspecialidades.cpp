@@ -28,7 +28,7 @@ void Especialidad::imprimir() const {
 
 // --- Clase GestorEspecialidades ---
 
-GestorEspecialidades::GestorEspecialidades(const std::vector<Especialidad>& especialidadesIniciales)
+GestorEspecialidades::GestorEspecialidades(std::vector<Especialidad>& especialidadesIniciales)
     : especialidades(especialidadesIniciales) {
 }
 
@@ -45,11 +45,10 @@ std::optional<Especialidad> GestorEspecialidades::buscarEspecialidadPorID(int id
     return std::nullopt;
 }
 
-void GestorEspecialidades::crearEspecialidad(const std::string& nombre, const std::string& descripcion) {
-    int id = obtenerSiguienteID(); // Generar el próximo ID
-    especialidades.emplace_back(id, nombre, descripcion); // Crear y agregar la especialidad
+void GestorEspecialidades::crearEspecialidad(const std::string& nombre, const std::string& descripcion, ArchivosActivos& archivos) {
+    int id = obtenerSiguienteID();
+    especialidades.emplace_back(id, nombre, descripcion);
     std::cout << "Especialidad creada exitosamente con ID " << id << ".\n";
 
-    // Guardar en el archivo
-    Archivo::guardarEspecialidades(especialidades, "especialidades.csv");
+    Archivo::guardarEspecialidades(especialidades, archivos.especialidades);
 }
